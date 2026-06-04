@@ -1,0 +1,19 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "shell": "powershell",
+            "command": "Set-Location 'D:\\stressID'; git add -A; if (git status --porcelain) { git commit -m 'auto: update progress' 2>$null; git push origin main 2>$null }",
+            "timeout": 30,
+            "statusMessage": "Committing and pushing...",
+            "async": true
+          }
+        ]
+      }
+    ]
+  }
+}

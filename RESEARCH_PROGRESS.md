@@ -219,3 +219,4 @@ TRAINING STRATEGY
 | Date | Change |
 |---|---|
 | 2026-06-04 | Initial research plan created — baselines analyzed, architecture designed, future work prioritized |
+| 2026-06-04 | Added `.claude/settings.local.json` with PostToolUse hook for auto-commit and push on every Write/Edit |
