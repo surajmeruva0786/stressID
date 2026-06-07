@@ -1,0 +1,7 @@
+# Dataset files - excluded from version control
+StressID Dataset/
+
+# macOS metadata
+.DS_Store
+._.DS_Store
+._*
