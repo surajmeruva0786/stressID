@@ -42,9 +42,12 @@ nothing else has to change.
 ## Deviations from the planning document (and why)
 
 1. **10 s windows, not 30 s.** The PDF assumes 3–5 min recordings. Real StressID tasks
-   are 60–90 s, so 30 s / 50 % overlap yields only 3 windows per task — not enough of a
-   sequence to test temporal modelling. 10 s / 5 s hop gives ~11 windows for a 60 s task.
+   are 60 s for the four speech tasks (Reading, Math, Stroop, Speaking), 150 s for Relax
+   and 180 s for Breathing. 30 s / 50 % overlap yields only 3 windows for a 60 s task —
+   not enough of a sequence to test temporal modelling. 10 s / 5 s hop gives 11 windows.
    Set `window_sec`/`hop_sec` in `src/config.py` to change this.
+   Note `max_windows = 16` truncates Breathing/Relax to their first ~85 s. This does not
+   affect E5/E6/E12, which score only the 60 s speech tasks.
 2. **Log-mel + CNN instead of wav2vec2.** `transformers` isn't installed and a wav2vec2
    fine-tune doesn't fit a 4 GB GPU at this scale. `AudioEncoder` is a drop-in slot:
    swap it for a wav2vec2 feature extractor emitting `[N, k, d]` and E9 becomes runnable.
