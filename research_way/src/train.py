@@ -108,7 +108,7 @@ def train_one_fold(cfg: Config, man: pd.DataFrame, fold: dict, seed: int,
         if verbose and (ep % 10 == 0 or ep == cfg.epochs - 1):
             print(f"      ep{ep:3d} loss={agg.get('loss', 0):.3f} "
                   f"bce={agg.get('bce', 0):.3f} inv={agg.get('subj_inv', 0):.3f} "
-                  f"valF1={f1:.3f}")
+                  f"valF1={f1:.3f}", flush=True)
 
     model.load_state_dict(best["state"])
 
