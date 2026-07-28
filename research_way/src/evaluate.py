@@ -97,6 +97,7 @@ def run(cfg: Config | None = None) -> dict:
           "availability/label confound (see README).")
 
     report: dict = {}
+    report["shortcut_audit"] = _shortcut_audit(preds_all, cfg)
 
     # ---- E2 / E4: temporal vs static at full modality
     e2 = _paired(per_run, "bin_f1_macro", "full")
