@@ -44,8 +44,10 @@ def main() -> int:
     args = ap.parse_args()
 
     cfg = Config()
+    # NOTE: --smoke does not change n_folds, because the splits on disk are fixed
+    # and shared by every experiment. It only shortens seeds/epochs.
     if args.smoke:
-        cfg.seeds, cfg.n_folds, cfg.epochs, cfg.run_name = (0,), 2, 6, "smoke"
+        cfg.seeds, cfg.epochs, cfg.run_name = (0,), 6, "smoke"
     if args.subjects:
         cfg.n_subjects = args.subjects
     if args.epochs:

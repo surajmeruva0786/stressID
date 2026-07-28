@@ -1,0 +1,8 @@
+[train] temporal seed=0 fold=0 bestValF1=0.812@ep1 (13s)
+[train] temporal seed=0 fold=1 bestValF1=0.829@ep1 (10s)
+[train] temporal seed=0 fold=2 bestValF1=0.657@ep1 (10s)
+[train] temporal seed=0 fold=3 bestValF1=0.667@ep3 (10s)
+[train] static   seed=0 fold=0 bestValF1=0.812@ep2 (10s)
+[train] static   seed=0 fold=1 bestValF1=0.733@ep2 (10s)
+[train] static   seed=0 fold=2 bestValF1=0.657@ep2 (10s)
+[train] static   seed=0 fold=3 bestValF1=0.580@ep4 (10s)
