@@ -7,14 +7,13 @@ Stage 6 suite without retraining anything.
 """
 from __future__ import annotations
 
-import json
 import time
 
 import numpy as np
 import pandas as pd
 import torch
 
-from .config import Config, MODALITIES
+from .config import Config
 from .dataset import StressIDWindows, compute_norm, make_loader, load_manifest
 from .losses import compute_loss
 from .model import build_model
