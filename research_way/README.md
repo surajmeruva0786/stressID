@@ -139,6 +139,45 @@ Written to `results/small/`:
 | `e13_calibration.csv`, `e13_reliability_bins.csv` | E13 — ECE and reliability bins |
 | `figures.png` | degradation curve, ECE vs. #missing, reliability diagram |
 
+## What the first full run actually found
+
+24 runs (3 seeds × 4 folds × {temporal, static}), 40 epochs each, ~20 min on a Quadro P1000.
+
+**The shortcut audit is the result.** The same full-modality predictions, scored two ways:
+
+| scope | variant | n | pos rate | macro F1 | majority-class F1 | margin |
+|---|---|---|---|---|---|---|
+| all | static | 96 | 0.53 | 0.621 | 0.347 | **+0.274** |
+| all | temporal | 96 | 0.53 | 0.705 | 0.347 | **+0.358** |
+| complete | static | 64 | 0.73 | 0.452 | 0.423 | +0.028 |
+| complete | temporal | 64 | 0.73 | 0.417 | 0.423 | **−0.007** |
+
+Scored on all test recordings, this looks like a clean result — temporal beats static by
+0.084 macro F1, exactly the story E2 is supposed to tell. Scored on the 64 recordings
+where all three modalities are present, **both variants sit at the majority-class
+reference**. The apparent margin was the availability shortcut, not stress signal.
+
+Everything downstream follows from that, and none of it should be read as a finding:
+
+- **E2** temporal − static = −0.035 [−0.105, +0.046], p = 0.375. No effect.
+- **E12** degradation curves are flat-to-*rising* — temporal macro F1 goes 0.417 → 0.440 →
+  0.447 as modalities are removed. A model whose score improves when you delete its
+  inputs is not using those inputs.
+- **E8** 3-class recall is 0.08 / 0.29 / 0.45 — the minority-class collapse the PDF's O6
+  describes, in its most severe form.
+- **E13** ECE is the one number that behaves sensibly: the temporal model is markedly
+  better calibrated than the static one (0.127 vs 0.233) and stays flat under missing
+  modalities. With the accuracy at chance, this mostly says it is confidently uncertain.
+
+This is the expected outcome at this scale, not a bug: 96 recordings, ~57 training
+recordings per fold, 1.2 M parameters, encoders trained from scratch. Stage −1
+(multi-dataset pretraining) exists in the plan precisely because StressID is too small to
+train these encoders cold. The pipeline is doing its job — it is correctly reporting that
+there is no signal yet, instead of laundering the shortcut into a headline number.
+
+Before scaling up, decide the confound question above. If availability stays correlated
+with the label, a larger run will produce *better-looking* numbers with the same problem.
+
 ## Caveat on the numbers
 
 16 subjects × 6 tasks = 96 recordings, 4 folds → ~24 test recordings per fold. Confidence
