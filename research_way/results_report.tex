@@ -1,0 +1,574 @@
+% ---------------------------------------------------------------------------
+%  StressID small-scale pipeline -- results report
+%  Compile:  pdflatex results_report.tex   (run twice for the ToC)
+%  Only standard packages; no external files required except the optional
+%  figure results/small/figures.png (guarded by \IfFileExists).
+% ---------------------------------------------------------------------------
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[margin=2.3cm]{geometry}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{xcolor}
+\usepackage{longtable}
+\usepackage[colorlinks=true,linkcolor=black,urlcolor=blue]{hyperref}
+\usepackage{fancyvrb}
+
+\newcommand{\code}[1]{\texttt{\small #1}}
+\definecolor{alertred}{RGB}{170,30,30}
+\newcommand{\alert}[1]{\textcolor{alertred}{\textbf{#1}}}
+
+\title{\textbf{Temporal Cross-Modal Stress Detection on StressID}\\
+       \large Small-Scale Pipeline Implementation --- Results Report}
+\author{Small-subset run: 16 subjects, 6 tasks, 96 recordings}
+\date{28 July 2026}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+\noindent
+This report documents a runnable implementation of the StressID research pipeline
+(Stages 0--6) and the results of its first full training run on a deliberately small
+subset of the dataset. The pipeline executes end to end and the evaluation suite is
+complete. \alert{The headline finding is negative and methodological:} a
+classifier given \emph{only the three modality-presence bits}, with no signal content
+whatsoever, achieves $0.781$ accuracy and $0.774$ macro F1 under leakage-free
+GroupKFold --- beating every genuine multimodal baseline. Once modality availability is
+held constant, both the temporal and static models collapse to the majority-class
+reference. The apparent multimodal performance on this dataset is substantially a
+shortcut, not stress signal. This must be resolved before the missing-modality
+robustness claim (E12) can be made.
+\end{abstract}
+
+\tableofcontents
+\vspace{1em}
+
+% ===========================================================================
+\section{Scope: what was built and run}
+
+\subsection*{Implemented and executed}
+\begin{itemize}\itemsep2pt
+  \item \textbf{Stage 0} --- subject-level GroupKFold protocol with leakage assertions;
+        corrected classical baselines (E1).
+  \item \textbf{Stage 1} --- temporal windowing (10\,s windows, 5\,s hop) with caching.
+  \item \textbf{Stage 2} --- modality-specific encoders (physio 1D-CNN+BiLSTM;
+        audio log-mel CNN; video per-frame CNN + Transformer).
+  \item \textbf{Stage 3} --- multi-head cross-modal attention fusion with modality
+        dropout (25\,\% per modality) and CLS aggregation.
+  \item \textbf{Stage 4} --- Transformer over the window sequence with task-type
+        embedding conditioning.
+  \item \textbf{Stage 5} --- multi-task heads (binary stress, 3-class affect,
+        stress-score regression) with a contrastive subject-invariance loss.
+  \item \textbf{Stage 6} --- evaluation suite: E2, E4, E5, E6, E8, E12, E13, plus a
+        shortcut audit added during this work.
+\end{itemize}
+
+\subsection*{Not implemented (data or code unavailable in this repository)}
+\begin{itemize}\itemsep2pt
+  \item \textbf{Stage $-1$} --- multi-dataset pretraining. Requires WESAD, SWELL-KW,
+        K-EmoCon, MuSE, ForDigitStress, BESST, EmoWork.
+  \item \textbf{Stage 5.5 / E0} --- re-implementation of the three competitor papers.
+  \item \textbf{E7, E10, E11} --- cross-dataset transfer and data-scaling ablations;
+        all require the auxiliary corpora above.
+\end{itemize}
+
+\noindent
+Consequently the encoders were trained \emph{from scratch} on roughly 57 recordings per
+fold. Stage $-1$ exists in the research plan precisely to address this, and its absence
+is the most likely cause of the null result reported in Section~\ref{sec:results}.
+
+% ===========================================================================
+\section{Dataset structure}
+
+\subsection{Full StressID corpus}
+
+\begin{Verbatim}[fontsize=\small,frame=single,framesep=3mm]
+StressID Dataset/
+|-- Physiological/          65 subject folders
+|   `-- <subj>/<subj>_<task>.txt    CSV, header "ECG,EDA,RR", 500 Hz
+|-- Audio/                  54 subject folders
+|   `-- <subj>/<subj>_<task>.wav    16 kHz, mono, 16-bit PCM
+|-- Videos/                 53 subject folders
+|   `-- <subj>/<subj>_<task>.mp4    5 fps, 1280x720
+|-- labels.csv              700 rows: subject/task, binary-stress, affect3-class
+|-- labels_supplementary.csv
+|-- self_assessments.csv    ';'-separated; tasks as rows, subjects as columns
+|-- demographics.csv
+`-- Technical information.pdf
+\end{Verbatim}
+
+\noindent
+64 subjects carry labels, over 11 tasks, for 700 labelled recordings. Modality coverage
+is incomplete by design: 12 labelled subjects have no audio directory and 12 have no
+video directory.
+
+\begin{table}[h]\centering\small
+\caption{Task inventory. Audio exists only for the seven speech tasks.}
+\begin{tabular}{lccc}
+\toprule
+Task & Duration (s) & Audio present & $P(\text{stress})$ (full corpus) \\
+\midrule
+Breathing  & 180 & no  & 0.172 \\
+Relax      & 150 & no  & 0.129 \\
+Video1     & 174 & no  & 0.286 \\
+Video2     & 118 & no  & 0.397 \\
+Reading    & 60  & yes & 0.547 \\
+Math       & 60  & yes & 0.672 \\
+Speaking   & 60  & yes & 0.672 \\
+Counting1  & 60  & yes & 0.656 \\
+Counting2  & 60  & yes & 0.766 \\
+Counting3  & 60  & yes & 0.703 \\
+Stroop     & 60  & yes & 0.766 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\noindent
+\alert{Note the structural confound visible in this table:} audio is present exactly for
+the high-stress tasks. Across the whole corpus,
+$P(\text{stress}\mid\text{audio exists}) = 0.683$ versus
+$P(\text{stress}\mid\text{no audio}) = 0.246$. Section~\ref{sec:shortcut} quantifies the
+consequence.
+
+\subsection{Small subset used in this run}
+
+Subject selection is deterministic and seeded (\code{Config.seed = 1337}): subjects with
+complete modality coverage are ranked by how balanced their own binary labels are, then
+drawn without replacement.
+
+\begin{center}\small
+\begin{tabular}{ll}
+\toprule
+Subjects & 16 (of 64) --- all with physio, audio and video \\
+Subject IDs & \code{2hpu 4woj 6g6y 71i5 8g4y 9t6n 9txq cxj0} \\
+            & \code{kkf5 m8g5 p9i3 r5s8 v8mh w2t5 x1q3 y9z6} \\
+Tasks & Breathing, Relax, Reading, Math, Stroop, Speaking \\
+Recordings & 96 (of 700) \\
+Binary balance & 0.531 \\
+3-class affect & class 0: 36, class 1: 24, class 2: 36 \\
+Cache size & 27.8 MB \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{table}[h]\centering\small
+\caption{Per-task composition of the subset. \code{Windows} is after the
+$\text{max\_windows}=16$ cap.}
+\begin{tabular}{lccccc}
+\toprule
+Task & $n$ & $P(\text{stress})$ & Audio & Duration (s) & Windows \\
+\midrule
+Breathing & 16 & 0.125 & 0.00 & 180 & 16 (truncated) \\
+Relax     & 16 & 0.125 & 0.00 & 150 & 16 (truncated) \\
+Reading   & 16 & 0.625 & 1.00 & 60  & 11 \\
+Math      & 16 & 0.750 & 1.00 & 60  & 11 \\
+Speaking  & 16 & 0.688 & 1.00 & 60  & 11 \\
+Stroop    & 16 & 0.875 & 1.00 & 60  & 11 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\noindent
+Breathing and Relax exceed the 16-window cap and are truncated to their first
+$\approx 85$\,s. This does not affect E5/E6/E12, which are scored only on the four 60\,s
+speech tasks.
+
+\subsection{Cached tensor structure}
+
+Each recording becomes one \code{.npz} under \code{research\_way/data\_small/cache/}:
+
+\begin{Verbatim}[fontsize=\small,frame=single,framesep=3mm]
+<subject>_<task>.npz
+  physio     float32  [16, 640, 3]        16 windows x 640 samples (64 Hz) x ECG,EDA,RR
+  audio      float16  [16, 400,  40]      16 windows x 400 frames x 40 log-mel bins
+  video      float16  [16,  25, 32, 32]   16 windows x 25 frames x 32x32 grayscale face
+  mask       float32  [16, 3]             per-window modality availability
+  n_windows  int64                        valid windows before padding
+\end{Verbatim}
+
+\noindent
+\textbf{Windowing.} The window grid is defined on the physiological signal --- the only
+always-present modality --- and window boundaries are converted to seconds so audio and
+video are time-aligned to the same grid.
+
+\noindent
+\textbf{Normalisation.} Physio is z-scored \emph{per subject} using statistics pooled over
+that subject's own recordings, then clipped to $\pm 10$. Per-recording normalisation was
+rejected because it erases the between-task EDA and heart-rate level shifts that carry
+most of the stress signal. Audio and video standardisation statistics are computed from
+\emph{training subjects only} in each fold.
+
+% ===========================================================================
+\section{Evaluation protocol}
+
+Subject-level \code{GroupKFold} with $K=4$. No subject appears in more than one split;
+a validation set is carved from training subjects only. Assertions verify train/val/test
+disjointness and that every subject is tested exactly once.
+
+\begin{center}\small
+\begin{tabular}{lllc}
+\toprule
+Fold & Test subjects & Test $n$ & Test $P(\text{stress})$ \\
+\midrule
+0 & \code{71i5 cxj0 r5s8 y9z6} & 24 & 0.50 \\
+1 & \code{6g6y 9txq p9i3 x1q3} & 24 & 0.58 \\
+2 & \code{4woj 9t6n m8g5 w2t5} & 24 & 0.50 \\
+3 & \code{2hpu 8g4y kkf5 v8mh} & 24 & 0.54 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\noindent
+Training used 3 seeds $\times$ 4 folds $\times$ 2 variants (temporal, static) $=$ 24 runs,
+40 epochs each, $\approx$ 20 minutes total on a Quadro P1000. All confidence intervals
+below are bootstrap 95\,\% CIs over the 12 (seed $\times$ fold) runs; temporal-vs-static
+comparisons use a paired bootstrap.
+
+% ===========================================================================
+\section{Results}\label{sec:results}
+
+\subsection{E1 --- corrected baselines under GroupKFold}
+
+\begin{table}[h]\centering\small
+\caption{Classical static-feature baselines, leakage-free GroupKFold.
+\code{availability\_only} uses \emph{only} the three modality-presence bits and no signal
+content at all.}
+\begin{tabular}{llcc}
+\toprule
+Classifier & Features & Accuracy & Macro F1 \\
+\midrule
+LogReg & physio            & 0.646 & 0.642 \\
+LogReg & audio             & 0.708 & 0.704 \\
+LogReg & video             & 0.510 & 0.503 \\
+LogReg & feature fusion    & 0.708 & 0.705 \\
+LogReg & decision fusion   & 0.708 & 0.705 \\
+LogReg & \alert{availability only} & \alert{0.781} & \alert{0.774} \\
+\midrule
+RF & physio            & 0.677 & 0.667 \\
+RF & audio             & 0.677 & 0.670 \\
+RF & video             & 0.583 & 0.576 \\
+RF & feature fusion    & 0.750 & 0.747 \\
+RF & decision fusion   & 0.688 & 0.678 \\
+RF & \alert{availability only} & \alert{0.781} & \alert{0.774} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[h]\centering\small
+\caption{Leakage inflation: random (subject-ignoring) KFold minus GroupKFold. Positive
+values indicate the leaky protocol overstates performance.}
+\begin{tabular}{llcc}
+\toprule
+Classifier & Features & $\Delta$ Accuracy & $\Delta$ Macro F1 \\
+\midrule
+LogReg & physio          & $+0.062$ & $+0.048$ \\
+LogReg & audio           & $+0.031$ & $+0.005$ \\
+LogReg & video           & $+0.021$ & $-0.002$ \\
+LogReg & feature fusion  & $-0.021$ & $-0.055$ \\
+LogReg & decision fusion & $\phantom{+}0.000$ & $-0.037$ \\
+RF & physio          & $+0.010$ & $+0.003$ \\
+RF & audio           & $+0.062$ & $+0.041$ \\
+RF & video           & $+0.021$ & $-0.004$ \\
+RF & feature fusion  & $+0.010$ & $-0.019$ \\
+RF & decision fusion & $+0.052$ & $+0.038$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\noindent
+At 16 subjects the leakage effect is small and noisy, several entries being negative.
+This does \emph{not} refute the leakage narrative --- it reflects that with four test
+subjects per fold, fold-to-fold variance dominates. The inflation measurement should be
+repeated at full scale before being reported as a contribution.
+
+\subsection{Shortcut audit --- the headline result}\label{sec:shortcut}
+
+The same full-modality predictions are scored two ways. \textbf{``All''} covers every test
+recording, where modality availability varies and is label-correlated. \textbf{``Complete''}
+covers only recordings where all three modalities exist, where availability is constant
+and the shortcut is unavailable.
+
+\begin{table}[h]\centering\small
+\caption{Shortcut audit. A model genuinely reading physiology, audio and video would keep
+its margin over the majority-class reference in \emph{both} scopes.}
+\begin{tabular}{llccccc}
+\toprule
+Scope & Variant & $n$ & Pos.\ rate & Macro F1 [95\,\% CI] & Majority F1 & Margin \\
+\midrule
+all      & static   & 96 & 0.531 & 0.621 [0.559, 0.681] & 0.347 & $+0.274$ \\
+all      & temporal & 96 & 0.531 & 0.705 [0.650, 0.758] & 0.347 & $+0.358$ \\
+complete & static   & 64 & 0.734 & 0.452 [0.388, 0.518] & 0.423 & $+0.028$ \\
+complete & temporal & 64 & 0.734 & 0.417 [0.389, 0.450] & 0.423 & \alert{$-0.007$} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\noindent
+Scored on all recordings this looks like a clean positive result: the temporal model beats
+the static model by $0.084$ macro F1, precisely the story E2 is designed to tell. Scored
+on the 64 recordings where availability carries no information, \alert{both variants sit
+at the majority-class reference} and the temporal model is marginally below it. The
+margin was the shortcut.
+
+\subsection{E2 / E4 --- temporal versus static, full modalities}
+
+\begin{center}\small
+\begin{tabular}{lccccc}
+\toprule
+Metric & Temporal & Static & $\Delta$ & 95\,\% CI & $p$ \\
+\midrule
+Macro F1 & 0.417 & 0.452 & $-0.035$ & $[-0.105, +0.046]$ & 0.375 \\
+Accuracy & 0.646 & 0.563 & $+0.083$ & $[-0.010, +0.182]$ & 0.103 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\noindent
+No significant effect in either direction ($n=12$ paired runs). O2 is unsupported by this
+run.
+
+\subsection{E5 / E6 --- missing-modality conditions}
+
+\begin{table}[h]\centering\small
+\caption{Macro F1 by modality condition, evaluated on the 64 complete recordings.}
+\begin{tabular}{llccc}
+\toprule
+Variant & Condition & \#\,Missing & Macro F1 & 95\,\% CI \\
+\midrule
+static & full          & 0 & 0.452 & [0.388, 0.518] \\
+static & \code{no\_audio}    & 1 & 0.457 & [0.392, 0.527] \\
+static & \code{no\_physio}   & 1 & 0.431 & [0.364, 0.495] \\
+static & \code{no\_video}    & 1 & 0.459 & [0.409, 0.511] \\
+static & \code{audio\_only}  & 2 & 0.444 & [0.390, 0.506] \\
+static & \code{physio\_only} & 2 & 0.494 & [0.434, 0.561] \\
+static & \code{video\_only}  & 2 & 0.355 & [0.259, 0.454] \\
+\midrule
+temporal & full          & 0 & 0.417 & [0.389, 0.450] \\
+temporal & \code{no\_audio}    & 1 & 0.448 & [0.375, 0.524] \\
+temporal & \code{no\_physio}   & 1 & 0.445 & [0.391, 0.512] \\
+temporal & \code{no\_video}    & 1 & 0.425 & [0.389, 0.468] \\
+temporal & \code{audio\_only}  & 2 & 0.443 & [0.389, 0.504] \\
+temporal & \code{physio\_only} & 2 & 0.412 & [0.373, 0.451] \\
+temporal & \code{video\_only}  & 2 & 0.488 & [0.428, 0.552] \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\noindent
+The static model's best single condition is \code{physio\_only} ($0.494$), and the
+temporal model's is \code{video\_only} ($0.488$) --- both \emph{above} their full-modality
+scores. Removing inputs does not hurt, which is the signature of a model that is not using
+them.
+
+\subsection{E12 --- degradation curves (intended headline experiment)}
+
+\begin{center}\small
+\begin{tabular}{lcccc}
+\toprule
+Variant & \#\,Missing & Macro F1 & 95\,\% CI & Relative drop vs.\ full \\
+\midrule
+static   & 0 & 0.452 & [0.388, 0.518] & \phantom{$-$}0.0\,\% \\
+static   & 1 & 0.449 & [0.413, 0.485] & \phantom{$-$}0.7\,\% \\
+static   & 2 & 0.431 & [0.384, 0.479] & \phantom{$-$}4.6\,\% \\
+temporal & 0 & 0.417 & [0.389, 0.450] & \phantom{$-$}0.0\,\% \\
+temporal & 1 & 0.440 & [0.406, 0.476] & $-5.4$\,\% \\
+temporal & 2 & 0.447 & [0.416, 0.481] & $-7.3$\,\% \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\noindent
+The temporal model's macro F1 \emph{rises} monotonically as modalities are removed
+($0.417 \rightarrow 0.440 \rightarrow 0.447$). A negative relative drop is not graceful
+degradation; it indicates the removed modalities were contributing noise rather than
+signal. \alert{E12 cannot be claimed from this run.}
+
+\begin{table}[h]\centering\small
+\caption{E12 paired temporal-vs-static tests per condition ($n=12$ pairs each).}
+\begin{tabular}{lcccc}
+\toprule
+Condition & Temporal & Static & $\Delta$ & $p$ \\
+\midrule
+full                & 0.417 & 0.452 & $-0.035$ & 0.375 \\
+\code{no\_physio}   & 0.445 & 0.431 & $+0.015$ & 0.747 \\
+\code{no\_audio}    & 0.448 & 0.457 & $-0.008$ & 0.864 \\
+\code{no\_video}    & 0.425 & 0.459 & $-0.034$ & 0.027 \\
+\code{physio\_only} & 0.412 & 0.494 & $-0.083$ & 0.064 \\
+\code{audio\_only}  & 0.443 & 0.444 & $-0.001$ & 0.973 \\
+\code{video\_only}  & 0.488 & 0.355 & $+0.133$ & 0.035 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\noindent
+Two conditions reach nominal significance, but with seven comparisons and no multiplicity
+correction, and with both models at chance level, neither should be interpreted.
+
+\subsection{E13 --- calibration under missing modalities}
+
+\begin{center}\small
+\begin{tabular}{lccccc}
+\toprule
+Variant & Condition & \#\,Missing & ECE & Accuracy & Mean confidence \\
+\midrule
+static & full          & 0 & 0.233 & 0.563 & 0.774 \\
+static & \code{no\_audio}    & 1 & 0.223 & 0.542 & 0.765 \\
+static & \code{no\_physio}   & 1 & 0.263 & 0.521 & 0.782 \\
+static & \code{no\_video}    & 1 & 0.150 & 0.635 & 0.768 \\
+static & \code{audio\_only}  & 2 & 0.184 & 0.620 & 0.780 \\
+static & \code{physio\_only} & 2 & 0.194 & 0.620 & 0.769 \\
+static & \code{video\_only}  & 2 & 0.391 & 0.406 & 0.789 \\
+\midrule
+temporal & full          & 0 & 0.127 & 0.646 & 0.705 \\
+temporal & \code{no\_audio}    & 1 & 0.192 & 0.589 & 0.697 \\
+temporal & \code{no\_physio}   & 1 & 0.125 & 0.662 & 0.705 \\
+temporal & \code{no\_video}    & 1 & 0.112 & 0.667 & 0.721 \\
+temporal & \code{audio\_only}  & 2 & 0.097 & 0.672 & 0.721 \\
+temporal & \code{physio\_only} & 2 & 0.137 & 0.620 & 0.694 \\
+temporal & \code{video\_only}  & 2 & 0.142 & 0.609 & 0.685 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\noindent
+This is the one metric that behaves sensibly. The temporal model is markedly better
+calibrated than the static model (mean ECE $0.127$ vs.\ $0.233$ at full modality) and
+stays flat as modalities are removed. With accuracy at chance, however, this largely says
+the temporal model is \emph{honestly} uncertain rather than usefully confident. The static
+model's \code{video\_only} ECE of $0.391$ --- 79\,\% mean confidence at 41\,\% accuracy ---
+is the clearest case of miscalibration in the run.
+
+\subsection{E8 --- 3-class affect, per-class recall}
+
+\begin{center}\small
+\begin{tabular}{lccc}
+\toprule
+Metric & Static & Temporal & 95\,\% CI (temporal) \\
+\midrule
+Recall, class 0 & 0.083 & 0.083 & [0.000, 0.208] \\
+Recall, class 1 & 0.240 & 0.295 & [0.146, 0.438] \\
+Recall, class 2 & 0.495 & 0.449 & [0.267, 0.644] \\
+Macro F1        & 0.237 & 0.233 & [0.198, 0.273] \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\noindent
+Severe minority-class collapse --- exactly the failure mode objective O6 targets, in its
+most extreme form. Class 0 recall of $0.083$ means the model almost never predicts the
+minority class.
+
+\subsection{Figures}
+
+\IfFileExists{results/small/figures.png}{%
+  \begin{figure}[h]\centering
+  \includegraphics[width=\textwidth]{results/small/figures.png}
+  \caption{Left: E12 degradation curves --- both flat, temporal rising. Middle: E13 ECE
+  versus number of missing modalities. Right: E13 reliability diagram for the temporal
+  model, full versus \code{physio\_only}.}
+  \end{figure}}{%
+  \begin{center}\itshape
+  [Figure omitted: \code{results/small/figures.png} not found relative to this .tex file.
+   Compile from the \code{research\_way/} directory, or adjust the path.]
+  \end{center}}
+
+% ===========================================================================
+\section{Interpretation}
+
+\begin{enumerate}\itemsep4pt
+\item \textbf{The pipeline is correct; the result is null.} All six implemented stages run
+      end to end, the splits are provably leakage-free, and the evaluation suite produces
+      every intended table. The models trained successfully. They simply did not learn
+      stress signal once the availability shortcut was removed.
+
+\item \textbf{The availability confound is the dominant effect and is structural.} It is a
+      property of the StressID protocol, not of this subset: audio was recorded only for
+      speech tasks, which are mostly the stressful ones. Any architecture that observes
+      which modalities are present --- which a missing-modality model does by construction
+      --- can exploit it. Reporting a missing-modality robustness result without
+      controlling for this would overstate the contribution.
+
+\item \textbf{Scale is the most likely cause of the null result.} 96 recordings,
+      $\approx$ 57 training recordings per fold, 1.2\,M parameters, encoders trained cold.
+      This is exactly the small-$N$ problem Stage $-1$ was designed to solve.
+
+\item \textbf{A larger run will not fix the confound.} It will produce better-looking
+      numbers with the same defect, because the shortcut scales with the data.
+\end{enumerate}
+
+\subsection*{Recommended next steps, in order}
+\begin{enumerate}\itemsep2pt
+\item Decide the confound policy. The clean option is to restrict the corpus to the seven
+      speech tasks, where audio is always present and availability carries zero label
+      information --- at the cost of a more skewed label balance ($\approx 0.68$ positive)
+      and the loss of naturally missing-modality cases.
+\item Re-run at full scale (64 subjects, 11 tasks, 700 recordings) and re-measure the
+      leakage inflation for E1, which is too noisy at 16 subjects to report.
+\item Implement Stage $-1$ pretraining before drawing any conclusion about E2 or E12.
+\item Report the \code{availability\_only} probe alongside every baseline table in the
+      paper. It is cheap, and it pre-empts the most obvious reviewer objection.
+\end{enumerate}
+
+% ===========================================================================
+\section{Reproducibility}
+
+\begin{Verbatim}[fontsize=\small,frame=single,framesep=3mm]
+python run_small.py                 # full run: subset -> ... -> evaluate
+python run_small.py --smoke         # ~2 min sanity run
+python run_small.py --stage evaluate
+
+Environment:  Python 3.11, torch 2.6.0+cu124, CUDA on Quadro P1000 (4 GB)
+              numpy 2.4.6, pandas 2.3.3, scikit-learn 1.8.0, scipy 1.17.0,
+              opencv 4.13.0, matplotlib 3.10.8
+Seeds:        subset/split seed 1337; training seeds 0, 1, 2
+Runtime:      preprocessing ~20 min; training 1173 s; evaluation ~3 s
+\end{Verbatim}
+
+\noindent
+Fixed splits are written to \code{data\_small/splits\_small.json} and reused by every
+experiment. Outputs are written to \code{results/small/}: \code{baselines.csv},
+\code{e1\_leakage\_inflation.csv}, \code{shortcut\_audit.csv}, \code{predictions.csv},
+\code{per\_run\_metrics.csv}, \code{e2\_temporal\_vs\_static.csv},
+\code{e5e6\_missing\_modality.csv}, \code{e8\_per\_class\_recall.csv},
+\code{e12\_degradation.csv}, \code{e12\_paired\_tests.csv}, \code{e13\_calibration.csv},
+\code{e13\_reliability\_bins.csv}, \code{report.json}, \code{figures.png}.
+
+% ===========================================================================
+\section{Deviations from the planning document}
+
+\begin{enumerate}\itemsep3pt
+\item \textbf{10\,s windows, not 30\,s.} The plan assumes 3--5 minute recordings. Real
+      StressID speech tasks are 60\,s, so 30\,s windows at 50\,\% overlap would yield only
+      three windows per task --- too short a sequence to test temporal modelling at all.
+      10\,s windows with a 5\,s hop give 11 windows.
+
+\item \textbf{Log-mel + CNN instead of wav2vec2.} The \code{transformers} package is not
+      installed and a wav2vec2 fine-tune does not fit a 4\,GB GPU at this scale. The audio
+      encoder is an isolated drop-in slot; substituting wav2vec2 makes E9 runnable without
+      touching the rest of the model.
+
+\item \textbf{Face-crop pixels instead of OpenFace action units.} OpenFace is unavailable.
+      Video is decoded at 2.5\,fps, the face is located once per clip with a Haar cascade,
+      and the crop is resized to $32\times32$ grayscale. The video encoder is likewise a
+      drop-in slot for per-frame AU vectors. The repository ships \emph{task-level} AU
+      aggregates, but those are static per-task vectors --- precisely the representation
+      the temporal stage exists to avoid.
+
+\item \textbf{Static baseline shares all weights-bearing components with the temporal
+      model.} The two variants differ only in Stage 4 (mean pooling versus a Transformer
+      over time), so the E12 ablation isolates temporal modelling and nothing else.
+
+\item \textbf{Window cap.} \code{max\_windows = 16} truncates Breathing (180\,s) and Relax
+      (150\,s) to their first $\approx 85$\,s. E5/E6/E12 are unaffected, being scored on
+      the 60\,s speech tasks only.
+\end{enumerate}
+
+\vspace{1em}
+\noindent\rule{\textwidth}{0.4pt}\\[2pt]
+\small\textit{Generated from the run in \code{research\_way/results/small/}. All numbers
+in this report are read directly from those files; none were transcribed by hand from
+intermediate output.}
+
+\end{document}
