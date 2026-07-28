@@ -87,8 +87,14 @@ def run(cfg: Config | None = None) -> dict:
     per_run = _per_run(preds, cfg)
     per_run.to_csv(rd / "per_run_metrics.csv", index=False)
 
-    print(f"[eval] {preds['key'].nunique()} recordings with all 3 modalities present "
-          f"(of {preds_all['key'].nunique()} tested)")
+    uniq = preds.drop_duplicates("key")
+    print(f"[eval] E5/E6/E12 evaluated on {len(uniq)} recordings with all 3 modalities "
+          f"naturally present (of {preds_all['key'].nunique()} tested); "
+          f"binary balance {uniq['y_binary'].mean():.2f}, "
+          f"tasks {sorted(uniq['task'].unique())}")
+    print("[eval] restricting to complete recordings keeps modality availability CONSTANT "
+          "across conditions, so the degradation curve cannot be driven by the "
+          "availability/label confound (see README).")
 
     report: dict = {}
 
