@@ -77,6 +77,55 @@ def _paired(per_run: pd.DataFrame, metric: str, cond: str) -> dict:
             "n_pairs": len(idx)}
 
 
+def _shortcut_audit(preds_all: pd.DataFrame, cfg: Config) -> list[dict]:
+    """Is the model's score real, or is it reading the availability shortcut?
+
+    Scores the SAME full-modality predictions two ways:
+      "all"      - every test recording. Modality availability varies and is
+                   label-correlated, so a model can score well off that alone.
+      "complete" - only recordings where all 3 modalities exist. Availability is
+                   constant, so the shortcut is unavailable.
+
+    A model that is genuinely reading physiology/audio/video keeps its margin
+    over the majority-class reference in BOTH columns. A model living off the
+    shortcut collapses to the reference in the "complete" column.
+    """
+    from sklearn.metrics import accuracy_score, f1_score
+
+    full = preds_all[preds_all["condition"] == "full"]
+    complete = full[(full["nat_physio"] == 1) & (full["nat_audio"] == 1)
+                    & (full["nat_video"] == 1)]
+
+    rows = []
+    for scope, d in (("all", full), ("complete", complete)):
+        y = d.drop_duplicates("key")["y_binary"].values
+        majority = f1_score(y, np.ones_like(y), average="macro", zero_division=0)
+        for variant, g in d.groupby("variant"):
+            per = [(f1_score(h["y_binary"], (h["prob"] >= .5).astype(int),
+                             average="macro", zero_division=0),
+                    accuracy_score(h["y_binary"], (h["prob"] >= .5).astype(int)))
+                   for _, h in g.groupby(["seed", "fold"])]
+            f1s = np.array([p[0] for p in per])
+            mean, lo, hi = bootstrap_ci(f1s)
+            rows.append({"scope": scope, "variant": variant, "n_recordings":
+                         int(d["key"].nunique()), "pos_rate": float(d["y_binary"].mean()),
+                         "f1_macro": mean, "ci_lo": lo, "ci_hi": hi,
+                         "accuracy": float(np.mean([p[1] for p in per])),
+                         "majority_class_f1": float(majority),
+                         "margin_over_majority": mean - float(majority)})
+    df = pd.DataFrame(rows)
+    df.to_csv(cfg.results_dir / "shortcut_audit.csv", index=False)
+
+    print("\n=== SHORTCUT AUDIT (full-modality predictions, scored two ways) ===")
+    for _, r in df.iterrows():
+        flag = "  <-- collapses to majority class" if r["margin_over_majority"] <= 0.02 else ""
+        print(f"  {r['scope']:<9} {r['variant']:<8} n={r['n_recordings']:>3} "
+              f"pos={r['pos_rate']:.2f}  F1={r['f1_macro']:.3f} "
+              f"[{r['ci_lo']:.3f},{r['ci_hi']:.3f}]  majority={r['majority_class_f1']:.3f}  "
+              f"margin={r['margin_over_majority']:+.3f}{flag}")
+    return df.to_dict("records")
+
+
 # ------------------------------------------------------------------- reporting
 
 def run(cfg: Config | None = None) -> dict:
