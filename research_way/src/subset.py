@@ -109,6 +109,18 @@ def main(cfg: Config | None = None) -> pd.DataFrame:
           f"physio={man['has_physio'].mean():.2f} "
           f"audio={man['has_audio'].mean():.2f} "
           f"video={man['has_video'].mean():.2f}")
+
+    # ---- availability/label confound check (see README) --------------------
+    for m in ("audio", "video"):
+        col = f"has_{m}"
+        if man[col].nunique() < 2:
+            continue
+        p_yes, p_no = man[man[col]]["binary"].mean(), man[~man[col]]["binary"].mean()
+        if abs(p_yes - p_no) > 0.15:
+            print(f"[subset] WARNING: {m} availability is label-correlated "
+                  f"-- P(stress|{m}) = {p_yes:.2f} vs P(stress|no {m}) = {p_no:.2f}. "
+                  f"The presence of {m} is itself a stress cue; see "
+                  f"`availability_only` in baselines.csv for how strong that shortcut is.")
     return man
 
 
