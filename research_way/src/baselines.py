@@ -87,9 +87,17 @@ def run(cfg: Config | None = None) -> pd.DataFrame:
     kf = KFold(n_splits=cfg.n_folds, shuffle=True, random_state=cfg.seed)
     random_folds = list(kf.split(np.arange(len(man))))   # LEAKY on purpose (E1)
 
+    # `availability_only` is a shortcut probe, not a real baseline: it uses ONLY
+    # the three modality-presence bits and no signal content at all. In StressID
+    # audio exists solely for the speech tasks, which are mostly the stressful
+    # ones, so this row measures how much of the "multimodal" score any model
+    # could get for free just by noticing which sensors are present.
+    feats["availability"] = man[["has_physio", "has_audio", "has_video"]].values.astype(float)
+
     configs = {
         "physio": ["physio"], "audio": ["audio"], "video": ["video"],
         "feature_fusion": ["physio", "audio", "video"],
+        "availability_only": ["availability"],
     }
 
     rows = []
