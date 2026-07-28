@@ -60,6 +60,52 @@ nothing else has to change.
    (mean pool vs. Transformer over time), so the ablation isolates temporal modelling
    and nothing else.
 
+## ⚠ Confound found while building this: modality availability leaks the label
+
+In StressID, audio exists **only for the 7 speech tasks**, and those are mostly the
+stressful ones. Across the **whole dataset** (not just this subset):
+
+```
+P(stress | audio file exists) = 0.683
+P(stress | no audio file)     = 0.246
+```
+
+So "is there an audio file?" is itself a strong stress cue. The `availability_only`
+row in `baselines.csv` makes the cost concrete — it is a classifier fed **only the
+three modality-presence bits and no signal content whatsoever**:
+
+| baseline (GroupKFold) | accuracy | macro F1 |
+|---|---|---|
+| physio (logreg) | 0.646 | 0.642 |
+| audio (logreg) | 0.708 | 0.704 |
+| video (logreg) | 0.510 | 0.503 |
+| feature fusion (RF) | 0.750 | 0.747 |
+| **availability_only** | **0.781** | **0.774** |
+
+Three modality-presence bits beat every real multimodal baseline. Any model that can
+observe which modalities are present — which is exactly what a missing-modality
+architecture does by construction — can score ~0.78 without learning anything about
+stress. This matters directly for the paper's headline claim (E12): a
+missing-modality robustness result on StressID is **not interpretable** unless
+availability is decorrelated from the label.
+
+What this implementation does about it:
+
+1. **E5/E6/E12 are evaluated only on recordings where all three modalities naturally
+   exist** (64 of 96 here), so availability is constant across the compared conditions
+   and cannot drive the degradation curve.
+2. **The `availability_only` probe is reported alongside every baseline**, so the
+   shortcut's size is always visible rather than folded into a "multimodal" number.
+3. **Modality dropout during training** (25 %/modality) partially decorrelates presence
+   from label, but does not remove the confound from the training labels themselves.
+
+What it does **not** yet do, and what you should decide before the paper: training still
+sees the confounded availability pattern. The clean fix is to restrict the corpus to the
+7 speech tasks (`Counting1/2/3, Math, Reading, Speaking, Stroop`), where audio is always
+present and availability carries zero label information — at the cost of a more skewed
+binary label balance (~0.68 positive) and losing the natural missing-modality cases.
+Set `tasks` in `src/config.py` to run it that way.
+
 ## Design notes worth knowing
 
 - **Physio normalisation is per subject, not per recording.** Stats are pooled over each
