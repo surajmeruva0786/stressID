@@ -213,6 +213,14 @@ Everything else is null, and should be reported as null:
   runs). No temporal effect. The subset run gave −0.035, p = 0.375; at 7× the data the
   estimate has moved to ~0 with a tighter interval, so this is now a reasonably
   well-powered null rather than an underpowered one.
+- **Do not report E2 on accuracy.** The same comparison on accuracy *is* significant
+  (+0.027 [+0.007, +0.050], p = 0.014) and it is an artefact worth understanding: the
+  complete-modality subset is 0.717 positive, so a classifier that predicts "stressed"
+  every time scores **0.717 accuracy**. Static gets 0.667 and temporal 0.694 — *both
+  below the trivial classifier*. Temporal's significant accuracy edge means only that
+  it collapses toward the majority class more than static does, which is exactly why
+  macro F1 shows nothing. This pair of numbers is a good illustration of why the
+  headline metric is macro F1 and the majority reference is printed next to it.
 - **E12** degradation curves are flat to slightly *rising*: static 0.476 → 0.484 → 0.486
   and temporal 0.487 → 0.483 → 0.489 as 0 → 1 → 2 modalities are removed.
 - **E12b** (`e12_vs_full_tests.csv`) tests that directly — does removing a modality cost
