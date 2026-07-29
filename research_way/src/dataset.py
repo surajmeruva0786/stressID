@@ -114,5 +114,6 @@ def make_loader(ds: Dataset, cfg: Config, shuffle: bool) -> DataLoader:
                       collate_fn=collate, num_workers=0, drop_last=False)
 
 
-def load_manifest() -> pd.DataFrame:
-    return pd.read_csv(DATA_DIR / "manifest_small.csv")
+def load_manifest(cfg: Config | None = None) -> pd.DataFrame:
+    cfg = cfg or Config()
+    return pd.read_csv(cfg.manifest_path)
