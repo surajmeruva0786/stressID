@@ -137,8 +137,8 @@ def run(cfg: Config | None = None, variants=("temporal", "static"),
         cfg.device = "cpu"
         print("[train] CUDA unavailable -> CPU")
 
-    man = load_manifest()
-    folds = load_splits()
+    man = load_manifest(cfg)
+    folds = load_splits(cfg)
     cfg.results_dir.mkdir(parents=True, exist_ok=True)
     cfg.save(cfg.results_dir / "config.json")
 
