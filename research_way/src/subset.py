@@ -100,7 +100,7 @@ def main(cfg: Config | None = None) -> pd.DataFrame:
     cfg = cfg or Config()
     man = build_manifest(cfg)
     DATA_DIR.mkdir(parents=True, exist_ok=True)
-    out = DATA_DIR / "manifest_small.csv"
+    out = cfg.manifest_path
     man.to_csv(out, index=False)
 
     print(f"[subset] {len(man)} recordings | {man['subject'].nunique()} subjects "
