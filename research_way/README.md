@@ -1,14 +1,33 @@
-# StressID research pipeline — small-scale implementation
+# StressID research pipeline
 
 Runnable implementation of the pipeline in `StressID_Paper_Pipeline_Objectives (1).pdf`,
-built and trained on a **small subset** of StressID so the whole thing runs end to end
-in minutes rather than days.
+at two scales. The small subset exists to validate the pipeline in minutes; the full
+corpus is the one to report from.
 
 ```
-python run_small.py            # full run
+python run_full.py             # ENTIRE corpus: 64 subjects, 11 tasks, 700 recordings
+python run_full.py --stage evaluate
+python run_full.py --workers 8 --stage preprocess
+
+python run_small.py            # 16-subject / 6-task subset
 python run_small.py --smoke    # ~2 min sanity run (1 seed, 2 folds, 6 epochs)
-python run_small.py --stage evaluate
 ```
+
+Artefacts are namespaced by scale, so both runs coexist:
+
+| | small | full |
+|---|---|---|
+| manifest | `data/manifest_small.csv` | `data/manifest_full.csv` |
+| splits | `data/splits_small.json` | `data/splits_full.json` |
+| window cache | `data/cache_small/` | `data/cache_full/` |
+| results | `results/small/` | `results/full/` |
+
+The window cache **must** be per-scale: physio is z-scored per subject with stats
+pooled over that subject's recordings *in the manifest*, so the same `subject_task`
+window sequence genuinely differs between the 6-task subset and the 11-task corpus.
+
+Full-scale cost on a Quadro P1000 / 12-core CPU: preprocessing 16 min (6 workers),
+baselines 1.5 min, training 3 h (30 fold-models), evaluation 4 s.
 
 ## Small subset
 
