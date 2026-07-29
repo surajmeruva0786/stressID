@@ -1,8 +1,8 @@
 # Dataset files - excluded from version control
 StressID Dataset/
 
-# Derived data - regenerable from the dataset via `python run_small.py`
-research_way/data_small/cache/
+# Derived data - regenerable from the dataset via `python run_small.py` / `run_full.py`
+research_way/data/cache_*/
 research_way/results/
 __pycache__/
 *.pyc
