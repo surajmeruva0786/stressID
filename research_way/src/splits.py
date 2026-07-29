@@ -60,8 +60,9 @@ def main(cfg: Config | None = None) -> list[dict]:
     return folds
 
 
-def load_splits() -> list[dict]:
-    return json.loads((DATA_DIR / "splits_small.json").read_text(encoding="utf-8"))
+def load_splits(cfg: Config | None = None) -> list[dict]:
+    cfg = cfg or Config()
+    return json.loads(cfg.splits_path.read_text(encoding="utf-8"))
 
 
 if __name__ == "__main__":
