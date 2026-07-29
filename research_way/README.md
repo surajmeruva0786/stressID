@@ -29,6 +29,22 @@ window sequence genuinely differs between the 6-task subset and the 11-task corp
 Full-scale cost on a Quadro P1000 / 12-core CPU: preprocessing 16 min (6 workers),
 baselines 1.5 min, training 3 h (30 fold-models), evaluation 4 s.
 
+## Full corpus
+
+| | |
+|---|---|
+| subjects | 64 (all of them) |
+| tasks | all 11 |
+| recordings | 700 |
+| binary-stress balance | 0.526 |
+| affect3 | 253 / 202 / 245 |
+| modality coverage | physio 100%, audio 54%, video 83% |
+| protocol | 5-fold subject GroupKFold, 41 train / 10 val / 13 test subjects |
+
+`src/config.py:full_config()` is the preset. Nothing about the model or the stage
+code differs from the small run — only `n_subjects`, `tasks`, `n_folds` and the
+`require_*` filters.
+
 ## Small subset
 
 | | |
