@@ -267,8 +267,12 @@ subset, where the margin was −0.007 / +0.028 (at chance).
 
 ### 9.3 Null results (report as null)
 
-- **Temporal vs static:** +0.011 [−0.041, +0.063], p = 0.677. Weakness #1 in §3 is
-  not addressed by temporal modelling at this data scale.
+- **Temporal vs static:** +0.011 [−0.041, +0.063], p = 0.677 on macro F1. Weakness #1
+  in §3 is not addressed by temporal modelling at this data scale. (The same test on
+  *accuracy* reads +0.027, p = 0.014 — but both variants score below the 0.717 accuracy
+  of a predict-always-stressed classifier on this 0.717-positive subset, so that
+  "significant" result only says temporal collapses toward the majority class harder.
+  Do not report it.)
 - **Missing-modality cost:** of 12 paired condition-vs-full tests, one is nominally
   significant and none survives Bonferroni. Degradation curves are flat-to-rising.
 - **3-class collapse (weakness #9) persists:** per-class recall 0.05 / 0.39 / 0.60,
