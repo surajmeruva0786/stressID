@@ -141,34 +141,76 @@ def process_recording(row: pd.Series, cfg: Config, phys_stats: dict) -> dict:
             "mask": mask, "n_windows": np.int64(n_win)}
 
 
-def main(cfg: Config | None = None, force: bool = False) -> None:
+def _subject_job(payload: tuple) -> list[tuple]:
+    """Process one subject end to end: its physio stats, then its recordings.
+
+    A subject is the natural unit of work because the normalisation stats are
+    pooled over that subject's own recordings -- doing it this way reads each
+    physio file once instead of twice, and makes the whole stage parallel.
+    """
+    cfg, rows, todo_keys = payload
+    man = pd.DataFrame(rows)
+    stats = compute_physio_stats(man, cfg)
+
+    results = []
+    for _, row in man.iterrows():
+        if row["key"] not in todo_keys:
+            continue
+        try:
+            d = process_recording(row, cfg, stats)
+            np.savez_compressed(cfg.cache_dir / f"{row['key']}.npz", **d)
+            cov = d["mask"][: int(d["n_windows"])].mean(axis=0)
+            results.append((row["key"], int(d["n_windows"]), cov.tolist(), None))
+        except Exception:
+            results.append((row["key"], 0, [0.0, 0.0, 0.0], traceback.format_exc()))
+    return results
+
+
+def main(cfg: Config | None = None, force: bool = False,
+         workers: int | None = None) -> None:
     cfg = cfg or Config()
-    man = pd.read_csv(DATA_DIR / "manifest_small.csv")
+    man = pd.read_csv(cfg.manifest_path)
     cfg.cache_dir.mkdir(parents=True, exist_ok=True)
 
-    todo = [r for _, r in man.iterrows()
-            if force or not (cfg.cache_dir / f"{r['key']}.npz").exists()]
-    print(f"[preprocess] {len(todo)}/{len(man)} recordings to process")
+    todo = {r["key"] for _, r in man.iterrows()
+            if force or not (cfg.cache_dir / f"{r['key']}.npz").exists()}
+    print(f"[preprocess] {len(todo)}/{len(man)} recordings to process "
+          f"-> {cfg.cache_dir}")
     if not todo:
         return
 
-    print("[preprocess] computing per-subject physio normalisation stats ...")
-    phys_stats = compute_physio_stats(man, cfg)
+    jobs = []
+    for _, grp in man.groupby("subject"):
+        keys = todo & set(grp["key"])
+        if keys:
+            jobs.append((cfg, grp.to_dict("records"), keys))
 
-    for i, row in enumerate(todo, 1):
-        out = cfg.cache_dir / f"{row['key']}.npz"
-        try:
-            d = process_recording(row, cfg, phys_stats)
-            np.savez_compressed(out, **d)
-            cov = d["mask"][: int(d["n_windows"])].mean(axis=0)
-            print(f"[{i:3d}/{len(todo)}] {row['key']:<22} "
-                  f"win={int(d['n_windows']):2d} "
-                  f"cov(p/a/v)={cov[0]:.2f}/{cov[1]:.2f}/{cov[2]:.2f}")
-        except Exception:
-            print(f"[{i:3d}/{len(todo)}] {row['key']} FAILED", file=sys.stderr)
-            traceback.print_exc()
+    workers = workers if workers is not None else min(6, os.cpu_count() or 1)
+    workers = max(1, min(workers, len(jobs)))
+    print(f"[preprocess] {len(jobs)} subjects | {workers} worker(s)")
 
-    print(f"[preprocess] cache -> {cfg.cache_dir}")
+    done = failed = 0
+
+    def _report(batch: list[tuple]) -> None:
+        nonlocal done, failed
+        for key, n_win, cov, err in batch:
+            done += 1
+            if err is not None:
+                failed += 1
+                print(f"[{done:3d}/{len(todo)}] {key} FAILED\n{err}", file=sys.stderr)
+            else:
+                print(f"[{done:3d}/{len(todo)}] {key:<22} win={n_win:2d} "
+                      f"cov(p/a/v)={cov[0]:.2f}/{cov[1]:.2f}/{cov[2]:.2f}", flush=True)
+
+    if workers == 1:
+        for job in jobs:
+            _report(_subject_job(job))
+    else:
+        with ProcessPoolExecutor(max_workers=workers) as ex:
+            for batch in ex.map(_subject_job, jobs):
+                _report(batch)
+
+    print(f"[preprocess] cache -> {cfg.cache_dir} | {done - failed} ok, {failed} failed")
 
 
 if __name__ == "__main__":
