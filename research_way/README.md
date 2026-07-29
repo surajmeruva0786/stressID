@@ -265,18 +265,33 @@ Everything downstream follows from that, and none of it should be read as a find
   better calibrated than the static one (0.127 vs 0.233) and stays flat under missing
   modalities. With the accuracy at chance, this mostly says it is confidently uncertain.
 
-This is the expected outcome at this scale, not a bug: 96 recordings, ~57 training
-recordings per fold, 1.2 M parameters, encoders trained from scratch. Stage −1
-(multi-dataset pretraining) exists in the plan precisely because StressID is too small to
-train these encoders cold. The pipeline is doing its job — it is correctly reporting that
-there is no signal yet, instead of laundering the shortcut into a headline number.
+This was the expected outcome at that scale, not a bug: 96 recordings, ~57 training
+recordings per fold, 1.2 M parameters, encoders trained from scratch. The pipeline was
+doing its job — correctly reporting that there was no signal yet, instead of laundering
+the shortcut into a headline number.
 
-Before scaling up, decide the confound question above. If availability stays correlated
-with the label, a larger run will produce *better-looking* numbers with the same problem.
+**The full-corpus run confirmed the prediction made here.** Scaling to 700 recordings did
+produce better-looking numbers with the same confound intact (+0.31 margin on "all",
++0.06 on "complete"), exactly as warned. What it also produced is a small but reliably
+non-zero margin on the complete subset, which the subset run could not resolve.
 
-## Caveat on the numbers
+## Where this leaves the paper
 
-16 subjects × 6 tasks = 96 recordings, 4 folds → ~24 test recordings per fold. Confidence
-intervals will be wide and fold-to-fold variance large. This subset run is for validating
-that the pipeline is correct and leakage-free, **not** for drawing the paper's conclusions.
-Scale `n_subjects` to 64 and `tasks` to all 11 for numbers worth reporting.
+1. **The confound is the strongest result in the repo.** A classifier fed three
+   presence bits reaches 0.697 macro F1 and beats the trained multimodal model
+   (0.671) on the same recordings, under a leakage-free protocol on the full corpus.
+   That is a methodological finding about StressID that stands on its own, and it
+   invalidates any missing-modality robustness claim on this dataset that does not
+   control for availability.
+2. **The architecture contribution (E2/E12) is not supported by the data.** Temporal
+   vs static is +0.011, p = 0.677; no modality removal costs measurable F1 after
+   correction. Reporting these as positive results would not survive review.
+3. **The remaining lever is Stage −1** (multi-dataset pretraining, WESAD / SWELL-KW /
+   K-EmoCon). 448 training recordings is not enough to train three encoders and a
+   fusion transformer cold — which the memorisation behaviour above shows directly.
+4. **The clean-corpus variant is one config change away.** Setting `tasks` to the 7
+   speech tasks makes availability carry zero label information (audio always present),
+   at the cost of a skewed 0.72 positive rate. That run answers "is there stress signal
+   at all, with the shortcut fully removed?" — note the complete-modality subset already
+   *is* those 7 tasks, so the +0.058 / +0.069 margins above are effectively that answer
+   at inference time, but with training still exposed to the confound.
