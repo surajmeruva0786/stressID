@@ -67,7 +67,9 @@ def build_manifest(cfg: Config) -> pd.DataFrame:
         video=("has_video", "sum"),
         pos_rate=("binary", "mean"),
     )
-    complete = per_subj[per_subj["n_tasks"] == len(cfg.tasks)]
+    complete = per_subj
+    if cfg.require_all_tasks:
+        complete = complete[complete["n_tasks"] == len(cfg.tasks)]
     if cfg.require_all_modalities:
         # audio only exists for speech tasks, so require it on those tasks only
         n_audio_tasks = sum(t not in ("Breathing", "Relax", "Video1", "Video2")
