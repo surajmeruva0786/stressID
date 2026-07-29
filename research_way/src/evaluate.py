@@ -244,6 +244,14 @@ def run(cfg: Config | None = None) -> dict:
                                     encoding="utf-8")
     _plots(cfg, curve, pd.DataFrame(ece_rows), pd.DataFrame(rel_rows))
     _print_summary(curve, e2, summ, pd.DataFrame(ece_rows), e8)
+
+    print("\n=== E12b does removing a modality cost anything? (paired vs full) ===")
+    for _, r in vs_full.iterrows():
+        flag = "  *" if r["p_value"] < 0.05 else ""
+        flag += "  ** survives Bonferroni" if r["p_bonferroni"] < 0.05 else ""
+        print(f"  {r['variant']:<8} {r['condition']:<12} "
+              f"delta={r['delta_vs_full']:+.3f} "
+              f"[{r['ci_lo']:+.3f},{r['ci_hi']:+.3f}]  p={r['p_value']:.3f}{flag}")
     return report
 
 
