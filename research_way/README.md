@@ -175,6 +175,8 @@ Written to `results/small/`:
 | `e5e6_missing_modality.csv` | E5/E6 — per-condition F1 / accuracy / ECE with CIs |
 | `e8_per_class_recall.csv` | E8 — 3-class per-class recall |
 | `e12_degradation.csv`, `e12_paired_tests.csv` | E12 — the headline degradation curves |
+| `e12_vs_full_tests.csv` | E12b — each condition vs its own full-modality run, Bonferroni-corrected |
+| `shortcut_audit.csv` | full-modality predictions scored on all vs complete-modality recordings |
 | `e13_calibration.csv`, `e13_reliability_bins.csv` | E13 — ECE and reliability bins |
 | `figures.png` | degradation curve, ECE vs. #missing, reliability diagram |
 
