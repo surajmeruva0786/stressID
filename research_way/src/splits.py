@@ -45,11 +45,11 @@ def assert_no_leakage(folds: list[dict]) -> None:
 
 def main(cfg: Config | None = None) -> list[dict]:
     cfg = cfg or Config()
-    man = pd.read_csv(DATA_DIR / "manifest_small.csv")
+    man = pd.read_csv(cfg.manifest_path)
     folds = make_splits(man, cfg)
     assert_no_leakage(folds)
 
-    out = DATA_DIR / "splits_small.json"
+    out = cfg.splits_path
     out.write_text(json.dumps(folds, indent=2), encoding="utf-8")
     for f in folds:
         te = man[man["subject"].isin(f["test"])]
