@@ -201,12 +201,14 @@ TRAINING STRATEGY
 
 | Step | Task | Status |
 |---|---|---|
-| 1 | Fix evaluation — re-run baselines with strict GroupKFold | TODO |
-| 2 | Temporal baseline — sliding window + LSTM on physiological only | TODO |
-| 3 | Fine-tune wav2vec2 on audio modality | TODO |
-| 4 | Implement cross-modal attention fusion (MST architecture) | TODO |
-| 5 | Benchmark MST on WESAD for generalization | TODO |
+| 1 | Fix evaluation — re-run baselines with strict GroupKFold | **DONE** (5-fold, 700 recs) |
+| 2 | Temporal baseline — sliding window + LSTM on physiological only | **DONE** — no effect |
+| 3 | Fine-tune wav2vec2 on audio modality | TODO (`transformers` not installed) |
+| 4 | Implement cross-modal attention fusion (MST architecture) | **DONE** — no measurable gain |
+| 5 | Benchmark MST on WESAD for generalization | TODO (dataset not in repo) |
 | 6 | Label refinement via physiological clustering | TODO |
+| 7 | **Stage −1 multi-dataset pretraining** — now the critical path | TODO |
+| 8 | Speech-tasks-only corpus (removes the confound from training) | TODO — one config change |
 
 ---
 
