@@ -131,8 +131,8 @@ availability is decorrelated from the label.
 What this implementation does about it:
 
 1. **E5/E6/E12 are evaluated only on recordings where all three modalities naturally
-   exist** (64 of 96 here), so availability is constant across the compared conditions
-   and cannot drive the degradation curve.
+   exist** (364 of 700 at full scale; 64 of 96 in the subset), so availability is
+   constant across the compared conditions and cannot drive the degradation curve.
 2. **The `availability_only` probe is reported alongside every baseline**, so the
    shortcut's size is always visible rather than folded into a "multimodal" number.
 3. **Modality dropout during training** (25 %/modality) partially decorrelates presence
