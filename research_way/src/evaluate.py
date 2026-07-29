@@ -77,6 +77,37 @@ def _paired(per_run: pd.DataFrame, metric: str, cond: str) -> dict:
             "n_pairs": len(idx)}
 
 
+def _vs_full(per_run: pd.DataFrame, metric: str = "bin_f1_macro") -> pd.DataFrame:
+    """Each degraded condition against its OWN full-modality run, paired.
+
+    E12 compares temporal vs static; this asks the complementary question that
+    actually tests whether the model uses its inputs at all: does removing a
+    modality cost anything? A model reading physiology/audio/video should lose
+    F1 here. `p_bonferroni` corrects for the 12 comparisons in this table -- a
+    nominally significant single cell is expected by chance at this count.
+    """
+    rows = []
+    conds = ONE_MISSING + TWO_MISSING
+    for variant in sorted(per_run["variant"].unique()):
+        base = per_run[(per_run.variant == variant) & (per_run.condition == "full")] \
+            .set_index(["seed", "fold"])[metric]
+        for cond in conds:
+            g = per_run[(per_run.variant == variant) & (per_run.condition == cond)] \
+                .set_index(["seed", "fold"])[metric]
+            idx = base.index.intersection(g.index)
+            if len(idx) == 0:
+                continue
+            a, b = g.loc[idx].values, base.loc[idx].values
+            mean, lo, hi = bootstrap_ci(a - b)
+            p = paired_bootstrap_pvalue(a, b)
+            rows.append({"variant": variant, "condition": cond, "metric": metric,
+                         "n_missing": CONDITION_LEVEL[cond], "delta_vs_full": mean,
+                         "ci_lo": lo, "ci_hi": hi, "p_value": p,
+                         "p_bonferroni": min(1.0, p * len(conds) * 2),
+                         "n_pairs": len(idx)})
+    return pd.DataFrame(rows)
+
+
 def _shortcut_audit(preds_all: pd.DataFrame, cfg: Config) -> list[dict]:
     """Is the model's score real, or is it reading the availability shortcut?
 

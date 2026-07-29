@@ -1,0 +1,248 @@
+
+========================================================================
+== STAGE: train
+========================================================================
+C:\Users\Big Data\AppData\Local\Programs\Python\Python311\Lib\site-packages\torch\nn\modules\transformer.py:385: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
+  warnings.warn(
+      ep  0 loss=1.372 bce=0.671 inv=1.528 valF1=0.562
+      ep 10 loss=0.955 bce=0.453 inv=0.585 valF1=0.675
+      ep 20 loss=0.643 bce=0.269 inv=0.445 valF1=0.605
+      ep 30 loss=0.291 bce=0.100 inv=0.167 valF1=0.595
+      ep 39 loss=0.250 bce=0.092 inv=0.135 valF1=0.588
+[train] temporal seed=0 fold=0 bestValF1=0.695@ep4 (371s)
+C:\Users\Big Data\AppData\Local\Programs\Python\Python311\Lib\site-packages\torch\nn\modules\transformer.py:385: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
+  warnings.warn(
+      ep  0 loss=1.345 bce=0.675 inv=1.336 valF1=0.634
+      ep 10 loss=1.021 bce=0.490 inv=0.715 valF1=0.626
+      ep 20 loss=0.739 bce=0.331 inv=0.567 valF1=0.548
+      ep 30 loss=0.366 bce=0.119 inv=0.250 valF1=0.564
+      ep 39 loss=0.320 bce=0.127 inv=0.314 valF1=0.545
+[train] temporal seed=0 fold=1 bestValF1=0.682@ep5 (369s)
+C:\Users\Big Data\AppData\Local\Programs\Python\Python311\Lib\site-packages\torch\nn\modules\transformer.py:385: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
+  warnings.warn(
+      ep  0 loss=1.423 bce=0.724 inv=1.490 valF1=0.654
+      ep 10 loss=1.033 bce=0.499 inv=0.788 valF1=0.600
+      ep 20 loss=0.765 bce=0.352 inv=0.551 valF1=0.655
+      ep 30 loss=0.393 bce=0.155 inv=0.317 valF1=0.653
+      ep 39 loss=0.330 bce=0.137 inv=0.223 valF1=0.606
+[train] temporal seed=0 fold=2 bestValF1=0.735@ep12 (366s)
+C:\Users\Big Data\AppData\Local\Programs\Python\Python311\Lib\site-packages\torch\nn\modules\transformer.py:385: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
+  warnings.warn(
+      ep  0 loss=1.379 bce=0.670 inv=1.647 valF1=0.570
+      ep 10 loss=0.991 bce=0.479 inv=0.698 valF1=0.714
+      ep 20 loss=0.732 bce=0.348 inv=0.473 valF1=0.764
+      ep 30 loss=0.350 bce=0.140 inv=0.232 valF1=0.724
+      ep 39 loss=0.243 bce=0.080 inv=0.153 valF1=0.739
+[train] temporal seed=0 fold=3 bestValF1=0.764@ep20 (361s)
+C:\Users\Big Data\AppData\Local\Programs\Python\Python311\Lib\site-packages\torch\nn\modules\transformer.py:385: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
+  warnings.warn(
+      ep  0 loss=1.340 bce=0.660 inv=1.308 valF1=0.632
+      ep 10 loss=0.998 bce=0.472 inv=0.767 valF1=0.670
+      ep 20 loss=0.720 bce=0.313 inv=0.501 valF1=0.705
+      ep 30 loss=0.368 bce=0.123 inv=0.245 valF1=0.481
+      ep 39 loss=0.205 bce=0.053 inv=0.092 valF1=0.495
+[train] temporal seed=0 fold=4 bestValF1=0.725@ep3 (369s)
+C:\Users\Big Data\AppData\Local\Programs\Python\Python311\Lib\site-packages\torch\nn\modules\transformer.py:385: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
+  warnings.warn(
+      ep  0 loss=1.373 bce=0.636 inv=1.463 valF1=0.620
+      ep 10 loss=0.936 bce=0.438 inv=0.632 valF1=0.658
+      ep 20 loss=0.634 bce=0.273 inv=0.437 valF1=0.681
+      ep 30 loss=0.295 bce=0.103 inv=0.153 valF1=0.632
+      ep 39 loss=0.216 bce=0.053 inv=0.137 valF1=0.664
+[train] temporal seed=1 fold=0 bestValF1=0.681@ep20 (358s)
+C:\Users\Big Data\AppData\Local\Programs\Python\Python311\Lib\site-packages\torch\nn\modules\transformer.py:385: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
+  warnings.warn(
+      ep  0 loss=1.380 bce=0.632 inv=1.513 valF1=0.645
+      ep 10 loss=0.956 bce=0.461 inv=0.627 valF1=0.726
+      ep 20 loss=0.700 bce=0.292 inv=0.497 valF1=0.602
+      ep 30 loss=0.376 bce=0.131 inv=0.237 valF1=0.542
+      ep 39 loss=0.286 bce=0.107 inv=0.221 valF1=0.527
+[train] temporal seed=1 fold=1 bestValF1=0.726@ep10 (355s)
+C:\Users\Big Data\AppData\Local\Programs\Python\Python311\Lib\site-packages\torch\nn\modules\transformer.py:385: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
+  warnings.warn(
+      ep  0 loss=1.445 bce=0.693 inv=1.458 valF1=0.697
+      ep 10 loss=0.980 bce=0.494 inv=0.732 valF1=0.600
+      ep 20 loss=0.694 bce=0.319 inv=0.457 valF1=0.670
+      ep 30 loss=0.336 bce=0.130 inv=0.210 valF1=0.572
+      ep 39 loss=0.206 bce=0.071 inv=0.130 valF1=0.577
+[train] temporal seed=1 fold=2 bestValF1=0.710@ep2 (354s)
+C:\Users\Big Data\AppData\Local\Programs\Python\Python311\Lib\site-packages\torch\nn\modules\transformer.py:385: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
+  warnings.warn(
+      ep  0 loss=1.386 bce=0.640 inv=1.565 valF1=0.680
+      ep 10 loss=0.942 bce=0.451 inv=0.591 valF1=0.686
+      ep 20 loss=0.653 bce=0.287 inv=0.488 valF1=0.646
+      ep 30 loss=0.267 bce=0.105 inv=0.245 valF1=0.691
+      ep 39 loss=0.227 bce=0.081 inv=0.222 valF1=0.686
+[train] temporal seed=1 fold=3 bestValF1=0.753@ep6 (355s)
+C:\Users\Big Data\AppData\Local\Programs\Python\Python311\Lib\site-packages\torch\nn\modules\transformer.py:385: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
+  warnings.warn(
+      ep  0 loss=1.384 bce=0.624 inv=1.590 valF1=0.660
+      ep 10 loss=0.983 bce=0.455 inv=0.748 valF1=0.660
+      ep 20 loss=0.711 bce=0.303 inv=0.451 valF1=0.567
+      ep 30 loss=0.354 bce=0.107 inv=0.269 valF1=0.663
+      ep 39 loss=0.238 bce=0.074 inv=0.138 valF1=0.604
+[train] temporal seed=1 fold=4 bestValF1=0.779@ep15 (363s)
+C:\Users\Big Data\AppData\Local\Programs\Python\Python311\Lib\site-packages\torch\nn\modules\transformer.py:385: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
+  warnings.warn(
+      ep  0 loss=1.459 bce=0.698 inv=1.523 valF1=0.556
+      ep 10 loss=0.967 bce=0.470 inv=0.636 valF1=0.650
+      ep 20 loss=0.585 bce=0.234 inv=0.385 valF1=0.710
+      ep 30 loss=0.282 bce=0.093 inv=0.186 valF1=0.664
+      ep 39 loss=0.210 bce=0.070 inv=0.167 valF1=0.667
+[train] temporal seed=2 fold=0 bestValF1=0.710@ep20 (355s)
+C:\Users\Big Data\AppData\Local\Programs\Python\Python311\Lib\site-packages\torch\nn\modules\transformer.py:385: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
+  warnings.warn(
+      ep  0 loss=1.438 bce=0.693 inv=1.490 valF1=0.600
+      ep 10 loss=0.991 bce=0.473 inv=0.746 valF1=0.663
+      ep 20 loss=0.685 bce=0.300 inv=0.581 valF1=0.582
+      ep 30 loss=0.371 bce=0.161 inv=0.294 valF1=0.522
+      ep 39 loss=0.337 bce=0.136 inv=0.282 valF1=0.571
+[train] temporal seed=2 fold=1 bestValF1=0.663@ep10 (355s)
+C:\Users\Big Data\AppData\Local\Programs\Python\Python311\Lib\site-packages\torch\nn\modules\transformer.py:385: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
+  warnings.warn(
+      ep  0 loss=1.465 bce=0.727 inv=1.400 valF1=0.595
+      ep 10 loss=0.989 bce=0.487 inv=0.743 valF1=0.580
+      ep 20 loss=0.668 bce=0.298 inv=0.463 valF1=0.643
+      ep 30 loss=0.384 bce=0.173 inv=0.284 valF1=0.690
+      ep 39 loss=0.250 bce=0.112 inv=0.187 valF1=0.691
+[train] temporal seed=2 fold=2 bestValF1=0.756@ep18 (355s)
+C:\Users\Big Data\AppData\Local\Programs\Python\Python311\Lib\site-packages\torch\nn\modules\transformer.py:385: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
+  warnings.warn(
+      ep  0 loss=1.499 bce=0.719 inv=1.784 valF1=0.591
+      ep 10 loss=1.054 bce=0.515 inv=0.762 valF1=0.630
+      ep 20 loss=0.640 bce=0.257 inv=0.459 valF1=0.641
+      ep 30 loss=0.364 bce=0.139 inv=0.272 valF1=0.665
+      ep 39 loss=0.257 bce=0.099 inv=0.172 valF1=0.638
+[train] temporal seed=2 fold=3 bestValF1=0.736@ep1 (355s)
+C:\Users\Big Data\AppData\Local\Programs\Python\Python311\Lib\site-packages\torch\nn\modules\transformer.py:385: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
+  warnings.warn(
+      ep  0 loss=1.425 bce=0.682 inv=1.424 valF1=0.578
+      ep 10 loss=0.965 bce=0.453 inv=0.681 valF1=0.660
+      ep 20 loss=0.623 bce=0.236 inv=0.368 valF1=0.582
+      ep 30 loss=0.308 bce=0.114 inv=0.219 valF1=0.584
+      ep 39 loss=0.219 bce=0.070 inv=0.116 valF1=0.545
+[train] temporal seed=2 fold=4 bestValF1=0.715@ep5 (370s)
+C:\Users\Big Data\AppData\Local\Programs\Python\Python311\Lib\site-packages\torch\nn\modules\transformer.py:385: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
+  warnings.warn(
+      ep  0 loss=1.321 bce=0.608 inv=1.672 valF1=0.625
+      ep 10 loss=0.998 bce=0.464 inv=1.077 valF1=0.595
+      ep 20 loss=0.581 bce=0.232 inv=0.516 valF1=0.575
+      ep 30 loss=0.289 bce=0.111 inv=0.283 valF1=0.530
+      ep 39 loss=0.141 bce=0.042 inv=0.135 valF1=0.583
+[train] static   seed=0 fold=0 bestValF1=0.701@ep18 (375s)
+C:\Users\Big Data\AppData\Local\Programs\Python\Python311\Lib\site-packages\torch\nn\modules\transformer.py:385: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
+  warnings.warn(
+      ep  0 loss=1.307 bce=0.594 inv=1.699 valF1=0.660
+      ep 10 loss=0.980 bce=0.463 inv=1.029 valF1=0.626
+      ep 20 loss=0.646 bce=0.279 inv=0.597 valF1=0.525
+      ep 30 loss=0.302 bce=0.124 inv=0.263 valF1=0.516
+      ep 39 loss=0.201 bce=0.074 inv=0.206 valF1=0.499
+[train] static   seed=0 fold=1 bestValF1=0.709@ep3 (366s)
+C:\Users\Big Data\AppData\Local\Programs\Python\Python311\Lib\site-packages\torch\nn\modules\transformer.py:385: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
+  warnings.warn(
+      ep  0 loss=1.374 bce=0.659 inv=1.818 valF1=0.679
+      ep 10 loss=1.057 bce=0.521 inv=1.144 valF1=0.733
+      ep 20 loss=0.637 bce=0.289 inv=0.595 valF1=0.523
+      ep 30 loss=0.340 bce=0.143 inv=0.365 valF1=0.600
+      ep 39 loss=0.260 bce=0.096 inv=0.232 valF1=0.615
+[train] static   seed=0 fold=2 bestValF1=0.737@ep3 (343s)
+C:\Users\Big Data\AppData\Local\Programs\Python\Python311\Lib\site-packages\torch\nn\modules\transformer.py:385: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
+  warnings.warn(
+      ep  0 loss=1.379 bce=0.626 inv=2.008 valF1=0.669
+      ep 10 loss=1.030 bce=0.507 inv=1.080 valF1=0.533
+      ep 20 loss=0.631 bce=0.279 inv=0.645 valF1=0.656
+      ep 30 loss=0.266 bce=0.106 inv=0.175 valF1=0.666
+      ep 39 loss=0.166 bce=0.070 inv=0.134 valF1=0.597
+[train] static   seed=0 fold=3 bestValF1=0.722@ep2 (345s)
+C:\Users\Big Data\AppData\Local\Programs\Python\Python311\Lib\site-packages\torch\nn\modules\transformer.py:385: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
+  warnings.warn(
+      ep  0 loss=1.320 bce=0.599 inv=1.843 valF1=0.616
+      ep 10 loss=0.964 bce=0.451 inv=0.898 valF1=0.596
+      ep 20 loss=0.637 bce=0.275 inv=0.663 valF1=0.679
+      ep 30 loss=0.297 bce=0.112 inv=0.340 valF1=0.613
+      ep 39 loss=0.189 bce=0.077 inv=0.216 valF1=0.604
+[train] static   seed=0 fold=4 bestValF1=0.733@ep9 (351s)
+C:\Users\Big Data\AppData\Local\Programs\Python\Python311\Lib\site-packages\torch\nn\modules\transformer.py:385: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
+  warnings.warn(
+      ep  0 loss=1.455 bce=0.648 inv=1.706 valF1=0.680
+      ep 10 loss=0.991 bce=0.450 inv=1.192 valF1=0.572
+      ep 20 loss=0.591 bce=0.231 inv=0.513 valF1=0.514
+      ep 30 loss=0.305 bce=0.099 inv=0.199 valF1=0.605
+      ep 39 loss=0.192 bce=0.071 inv=0.177 valF1=0.545
+[train] static   seed=1 fold=0 bestValF1=0.703@ep4 (344s)
+C:\Users\Big Data\AppData\Local\Programs\Python\Python311\Lib\site-packages\torch\nn\modules\transformer.py:385: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
+  warnings.warn(
+      ep  0 loss=1.406 bce=0.626 inv=1.400 valF1=0.599
+      ep 10 loss=1.014 bce=0.477 inv=1.104 valF1=0.529
+      ep 20 loss=0.647 bce=0.275 inv=0.667 valF1=0.572
+      ep 30 loss=0.292 bce=0.115 inv=0.263 valF1=0.535
+      ep 39 loss=0.202 bce=0.074 inv=0.196 valF1=0.509
+[train] static   seed=1 fold=1 bestValF1=0.754@ep8 (344s)
+C:\Users\Big Data\AppData\Local\Programs\Python\Python311\Lib\site-packages\torch\nn\modules\transformer.py:385: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
+  warnings.warn(
+      ep  0 loss=1.474 bce=0.678 inv=1.682 valF1=0.652
+      ep 10 loss=1.011 bce=0.480 inv=1.126 valF1=0.662
+      ep 20 loss=0.629 bce=0.269 inv=0.619 valF1=0.530
+      ep 30 loss=0.289 bce=0.105 inv=0.316 valF1=0.627
+      ep 39 loss=0.142 bce=0.051 inv=0.103 valF1=0.647
+[train] static   seed=1 fold=2 bestValF1=0.769@ep14 (343s)
+C:\Users\Big Data\AppData\Local\Programs\Python\Python311\Lib\site-packages\torch\nn\modules\transformer.py:385: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
+  warnings.warn(
+      ep  0 loss=1.490 bce=0.664 inv=1.967 valF1=0.693
+      ep 10 loss=1.041 bce=0.500 inv=1.057 valF1=0.610
+      ep 20 loss=0.666 bce=0.323 inv=0.678 valF1=0.730
+      ep 30 loss=0.263 bce=0.109 inv=0.240 valF1=0.619
+      ep 39 loss=0.164 bce=0.054 inv=0.146 valF1=0.634
+[train] static   seed=1 fold=3 bestValF1=0.730@ep20 (343s)
+C:\Users\Big Data\AppData\Local\Programs\Python\Python311\Lib\site-packages\torch\nn\modules\transformer.py:385: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
+  warnings.warn(
+      ep  0 loss=1.427 bce=0.621 inv=1.754 valF1=0.615
+      ep 10 loss=1.045 bce=0.485 inv=1.086 valF1=0.654
+      ep 20 loss=0.690 bce=0.293 inv=0.690 valF1=0.638
+      ep 30 loss=0.402 bce=0.153 inv=0.385 valF1=0.595
+      ep 39 loss=0.274 bce=0.110 inv=0.316 valF1=0.572
+[train] static   seed=1 fold=4 bestValF1=0.724@ep16 (351s)
+C:\Users\Big Data\AppData\Local\Programs\Python\Python311\Lib\site-packages\torch\nn\modules\transformer.py:385: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
+  warnings.warn(
+      ep  0 loss=1.367 bce=0.642 inv=1.469 valF1=0.583
+      ep 10 loss=0.975 bce=0.460 inv=1.042 valF1=0.603
+      ep 20 loss=0.558 bce=0.224 inv=0.537 valF1=0.572
+      ep 30 loss=0.277 bce=0.104 inv=0.284 valF1=0.610
+      ep 39 loss=0.181 bce=0.057 inv=0.160 valF1=0.602
+[train] static   seed=2 fold=0 bestValF1=0.667@ep13 (343s)
+C:\Users\Big Data\AppData\Local\Programs\Python\Python311\Lib\site-packages\torch\nn\modules\transformer.py:385: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
+  warnings.warn(
+      ep  0 loss=1.361 bce=0.623 inv=1.774 valF1=0.614
+      ep 10 loss=0.967 bce=0.449 inv=1.005 valF1=0.604
+      ep 20 loss=0.588 bce=0.238 inv=0.590 valF1=0.556
+      ep 30 loss=0.308 bce=0.122 inv=0.391 valF1=0.582
+      ep 39 loss=0.201 bce=0.085 inv=0.232 valF1=0.600
+[train] static   seed=2 fold=1 bestValF1=0.736@ep3 (343s)
+C:\Users\Big Data\AppData\Local\Programs\Python\Python311\Lib\site-packages\torch\nn\modules\transformer.py:385: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
+  warnings.warn(
+      ep  0 loss=1.453 bce=0.683 inv=1.961 valF1=0.599
+      ep 10 loss=1.008 bce=0.487 inv=1.097 valF1=0.644
+      ep 20 loss=0.694 bce=0.319 inv=0.594 valF1=0.633
+      ep 30 loss=0.353 bce=0.143 inv=0.376 valF1=0.633
+      ep 39 loss=0.186 bce=0.082 inv=0.119 valF1=0.636
+[train] static   seed=2 fold=2 bestValF1=0.759@ep22 (343s)
+C:\Users\Big Data\AppData\Local\Programs\Python\Python311\Lib\site-packages\torch\nn\modules\transformer.py:385: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
+  warnings.warn(
+      ep  0 loss=1.442 bce=0.657 inv=2.118 valF1=0.539
+      ep 10 loss=1.002 bce=0.483 inv=1.073 valF1=0.667
+      ep 20 loss=0.638 bce=0.279 inv=0.722 valF1=0.588
+      ep 30 loss=0.224 bce=0.088 inv=0.247 valF1=0.662
+      ep 39 loss=0.146 bce=0.050 inv=0.110 valF1=0.606
+[train] static   seed=2 fold=3 bestValF1=0.724@ep1 (344s)
+C:\Users\Big Data\AppData\Local\Programs\Python\Python311\Lib\site-packages\torch\nn\modules\transformer.py:385: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
+  warnings.warn(
+      ep  0 loss=1.348 bce=0.625 inv=1.577 valF1=0.535
+      ep 10 loss=1.011 bce=0.482 inv=0.922 valF1=0.634
+      ep 20 loss=0.616 bce=0.270 inv=0.566 valF1=0.595
+      ep 30 loss=0.315 bce=0.120 inv=0.246 valF1=0.537
+      ep 39 loss=0.225 bce=0.080 inv=0.156 valF1=0.558
+[train] static   seed=2 fold=4 bestValF1=0.706@ep1 (351s)
+[train] done in 10640s -> F:\stressID\research_way\results\full\predictions.csv  (29400 rows)
+== stage train took 10640s
+
+[run_full] total 10640s | results -> F:\stressID\research_way\results\full

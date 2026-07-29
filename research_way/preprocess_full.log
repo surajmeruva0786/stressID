@@ -1,0 +1,710 @@
+
+========================================================================
+== STAGE: preprocess
+========================================================================
+[preprocess] 700/700 recordings to process -> F:\stressID\research_way\data\cache_full
+[preprocess] 64 subjects | 6 worker(s)
+[  1/700] 2ea4_Breathing         win=16 cov(p/a/v)=1.00/0.00/1.00
+[  2/700] 2ea4_Counting1         win=11 cov(p/a/v)=1.00/1.00/1.00
+[  3/700] 2ea4_Counting2         win=11 cov(p/a/v)=1.00/1.00/1.00
+[  4/700] 2ea4_Counting3         win=11 cov(p/a/v)=1.00/1.00/1.00
+[  5/700] 2ea4_Math              win=11 cov(p/a/v)=1.00/1.00/1.00
+[  6/700] 2ea4_Reading           win=11 cov(p/a/v)=1.00/1.00/1.00
+[  7/700] 2ea4_Relax             win=16 cov(p/a/v)=1.00/0.00/1.00
+[  8/700] 2ea4_Speaking          win=11 cov(p/a/v)=1.00/1.00/1.00
+[  9/700] 2ea4_Stroop            win=11 cov(p/a/v)=1.00/1.00/1.00
+[ 10/700] 2ea4_Video1            win=16 cov(p/a/v)=1.00/0.00/1.00
+[ 11/700] 2ea4_Video2            win=16 cov(p/a/v)=1.00/0.00/1.00
+[ 12/700] 2hpu_Breathing         win=16 cov(p/a/v)=1.00/0.00/1.00
+[ 13/700] 2hpu_Counting1         win=11 cov(p/a/v)=1.00/1.00/1.00
+[ 14/700] 2hpu_Counting2         win=11 cov(p/a/v)=1.00/1.00/1.00
+[ 15/700] 2hpu_Counting3         win=11 cov(p/a/v)=1.00/1.00/1.00
+[ 16/700] 2hpu_Math              win=11 cov(p/a/v)=1.00/1.00/1.00
+[ 17/700] 2hpu_Reading           win=11 cov(p/a/v)=1.00/1.00/1.00
+[ 18/700] 2hpu_Relax             win=16 cov(p/a/v)=1.00/0.00/1.00
+[ 19/700] 2hpu_Speaking          win=11 cov(p/a/v)=1.00/1.00/1.00
+[ 20/700] 2hpu_Stroop            win=11 cov(p/a/v)=1.00/1.00/1.00
+[ 21/700] 2hpu_Video1            win=16 cov(p/a/v)=1.00/0.00/1.00
+[ 22/700] 2hpu_Video2            win=16 cov(p/a/v)=1.00/0.00/1.00
+[ 23/700] 2z7d_Breathing         win=16 cov(p/a/v)=1.00/0.00/1.00
+[ 24/700] 2z7d_Counting1         win=11 cov(p/a/v)=1.00/1.00/1.00
+[ 25/700] 2z7d_Counting2         win=11 cov(p/a/v)=1.00/1.00/1.00
+[ 26/700] 2z7d_Counting3         win=11 cov(p/a/v)=1.00/1.00/1.00
+[ 27/700] 2z7d_Math              win=11 cov(p/a/v)=1.00/1.00/1.00
+[ 28/700] 2z7d_Reading           win=11 cov(p/a/v)=1.00/1.00/1.00
+[ 29/700] 2z7d_Relax             win=16 cov(p/a/v)=1.00/0.00/1.00
+[ 30/700] 2z7d_Speaking          win=11 cov(p/a/v)=1.00/1.00/1.00
+[ 31/700] 2z7d_Stroop            win=11 cov(p/a/v)=1.00/1.00/1.00
+[ 32/700] 2z7d_Video1            win=16 cov(p/a/v)=1.00/0.00/1.00
+[ 33/700] 2z7d_Video2            win=16 cov(p/a/v)=1.00/0.00/1.00
+[ 34/700] 37ir_Breathing         win=16 cov(p/a/v)=1.00/0.00/0.00
+[ 35/700] 37ir_Counting1         win=11 cov(p/a/v)=1.00/0.00/0.00
+[ 36/700] 37ir_Counting2         win=11 cov(p/a/v)=1.00/0.00/0.00
+[ 37/700] 37ir_Counting3         win=11 cov(p/a/v)=1.00/0.00/0.00
+[ 38/700] 37ir_Math              win=11 cov(p/a/v)=1.00/0.00/0.00
+[ 39/700] 37ir_Reading           win=11 cov(p/a/v)=1.00/0.00/0.00
+[ 40/700] 37ir_Relax             win=16 cov(p/a/v)=1.00/0.00/0.00
+[ 41/700] 37ir_Speaking          win=11 cov(p/a/v)=1.00/0.00/0.00
+[ 42/700] 37ir_Stroop            win=11 cov(p/a/v)=1.00/0.00/0.00
+[ 43/700] 37ir_Video1            win=16 cov(p/a/v)=1.00/0.00/0.00
+[ 44/700] 37ir_Video2            win=16 cov(p/a/v)=1.00/0.00/0.00
+[ 45/700] 45lx_Breathing         win=16 cov(p/a/v)=1.00/0.00/1.00
+[ 46/700] 45lx_Counting1         win=11 cov(p/a/v)=1.00/1.00/1.00
+[ 47/700] 45lx_Counting2         win=11 cov(p/a/v)=1.00/1.00/1.00
+[ 48/700] 45lx_Counting3         win=11 cov(p/a/v)=1.00/1.00/1.00
+[ 49/700] 45lx_Math              win=11 cov(p/a/v)=1.00/1.00/1.00
+[ 50/700] 45lx_Reading           win=11 cov(p/a/v)=1.00/1.00/1.00
+[ 51/700] 45lx_Relax             win=16 cov(p/a/v)=1.00/0.00/1.00
+[ 52/700] 45lx_Speaking          win=11 cov(p/a/v)=1.00/1.00/1.00
+[ 53/700] 45lx_Stroop            win=11 cov(p/a/v)=1.00/1.00/1.00
+[ 54/700] 45lx_Video1            win=16 cov(p/a/v)=1.00/0.00/1.00
+[ 55/700] 45lx_Video2            win=16 cov(p/a/v)=1.00/0.00/1.00
+[ 56/700] 4e8r_Breathing         win=16 cov(p/a/v)=1.00/0.00/1.00
+[ 57/700] 4e8r_Counting1         win=11 cov(p/a/v)=1.00/1.00/1.00
+[ 58/700] 4e8r_Counting2         win=11 cov(p/a/v)=1.00/1.00/1.00
+[ 59/700] 4e8r_Counting3         win=11 cov(p/a/v)=1.00/1.00/1.00
+[ 60/700] 4e8r_Math              win=11 cov(p/a/v)=1.00/1.00/1.00
+[ 61/700] 4e8r_Reading           win=11 cov(p/a/v)=1.00/1.00/1.00
+[ 62/700] 4e8r_Relax             win=16 cov(p/a/v)=1.00/0.00/1.00
+[ 63/700] 4e8r_Speaking          win=11 cov(p/a/v)=1.00/1.00/1.00
+[ 64/700] 4e8r_Stroop            win=11 cov(p/a/v)=1.00/1.00/1.00
+[ 65/700] 4e8r_Video1            win=16 cov(p/a/v)=1.00/0.00/1.00
+[ 66/700] 4e8r_Video2            win=16 cov(p/a/v)=1.00/0.00/1.00
+[ 67/700] 4woj_Breathing         win=16 cov(p/a/v)=1.00/0.00/1.00
+[ 68/700] 4woj_Counting1         win=11 cov(p/a/v)=1.00/1.00/1.00
+[ 69/700] 4woj_Counting2         win=11 cov(p/a/v)=1.00/1.00/1.00
+[ 70/700] 4woj_Counting3         win=11 cov(p/a/v)=1.00/1.00/1.00
+[ 71/700] 4woj_Math              win=11 cov(p/a/v)=1.00/1.00/1.00
+[ 72/700] 4woj_Reading           win=11 cov(p/a/v)=1.00/1.00/1.00
+[ 73/700] 4woj_Relax             win=16 cov(p/a/v)=1.00/0.00/1.00
+[ 74/700] 4woj_Speaking          win=11 cov(p/a/v)=1.00/1.00/1.00
+[ 75/700] 4woj_Stroop            win=11 cov(p/a/v)=1.00/1.00/1.00
+[ 76/700] 4woj_Video1            win=16 cov(p/a/v)=1.00/0.00/1.00
+[ 77/700] 4woj_Video2            win=16 cov(p/a/v)=1.00/0.00/1.00
+[ 78/700] 5f7t_Breathing         win=16 cov(p/a/v)=1.00/0.00/1.00
+[ 79/700] 5f7t_Counting1         win=11 cov(p/a/v)=1.00/1.00/1.00
+[ 80/700] 5f7t_Counting2         win=11 cov(p/a/v)=1.00/1.00/1.00
+[ 81/700] 5f7t_Counting3         win=11 cov(p/a/v)=1.00/1.00/1.00
+[ 82/700] 5f7t_Math              win=11 cov(p/a/v)=1.00/1.00/1.00
+[ 83/700] 5f7t_Reading           win=11 cov(p/a/v)=1.00/1.00/1.00
+[ 84/700] 5f7t_Relax             win=16 cov(p/a/v)=1.00/0.00/1.00
+[ 85/700] 5f7t_Speaking          win=11 cov(p/a/v)=1.00/1.00/1.00
+[ 86/700] 5f7t_Stroop            win=11 cov(p/a/v)=1.00/1.00/1.00
+[ 87/700] 5f7t_Video1            win=16 cov(p/a/v)=1.00/0.00/1.00
+[ 88/700] 5f7t_Video2            win=16 cov(p/a/v)=1.00/0.00/1.00
+[ 89/700] 6g6y_Breathing         win=16 cov(p/a/v)=1.00/0.00/1.00
+[ 90/700] 6g6y_Counting1         win=11 cov(p/a/v)=1.00/1.00/1.00
+[ 91/700] 6g6y_Counting2         win=11 cov(p/a/v)=1.00/1.00/1.00
+[ 92/700] 6g6y_Counting3         win=11 cov(p/a/v)=1.00/1.00/1.00
+[ 93/700] 6g6y_Math              win=11 cov(p/a/v)=1.00/1.00/1.00
+[ 94/700] 6g6y_Reading           win=11 cov(p/a/v)=1.00/1.00/1.00
+[ 95/700] 6g6y_Relax             win=16 cov(p/a/v)=1.00/0.00/1.00
+[ 96/700] 6g6y_Speaking          win=11 cov(p/a/v)=1.00/1.00/1.00
+[ 97/700] 6g6y_Stroop            win=11 cov(p/a/v)=1.00/1.00/1.00
+[ 98/700] 6g6y_Video1            win=16 cov(p/a/v)=1.00/0.00/1.00
+[ 99/700] 6g6y_Video2            win=16 cov(p/a/v)=1.00/0.00/1.00
+[100/700] 6k5f_Breathing         win=16 cov(p/a/v)=1.00/0.00/1.00
+[101/700] 6k5f_Counting1         win=11 cov(p/a/v)=1.00/1.00/1.00
+[102/700] 6k5f_Counting2         win=11 cov(p/a/v)=1.00/1.00/1.00
+[103/700] 6k5f_Counting3         win=11 cov(p/a/v)=1.00/1.00/1.00
+[104/700] 6k5f_Math              win=11 cov(p/a/v)=1.00/1.00/1.00
+[105/700] 6k5f_Reading           win=11 cov(p/a/v)=1.00/1.00/1.00
+[106/700] 6k5f_Relax             win=16 cov(p/a/v)=1.00/0.00/1.00
+[107/700] 6k5f_Speaking          win=11 cov(p/a/v)=1.00/1.00/1.00
+[108/700] 6k5f_Stroop            win=11 cov(p/a/v)=1.00/1.00/1.00
+[109/700] 6k5f_Video1            win=16 cov(p/a/v)=1.00/0.00/1.00
+[110/700] 6k5f_Video2            win=16 cov(p/a/v)=1.00/0.00/1.00
+[111/700] 71i5_Breathing         win=16 cov(p/a/v)=1.00/0.00/1.00
+[112/700] 71i5_Counting1         win=11 cov(p/a/v)=1.00/1.00/1.00
+[113/700] 71i5_Counting2         win=11 cov(p/a/v)=1.00/1.00/1.00
+[114/700] 71i5_Counting3         win=11 cov(p/a/v)=1.00/1.00/1.00
+[115/700] 71i5_Math              win=11 cov(p/a/v)=1.00/1.00/1.00
+[116/700] 71i5_Reading           win=11 cov(p/a/v)=1.00/1.00/1.00
+[117/700] 71i5_Relax             win=16 cov(p/a/v)=1.00/0.00/1.00
+[118/700] 71i5_Speaking          win=11 cov(p/a/v)=1.00/1.00/1.00
+[119/700] 71i5_Stroop            win=11 cov(p/a/v)=1.00/1.00/1.00
+[120/700] 71i5_Video1            win=16 cov(p/a/v)=1.00/0.00/1.00
+[121/700] 71i5_Video2            win=16 cov(p/a/v)=1.00/0.00/1.00
+[122/700] 7h5u_Breathing         win=16 cov(p/a/v)=1.00/0.00/1.00
+[123/700] 7h5u_Counting1         win=11 cov(p/a/v)=1.00/1.00/1.00
+[124/700] 7h5u_Counting2         win=11 cov(p/a/v)=1.00/1.00/1.00
+[125/700] 7h5u_Counting3         win=11 cov(p/a/v)=1.00/1.00/1.00
+[126/700] 7h5u_Math              win=11 cov(p/a/v)=1.00/1.00/1.00
+[127/700] 7h5u_Reading           win=11 cov(p/a/v)=1.00/1.00/1.00
+[128/700] 7h5u_Relax             win=16 cov(p/a/v)=1.00/0.00/1.00
+[129/700] 7h5u_Speaking          win=11 cov(p/a/v)=1.00/1.00/1.00
+[130/700] 7h5u_Stroop            win=11 cov(p/a/v)=1.00/1.00/1.00
+[131/700] 7h5u_Video1            win=16 cov(p/a/v)=1.00/0.00/1.00
+[132/700] 7m3c_Breathing         win=16 cov(p/a/v)=1.00/0.00/0.00
+[133/700] 7m3c_Counting1         win=11 cov(p/a/v)=1.00/1.00/0.00
+[134/700] 7m3c_Counting2         win=11 cov(p/a/v)=1.00/1.00/0.00
+[135/700] 7m3c_Counting3         win=11 cov(p/a/v)=1.00/1.00/0.00
+[136/700] 7m3c_Math              win=11 cov(p/a/v)=1.00/1.00/0.00
+[137/700] 7m3c_Reading           win=11 cov(p/a/v)=1.00/1.00/0.00
+[138/700] 7m3c_Relax             win=16 cov(p/a/v)=1.00/0.00/0.00
+[139/700] 7m3c_Speaking          win=11 cov(p/a/v)=1.00/1.00/0.00
+[140/700] 7m3c_Stroop            win=11 cov(p/a/v)=1.00/1.00/0.00
+[141/700] 7m3c_Video1            win=16 cov(p/a/v)=1.00/0.00/0.00
+[142/700] 7m3c_Video2            win=16 cov(p/a/v)=1.00/0.00/0.00
+[143/700] 8g4y_Breathing         win=16 cov(p/a/v)=1.00/0.00/1.00
+[144/700] 8g4y_Counting1         win=11 cov(p/a/v)=1.00/1.00/1.00
+[145/700] 8g4y_Counting2         win=11 cov(p/a/v)=1.00/1.00/1.00
+[146/700] 8g4y_Counting3         win=11 cov(p/a/v)=1.00/1.00/1.00
+[147/700] 8g4y_Math              win=11 cov(p/a/v)=1.00/1.00/1.00
+[148/700] 8g4y_Reading           win=11 cov(p/a/v)=1.00/1.00/1.00
+[149/700] 8g4y_Relax             win=16 cov(p/a/v)=1.00/0.00/1.00
+[150/700] 8g4y_Speaking          win=11 cov(p/a/v)=1.00/1.00/1.00
+[151/700] 8g4y_Stroop            win=11 cov(p/a/v)=1.00/1.00/1.00
+[152/700] 8g4y_Video1            win=16 cov(p/a/v)=1.00/0.00/1.00
+[153/700] 8g4y_Video2            win=16 cov(p/a/v)=1.00/0.00/1.00
+[154/700] 8i4i_Breathing         win=16 cov(p/a/v)=1.00/0.00/1.00
+[155/700] 8i4i_Counting1         win=11 cov(p/a/v)=1.00/1.00/1.00
+[156/700] 8i4i_Counting2         win=11 cov(p/a/v)=1.00/1.00/1.00
+[157/700] 8i4i_Counting3         win=11 cov(p/a/v)=1.00/1.00/1.00
+[158/700] 8i4i_Math              win=11 cov(p/a/v)=1.00/1.00/1.00
+[159/700] 8i4i_Reading           win=11 cov(p/a/v)=1.00/1.00/1.00
+[160/700] 8i4i_Relax             win=16 cov(p/a/v)=1.00/0.00/1.00
+[161/700] 8i4i_Speaking          win=11 cov(p/a/v)=1.00/1.00/1.00
+[162/700] 8i4i_Stroop            win=11 cov(p/a/v)=1.00/1.00/1.00
+[163/700] 8i4i_Video1            win=16 cov(p/a/v)=1.00/0.00/1.00
+[164/700] 8i4i_Video2            win=16 cov(p/a/v)=1.00/0.00/1.00
+[165/700] 9j3o_Breathing         win=16 cov(p/a/v)=1.00/0.00/1.00
+[166/700] 9j3o_Counting1         win=11 cov(p/a/v)=1.00/1.00/1.00
+[167/700] 9j3o_Counting2         win=11 cov(p/a/v)=1.00/1.00/1.00
+[168/700] 9j3o_Counting3         win=11 cov(p/a/v)=1.00/1.00/1.00
+[169/700] 9j3o_Math              win=11 cov(p/a/v)=1.00/1.00/1.00
+[170/700] 9j3o_Reading           win=11 cov(p/a/v)=1.00/1.00/1.00
+[171/700] 9j3o_Relax             win=16 cov(p/a/v)=1.00/0.00/1.00
+[172/700] 9j3o_Speaking          win=11 cov(p/a/v)=1.00/1.00/1.00
+[173/700] 9j3o_Stroop            win=11 cov(p/a/v)=1.00/1.00/1.00
+[174/700] 9j3o_Video1            win=16 cov(p/a/v)=1.00/0.00/1.00
+[175/700] 9j3o_Video2            win=16 cov(p/a/v)=1.00/0.00/1.00
+[176/700] 9t6n_Breathing         win=16 cov(p/a/v)=1.00/0.00/1.00
+[177/700] 9t6n_Counting1         win=11 cov(p/a/v)=1.00/1.00/1.00
+[178/700] 9t6n_Counting2         win=11 cov(p/a/v)=1.00/1.00/1.00
+[179/700] 9t6n_Counting3         win=11 cov(p/a/v)=1.00/1.00/1.00
+[180/700] 9t6n_Math              win=11 cov(p/a/v)=1.00/1.00/1.00
+[181/700] 9t6n_Reading           win=11 cov(p/a/v)=1.00/1.00/1.00
+[182/700] 9t6n_Relax             win=16 cov(p/a/v)=1.00/0.00/1.00
+[183/700] 9t6n_Speaking          win=11 cov(p/a/v)=1.00/1.00/1.00
+[184/700] 9t6n_Stroop            win=11 cov(p/a/v)=1.00/1.00/1.00
+[185/700] 9t6n_Video1            win=16 cov(p/a/v)=1.00/0.00/1.00
+[186/700] 9t6n_Video2            win=16 cov(p/a/v)=1.00/0.00/1.00
+[187/700] 9txq_Breathing         win=16 cov(p/a/v)=1.00/0.00/1.00
+[188/700] 9txq_Counting1         win=11 cov(p/a/v)=1.00/1.00/1.00
+[189/700] 9txq_Counting2         win=11 cov(p/a/v)=1.00/1.00/1.00
+[190/700] 9txq_Counting3         win=11 cov(p/a/v)=1.00/1.00/1.00
+[191/700] 9txq_Math              win=11 cov(p/a/v)=1.00/1.00/1.00
+[192/700] 9txq_Reading           win=11 cov(p/a/v)=1.00/1.00/1.00
+[193/700] 9txq_Relax             win=16 cov(p/a/v)=1.00/0.00/1.00
+[194/700] 9txq_Speaking          win=11 cov(p/a/v)=1.00/1.00/1.00
+[195/700] 9txq_Stroop            win=11 cov(p/a/v)=1.00/1.00/1.00
+[196/700] 9txq_Video1            win=16 cov(p/a/v)=1.00/0.00/1.00
+[197/700] 9txq_Video2            win=16 cov(p/a/v)=1.00/0.00/1.00
+[198/700] a1k9_Breathing         win=16 cov(p/a/v)=1.00/0.00/1.00
+[199/700] a1k9_Counting1         win=11 cov(p/a/v)=1.00/1.00/1.00
+[200/700] a1k9_Counting2         win=11 cov(p/a/v)=1.00/1.00/1.00
+[201/700] a1k9_Counting3         win=11 cov(p/a/v)=1.00/1.00/1.00
+[202/700] a1k9_Math              win=11 cov(p/a/v)=1.00/1.00/1.00
+[203/700] a1k9_Reading           win=11 cov(p/a/v)=1.00/1.00/1.00
+[204/700] a1k9_Relax             win=16 cov(p/a/v)=1.00/0.00/1.00
+[205/700] a1k9_Speaking          win=11 cov(p/a/v)=1.00/1.00/1.00
+[206/700] a1k9_Stroop            win=11 cov(p/a/v)=1.00/1.00/1.00
+[207/700] a1k9_Video1            win=16 cov(p/a/v)=1.00/0.00/1.00
+[208/700] a1k9_Video2            win=16 cov(p/a/v)=1.00/0.00/1.00
+[209/700] b2l8_Breathing         win=16 cov(p/a/v)=1.00/0.00/1.00
+[210/700] b2l8_Counting1         win=11 cov(p/a/v)=1.00/1.00/1.00
+[211/700] b2l8_Counting2         win=11 cov(p/a/v)=1.00/1.00/1.00
+[212/700] b2l8_Counting3         win=11 cov(p/a/v)=1.00/1.00/1.00
+[213/700] b2l8_Math              win=11 cov(p/a/v)=1.00/1.00/1.00
+[214/700] b2l8_Reading           win=11 cov(p/a/v)=1.00/1.00/1.00
+[215/700] b2l8_Relax             win=16 cov(p/a/v)=1.00/0.00/1.00
+[216/700] b2l8_Speaking          win=11 cov(p/a/v)=1.00/1.00/1.00
+[217/700] b2l8_Stroop            win=11 cov(p/a/v)=1.00/1.00/1.00
+[218/700] b2l8_Video1            win=16 cov(p/a/v)=1.00/0.00/1.00
+[219/700] b2l8_Video2            win=16 cov(p/a/v)=1.00/0.00/1.00
+[220/700] b9w0_Breathing         win=16 cov(p/a/v)=1.00/0.00/1.00
+[221/700] b9w0_Counting1         win=11 cov(p/a/v)=1.00/1.00/1.00
+[222/700] b9w0_Counting2         win=11 cov(p/a/v)=1.00/1.00/1.00
+[223/700] b9w0_Counting3         win=11 cov(p/a/v)=1.00/1.00/1.00
+[224/700] b9w0_Math              win=11 cov(p/a/v)=1.00/1.00/1.00
+[225/700] b9w0_Reading           win=11 cov(p/a/v)=1.00/1.00/1.00
+[226/700] b9w0_Relax             win=16 cov(p/a/v)=1.00/0.00/1.00
+[227/700] b9w0_Speaking          win=11 cov(p/a/v)=1.00/1.00/1.00
+[228/700] b9w0_Stroop            win=11 cov(p/a/v)=1.00/1.00/1.00
+[229/700] b9w0_Video1            win=16 cov(p/a/v)=1.00/0.00/1.00
+[230/700] b9w0_Video2            win=16 cov(p/a/v)=1.00/0.00/1.00
+[231/700] bfl5_Breathing         win=16 cov(p/a/v)=1.00/0.00/1.00
+[232/700] bfl5_Counting1         win=11 cov(p/a/v)=1.00/1.00/1.00
+[233/700] bfl5_Counting2         win=11 cov(p/a/v)=1.00/1.00/1.00
+[234/700] bfl5_Counting3         win=11 cov(p/a/v)=1.00/1.00/1.00
+[235/700] bfl5_Math              win=11 cov(p/a/v)=1.00/1.00/1.00
+[236/700] bfl5_Reading           win=11 cov(p/a/v)=1.00/1.00/1.00
+[237/700] bfl5_Relax             win=16 cov(p/a/v)=1.00/0.00/1.00
+[238/700] bfl5_Speaking          win=11 cov(p/a/v)=1.00/1.00/1.00
+[239/700] bfl5_Stroop            win=11 cov(p/a/v)=1.00/1.00/1.00
+[240/700] bfl5_Video1            win=16 cov(p/a/v)=1.00/0.00/1.00
+[241/700] bfl5_Video2            win=16 cov(p/a/v)=1.00/0.00/1.00
+[242/700] c3m7_Breathing         win=16 cov(p/a/v)=1.00/0.00/1.00
+[243/700] c3m7_Counting1         win=11 cov(p/a/v)=1.00/1.00/1.00
+[244/700] c3m7_Counting2         win=11 cov(p/a/v)=1.00/1.00/1.00
+[245/700] c3m7_Counting3         win=11 cov(p/a/v)=1.00/1.00/1.00
+[246/700] c3m7_Math              win=11 cov(p/a/v)=1.00/1.00/1.00
+[247/700] c3m7_Reading           win=11 cov(p/a/v)=1.00/1.00/1.00
+[248/700] c3m7_Relax             win=16 cov(p/a/v)=1.00/0.00/1.00
+[249/700] c3m7_Speaking          win=11 cov(p/a/v)=1.00/1.00/1.00
+[250/700] c3m7_Stroop            win=11 cov(p/a/v)=1.00/1.00/1.00
+[251/700] c3m7_Video1            win=16 cov(p/a/v)=1.00/0.00/1.00
+[252/700] c3m7_Video2            win=16 cov(p/a/v)=1.00/0.00/1.00
+[253/700] chdf_Breathing         win=16 cov(p/a/v)=1.00/0.00/1.00
+[254/700] chdf_Counting1         win=11 cov(p/a/v)=1.00/1.00/1.00
+[255/700] chdf_Counting2         win=11 cov(p/a/v)=1.00/1.00/1.00
+[256/700] chdf_Counting3         win=11 cov(p/a/v)=1.00/1.00/1.00
+[257/700] chdf_Math              win=11 cov(p/a/v)=1.00/1.00/1.00
+[258/700] chdf_Reading           win=11 cov(p/a/v)=1.00/1.00/1.00
+[259/700] chdf_Relax             win=16 cov(p/a/v)=1.00/0.00/1.00
+[260/700] chdf_Speaking          win=11 cov(p/a/v)=1.00/1.00/1.00
+[261/700] chdf_Stroop            win=11 cov(p/a/v)=1.00/1.00/1.00
+[262/700] chdf_Video1            win=16 cov(p/a/v)=1.00/0.00/1.00
+[263/700] chdf_Video2            win=16 cov(p/a/v)=1.00/0.00/1.00
+[264/700] ctzy_Breathing         win=16 cov(p/a/v)=1.00/0.00/1.00
+[265/700] ctzy_Counting1         win=11 cov(p/a/v)=1.00/1.00/1.00
+[266/700] ctzy_Counting2         win=11 cov(p/a/v)=1.00/1.00/1.00
+[267/700] ctzy_Counting3         win=11 cov(p/a/v)=1.00/1.00/1.00
+[268/700] ctzy_Math              win=11 cov(p/a/v)=1.00/1.00/1.00
+[269/700] ctzy_Reading           win=11 cov(p/a/v)=1.00/1.00/1.00
+[270/700] ctzy_Relax             win=16 cov(p/a/v)=1.00/0.00/1.00
+[271/700] ctzy_Speaking          win=11 cov(p/a/v)=1.00/1.00/1.00
+[272/700] ctzy_Stroop            win=11 cov(p/a/v)=1.00/1.00/1.00
+[273/700] ctzy_Video1            win=16 cov(p/a/v)=1.00/0.00/1.00
+[274/700] ctzy_Video2            win=16 cov(p/a/v)=1.00/0.00/1.00
+[275/700] cxj0_Breathing         win=16 cov(p/a/v)=1.00/0.00/1.00
+[276/700] cxj0_Counting1         win=11 cov(p/a/v)=1.00/1.00/1.00
+[277/700] cxj0_Counting2         win=11 cov(p/a/v)=1.00/1.00/1.00
+[278/700] cxj0_Counting3         win=11 cov(p/a/v)=1.00/1.00/1.00
+[279/700] cxj0_Math              win=11 cov(p/a/v)=1.00/1.00/1.00
+[280/700] cxj0_Reading           win=11 cov(p/a/v)=1.00/1.00/1.00
+[281/700] cxj0_Relax             win=16 cov(p/a/v)=1.00/0.00/1.00
+[282/700] cxj0_Speaking          win=11 cov(p/a/v)=1.00/1.00/1.00
+[283/700] cxj0_Stroop            win=11 cov(p/a/v)=1.00/1.00/1.00
+[284/700] cxj0_Video1            win=16 cov(p/a/v)=1.00/0.00/1.00
+[285/700] cxj0_Video2            win=16 cov(p/a/v)=1.00/0.00/1.00
+[286/700] d4n6_Breathing         win=16 cov(p/a/v)=1.00/0.00/1.00
+[287/700] d4n6_Counting1         win=11 cov(p/a/v)=1.00/1.00/1.00
+[288/700] d4n6_Counting2         win=11 cov(p/a/v)=1.00/1.00/1.00
+[289/700] d4n6_Counting3         win=11 cov(p/a/v)=1.00/1.00/1.00
+[290/700] d4n6_Math              win=11 cov(p/a/v)=1.00/1.00/1.00
+[291/700] d4n6_Reading           win=11 cov(p/a/v)=1.00/1.00/1.00
+[292/700] d4n6_Relax             win=16 cov(p/a/v)=1.00/0.00/1.00
+[293/700] d4n6_Speaking          win=11 cov(p/a/v)=1.00/1.00/1.00
+[294/700] d4n6_Stroop            win=11 cov(p/a/v)=1.00/1.00/1.00
+[295/700] d4n6_Video1            win=16 cov(p/a/v)=1.00/0.00/1.00
+[296/700] d4n6_Video2            win=16 cov(p/a/v)=1.00/0.00/1.00
+[297/700] dmbd_Breathing         win=16 cov(p/a/v)=1.00/0.00/0.00
+[298/700] dmbd_Counting1         win=11 cov(p/a/v)=1.00/0.00/0.00
+[299/700] dmbd_Counting2         win=11 cov(p/a/v)=1.00/0.00/0.00
+[300/700] dmbd_Counting3         win=11 cov(p/a/v)=1.00/0.00/0.00
+[301/700] dmbd_Math              win=11 cov(p/a/v)=1.00/0.00/0.00
+[302/700] dmbd_Reading           win=11 cov(p/a/v)=1.00/0.00/0.00
+[303/700] dmbd_Relax             win=16 cov(p/a/v)=1.00/0.00/0.00
+[304/700] dmbd_Speaking          win=11 cov(p/a/v)=1.00/0.00/0.00
+[305/700] dmbd_Stroop            win=11 cov(p/a/v)=1.00/0.00/0.00
+[306/700] dmbd_Video1            win=16 cov(p/a/v)=1.00/0.00/0.00
+[307/700] dmbd_Video2            win=16 cov(p/a/v)=1.00/0.00/0.00
+[308/700] e5p4_Breathing         win=16 cov(p/a/v)=1.00/0.00/1.00
+[309/700] e5p4_Counting1         win=11 cov(p/a/v)=1.00/1.00/1.00
+[310/700] e5p4_Counting2         win=11 cov(p/a/v)=1.00/1.00/1.00
+[311/700] e5p4_Counting3         win=11 cov(p/a/v)=1.00/1.00/1.00
+[312/700] e5p4_Math              win=11 cov(p/a/v)=1.00/1.00/1.00
+[313/700] e5p4_Reading           win=11 cov(p/a/v)=1.00/1.00/1.00
+[314/700] e5p4_Relax             win=16 cov(p/a/v)=1.00/0.00/1.00
+[315/700] e5p4_Speaking          win=11 cov(p/a/v)=1.00/1.00/1.00
+[316/700] e5p4_Stroop            win=11 cov(p/a/v)=1.00/1.00/1.00
+[317/700] e5p4_Video1            win=16 cov(p/a/v)=1.00/0.00/1.00
+[318/700] e5p4_Video2            win=16 cov(p/a/v)=1.00/0.00/1.00
+[319/700] f6q3_Breathing         win=16 cov(p/a/v)=1.00/0.00/1.00
+[320/700] f6q3_Counting1         win=11 cov(p/a/v)=1.00/0.00/1.00
+[321/700] f6q3_Counting2         win=11 cov(p/a/v)=1.00/0.00/1.00
+[322/700] f6q3_Counting3         win=11 cov(p/a/v)=1.00/0.00/1.00
+[323/700] f6q3_Math              win=11 cov(p/a/v)=1.00/0.00/1.00
+[324/700] f6q3_Reading           win=11 cov(p/a/v)=1.00/0.00/1.00
+[325/700] f6q3_Relax             win=16 cov(p/a/v)=1.00/0.00/1.00
+[326/700] f6q3_Speaking          win=11 cov(p/a/v)=1.00/0.00/1.00
+[327/700] f6q3_Stroop            win=11 cov(p/a/v)=1.00/0.00/1.00
+[328/700] f6q3_Video1            win=16 cov(p/a/v)=1.00/0.00/1.00
+[329/700] f6q3_Video2            win=16 cov(p/a/v)=1.00/0.00/1.00
+[330/700] g7r2_Breathing         win=16 cov(p/a/v)=1.00/0.00/1.00
+[331/700] g7r2_Counting1         win=11 cov(p/a/v)=1.00/1.00/1.00
+[332/700] g7r2_Counting2         win=11 cov(p/a/v)=1.00/1.00/1.00
+[333/700] g7r2_Counting3         win=11 cov(p/a/v)=1.00/1.00/1.00
+[334/700] g7r2_Math              win=11 cov(p/a/v)=1.00/1.00/1.00
+[335/700] g7r2_Reading           win=11 cov(p/a/v)=1.00/1.00/1.00
+[336/700] g7r2_Relax             win=16 cov(p/a/v)=1.00/0.00/1.00
+[337/700] g7r2_Speaking          win=11 cov(p/a/v)=1.00/1.00/1.00
+[338/700] g7r2_Stroop            win=11 cov(p/a/v)=1.00/1.00/1.00
+[339/700] g7r2_Video1            win=16 cov(p/a/v)=1.00/0.00/1.00
+[340/700] g7r2_Video2            win=16 cov(p/a/v)=1.00/0.00/1.00
+[341/700] g9j5_Breathing         win=16 cov(p/a/v)=1.00/0.00/1.00
+[342/700] g9j5_Counting1         win=11 cov(p/a/v)=1.00/1.00/1.00
+[343/700] g9j5_Counting2         win=11 cov(p/a/v)=1.00/1.00/1.00
+[344/700] g9j5_Counting3         win=11 cov(p/a/v)=1.00/1.00/1.00
+[345/700] g9j5_Math              win=11 cov(p/a/v)=1.00/1.00/1.00
+[346/700] g9j5_Reading           win=11 cov(p/a/v)=1.00/1.00/1.00
+[347/700] g9j5_Relax             win=16 cov(p/a/v)=1.00/0.00/1.00
+[348/700] g9j5_Speaking          win=11 cov(p/a/v)=1.00/1.00/1.00
+[349/700] g9j5_Stroop            win=11 cov(p/a/v)=1.00/1.00/1.00
+[350/700] g9j5_Video1            win=16 cov(p/a/v)=1.00/0.00/1.00
+[351/700] g9j5_Video2            win=16 cov(p/a/v)=1.00/0.00/1.00
+[352/700] h7j3_Breathing         win=16 cov(p/a/v)=1.00/0.00/1.00
+[353/700] h7j3_Counting1         win=11 cov(p/a/v)=1.00/1.00/1.00
+[354/700] h7j3_Counting2         win=11 cov(p/a/v)=1.00/1.00/1.00
+[355/700] h7j3_Counting3         win=11 cov(p/a/v)=1.00/1.00/1.00
+[356/700] h7j3_Math              win=11 cov(p/a/v)=1.00/1.00/1.00
+[357/700] h7j3_Reading           win=11 cov(p/a/v)=1.00/1.00/1.00
+[358/700] h7j3_Speaking          win=11 cov(p/a/v)=1.00/1.00/1.00
+[359/700] h7j3_Stroop            win=11 cov(p/a/v)=1.00/1.00/1.00
+[360/700] h7j3_Video1            win=16 cov(p/a/v)=1.00/0.00/1.00
+[361/700] h7j3_Video2            win=16 cov(p/a/v)=1.00/0.00/1.00
+[362/700] h8r2_Breathing         win=16 cov(p/a/v)=1.00/0.00/0.00
+[363/700] h8r2_Counting1         win=11 cov(p/a/v)=1.00/1.00/1.00
+[364/700] h8r2_Counting2         win=11 cov(p/a/v)=1.00/1.00/1.00
+[365/700] h8r2_Counting3         win=11 cov(p/a/v)=1.00/1.00/1.00
+[366/700] h8r2_Math              win=11 cov(p/a/v)=1.00/1.00/1.00
+[367/700] h8r2_Reading           win=11 cov(p/a/v)=1.00/1.00/1.00
+[368/700] h8r2_Relax             win=16 cov(p/a/v)=1.00/0.00/1.00
+[369/700] h8r2_Speaking          win=11 cov(p/a/v)=1.00/1.00/1.00
+[370/700] h8r2_Stroop            win=11 cov(p/a/v)=1.00/1.00/1.00
+[371/700] h8r2_Video1            win=16 cov(p/a/v)=1.00/0.00/1.00
+[372/700] h8r2_Video2            win=16 cov(p/a/v)=1.00/0.00/1.00
+[373/700] h8s1_Breathing         win=16 cov(p/a/v)=1.00/0.00/1.00
+[374/700] h8s1_Counting1         win=11 cov(p/a/v)=1.00/1.00/1.00
+[375/700] h8s1_Counting2         win=11 cov(p/a/v)=1.00/1.00/1.00
+[376/700] h8s1_Counting3         win=11 cov(p/a/v)=1.00/1.00/1.00
+[377/700] h8s1_Math              win=11 cov(p/a/v)=1.00/1.00/1.00
+[378/700] h8s1_Reading           win=11 cov(p/a/v)=1.00/1.00/1.00
+[379/700] h8s1_Relax             win=16 cov(p/a/v)=1.00/0.00/1.00
+[380/700] h8s1_Speaking          win=11 cov(p/a/v)=1.00/1.00/1.00
+[381/700] h8s1_Stroop            win=11 cov(p/a/v)=1.00/1.00/1.00
+[382/700] h8s1_Video1            win=16 cov(p/a/v)=1.00/0.00/1.00
+[383/700] h8s1_Video2            win=16 cov(p/a/v)=1.00/0.00/1.00
+[384/700] hvpa_Breathing         win=16 cov(p/a/v)=1.00/0.00/0.00
+[385/700] hvpa_Counting1         win=11 cov(p/a/v)=1.00/0.00/0.00
+[386/700] hvpa_Counting2         win=11 cov(p/a/v)=1.00/0.00/0.00
+[387/700] hvpa_Counting3         win=11 cov(p/a/v)=1.00/0.00/0.00
+[388/700] hvpa_Math              win=11 cov(p/a/v)=1.00/0.00/0.00
+[389/700] hvpa_Reading           win=11 cov(p/a/v)=1.00/0.00/0.00
+[390/700] hvpa_Relax             win=16 cov(p/a/v)=1.00/0.00/0.00
+[391/700] hvpa_Speaking          win=11 cov(p/a/v)=1.00/0.00/0.00
+[392/700] hvpa_Stroop            win=11 cov(p/a/v)=1.00/0.00/0.00
+[393/700] hvpa_Video1            win=16 cov(p/a/v)=1.00/0.00/0.00
+[394/700] hvpa_Video2            win=16 cov(p/a/v)=1.00/0.00/0.00
+[395/700] i9t9_Breathing         win=16 cov(p/a/v)=1.00/0.00/1.00
+[396/700] i9t9_Counting1         win=11 cov(p/a/v)=1.00/1.00/1.00
+[397/700] i9t9_Counting2         win=11 cov(p/a/v)=1.00/1.00/1.00
+[398/700] i9t9_Counting3         win=11 cov(p/a/v)=1.00/1.00/1.00
+[399/700] i9t9_Math              win=11 cov(p/a/v)=1.00/1.00/1.00
+[400/700] i9t9_Reading           win=11 cov(p/a/v)=1.00/1.00/1.00
+[401/700] i9t9_Relax             win=16 cov(p/a/v)=1.00/0.00/1.00
+[402/700] i9t9_Speaking          win=11 cov(p/a/v)=1.00/1.00/1.00
+[403/700] i9t9_Stroop            win=11 cov(p/a/v)=1.00/1.00/1.00
+[404/700] i9t9_Video1            win=16 cov(p/a/v)=1.00/0.00/1.00
+[405/700] i9t9_Video2            win=16 cov(p/a/v)=1.00/0.00/1.00
+[406/700] iqyg_Breathing         win=16 cov(p/a/v)=1.00/0.00/1.00
+[407/700] iqyg_Counting1         win=11 cov(p/a/v)=1.00/1.00/1.00
+[408/700] iqyg_Counting2         win=11 cov(p/a/v)=1.00/1.00/1.00
+[409/700] iqyg_Counting3         win=11 cov(p/a/v)=1.00/1.00/1.00
+[410/700] iqyg_Math              win=11 cov(p/a/v)=1.00/1.00/1.00
+[411/700] iqyg_Reading           win=11 cov(p/a/v)=1.00/1.00/1.00
+[412/700] iqyg_Relax             win=16 cov(p/a/v)=1.00/0.00/1.00
+[413/700] iqyg_Speaking          win=11 cov(p/a/v)=1.00/1.00/1.00
+[414/700] iqyg_Stroop            win=11 cov(p/a/v)=1.00/1.00/1.00
+[415/700] iqyg_Video1            win=16 cov(p/a/v)=1.00/0.00/1.00
+[416/700] iqyg_Video2            win=16 cov(p/a/v)=1.00/0.00/1.00
+[417/700] j1u8_Breathing         win=16 cov(p/a/v)=1.00/0.00/0.00
+[418/700] j1u8_Counting1         win=11 cov(p/a/v)=1.00/0.00/0.00
+[419/700] j1u8_Counting2         win=11 cov(p/a/v)=1.00/0.00/0.00
+[420/700] j1u8_Counting3         win=11 cov(p/a/v)=1.00/0.00/0.00
+[421/700] j1u8_Math              win=11 cov(p/a/v)=1.00/0.00/0.00
+[422/700] j1u8_Reading           win=11 cov(p/a/v)=1.00/0.00/0.00
+[423/700] j1u8_Relax             win=16 cov(p/a/v)=1.00/0.00/0.00
+[424/700] j1u8_Speaking          win=11 cov(p/a/v)=1.00/0.00/0.00
+[425/700] j1u8_Stroop            win=11 cov(p/a/v)=1.00/0.00/0.00
+[426/700] j1u8_Video2            win=16 cov(p/a/v)=1.00/0.00/0.00
+[427/700] j9h8_Breathing         win=16 cov(p/a/v)=1.00/0.00/1.00
+[428/700] j9h8_Counting1         win=11 cov(p/a/v)=1.00/1.00/1.00
+[429/700] j9h8_Counting2         win=11 cov(p/a/v)=1.00/1.00/1.00
+[430/700] j9h8_Counting3         win=11 cov(p/a/v)=1.00/1.00/1.00
+[431/700] j9h8_Math              win=11 cov(p/a/v)=1.00/1.00/1.00
+[432/700] j9h8_Reading           win=11 cov(p/a/v)=1.00/1.00/1.00
+[433/700] j9h8_Relax             win=16 cov(p/a/v)=1.00/0.00/1.00
+[434/700] j9h8_Speaking          win=11 cov(p/a/v)=1.00/1.00/1.00
+[435/700] j9h8_Stroop            win=11 cov(p/a/v)=1.00/1.00/1.00
+[436/700] j9h8_Video1            win=16 cov(p/a/v)=1.00/0.00/1.00
+[437/700] j9h8_Video2            win=16 cov(p/a/v)=1.00/0.00/1.00
+[438/700] k2v7_Breathing         win=16 cov(p/a/v)=1.00/0.00/1.00
+[439/700] k2v7_Counting1         win=11 cov(p/a/v)=1.00/1.00/1.00
+[440/700] k2v7_Counting2         win=11 cov(p/a/v)=1.00/1.00/1.00
+[441/700] k2v7_Counting3         win=11 cov(p/a/v)=1.00/1.00/1.00
+[442/700] k2v7_Math              win=11 cov(p/a/v)=1.00/1.00/1.00
+[443/700] k2v7_Reading           win=11 cov(p/a/v)=1.00/1.00/1.00
+[444/700] k2v7_Relax             win=16 cov(p/a/v)=1.00/0.00/1.00
+[445/700] k2v7_Speaking          win=11 cov(p/a/v)=1.00/1.00/1.00
+[446/700] k2v7_Stroop            win=11 cov(p/a/v)=1.00/1.00/1.00
+[447/700] k2v7_Video1            win=16 cov(p/a/v)=1.00/0.00/1.00
+[448/700] k2v7_Video2            win=16 cov(p/a/v)=1.00/0.00/1.00
+[449/700] k67g_Breathing         win=16 cov(p/a/v)=1.00/0.00/0.00
+[450/700] k67g_Counting1         win=11 cov(p/a/v)=1.00/1.00/1.00
+[451/700] k67g_Counting2         win=11 cov(p/a/v)=1.00/1.00/1.00
+[452/700] k67g_Counting3         win=11 cov(p/a/v)=1.00/1.00/1.00
+[453/700] k67g_Math              win=11 cov(p/a/v)=1.00/1.00/1.00
+[454/700] k67g_Reading           win=11 cov(p/a/v)=1.00/1.00/1.00
+[455/700] k67g_Relax             win=16 cov(p/a/v)=1.00/0.00/1.00
+[456/700] k67g_Speaking          win=11 cov(p/a/v)=1.00/1.00/1.00
+[457/700] k67g_Stroop            win=11 cov(p/a/v)=1.00/1.00/1.00
+[458/700] k67g_Video1            win=16 cov(p/a/v)=1.00/0.00/0.00
+[459/700] k67g_Video2            win=16 cov(p/a/v)=1.00/0.00/1.00
+[460/700] kkf5_Breathing         win=16 cov(p/a/v)=1.00/0.00/1.00
+[461/700] kkf5_Counting1         win=11 cov(p/a/v)=1.00/1.00/1.00
+[462/700] kkf5_Counting2         win=11 cov(p/a/v)=1.00/1.00/1.00
+[463/700] kkf5_Counting3         win=11 cov(p/a/v)=1.00/1.00/1.00
+[464/700] kkf5_Math              win=11 cov(p/a/v)=1.00/1.00/1.00
+[465/700] kkf5_Reading           win=11 cov(p/a/v)=1.00/1.00/1.00
+[466/700] kkf5_Relax             win=16 cov(p/a/v)=1.00/0.00/1.00
+[467/700] kkf5_Speaking          win=11 cov(p/a/v)=1.00/1.00/1.00
+[468/700] kkf5_Stroop            win=11 cov(p/a/v)=1.00/1.00/1.00
+[469/700] kkf5_Video1            win=16 cov(p/a/v)=1.00/0.00/1.00
+[470/700] kkf5_Video2            win=16 cov(p/a/v)=1.00/0.00/1.00
+[471/700] kycf_Breathing         win=16 cov(p/a/v)=1.00/0.00/1.00
+[472/700] kycf_Counting1         win=11 cov(p/a/v)=1.00/1.00/1.00
+[473/700] kycf_Counting2         win=11 cov(p/a/v)=1.00/1.00/1.00
+[474/700] kycf_Counting3         win=11 cov(p/a/v)=1.00/1.00/1.00
+[475/700] kycf_Math              win=11 cov(p/a/v)=1.00/1.00/1.00
+[476/700] kycf_Reading           win=11 cov(p/a/v)=1.00/1.00/1.00
+[477/700] kycf_Relax             win=16 cov(p/a/v)=1.00/0.00/1.00
+[478/700] kycf_Speaking          win=11 cov(p/a/v)=1.00/1.00/1.00
+[479/700] kycf_Stroop            win=11 cov(p/a/v)=1.00/1.00/1.00
+[480/700] kycf_Video1            win=16 cov(p/a/v)=1.00/0.00/1.00
+[481/700] kycf_Video2            win=16 cov(p/a/v)=1.00/0.00/1.00
+[482/700] m8g5_Breathing         win=16 cov(p/a/v)=1.00/0.00/1.00
+[483/700] m8g5_Counting1         win=11 cov(p/a/v)=1.00/1.00/1.00
+[484/700] m8g5_Counting2         win=11 cov(p/a/v)=1.00/1.00/1.00
+[485/700] m8g5_Counting3         win=11 cov(p/a/v)=1.00/1.00/1.00
+[486/700] m8g5_Math              win=11 cov(p/a/v)=1.00/1.00/1.00
+[487/700] m8g5_Reading           win=11 cov(p/a/v)=1.00/1.00/1.00
+[488/700] m8g5_Relax             win=16 cov(p/a/v)=1.00/0.00/1.00
+[489/700] m8g5_Speaking          win=11 cov(p/a/v)=1.00/1.00/1.00
+[490/700] m8g5_Stroop            win=11 cov(p/a/v)=1.00/1.00/1.00
+[491/700] m8g5_Video1            win=16 cov(p/a/v)=1.00/0.00/1.00
+[492/700] m8g5_Video2            win=16 cov(p/a/v)=1.00/0.00/1.00
+[493/700] p9i3_Breathing         win=16 cov(p/a/v)=1.00/0.00/1.00
+[494/700] p9i3_Counting1         win=11 cov(p/a/v)=1.00/1.00/1.00
+[495/700] p9i3_Counting2         win=11 cov(p/a/v)=1.00/1.00/1.00
+[496/700] p9i3_Counting3         win=11 cov(p/a/v)=1.00/1.00/1.00
+[497/700] p9i3_Math              win=11 cov(p/a/v)=1.00/1.00/1.00
+[498/700] p9i3_Reading           win=11 cov(p/a/v)=1.00/1.00/1.00
+[499/700] p9i3_Relax             win=16 cov(p/a/v)=1.00/0.00/1.00
+[500/700] p9i3_Speaking          win=11 cov(p/a/v)=1.00/1.00/1.00
+[501/700] p9i3_Stroop            win=11 cov(p/a/v)=1.00/1.00/1.00
+[502/700] p9i3_Video1            win=16 cov(p/a/v)=1.00/0.00/1.00
+[503/700] p9i3_Video2            win=16 cov(p/a/v)=1.00/0.00/1.00
+[504/700] ql3b_Breathing         win=16 cov(p/a/v)=1.00/0.00/0.00
+[505/700] ql3b_Counting1         win=11 cov(p/a/v)=1.00/0.00/0.00
+[506/700] ql3b_Counting2         win=11 cov(p/a/v)=1.00/0.00/0.00
+[507/700] ql3b_Counting3         win=11 cov(p/a/v)=1.00/0.00/0.00
+[508/700] ql3b_Math              win=11 cov(p/a/v)=1.00/0.00/0.00
+[509/700] ql3b_Reading           win=11 cov(p/a/v)=1.00/0.00/0.00
+[510/700] ql3b_Relax             win=16 cov(p/a/v)=1.00/0.00/0.00
+[511/700] ql3b_Speaking          win=11 cov(p/a/v)=1.00/0.00/0.00
+[512/700] ql3b_Stroop            win=11 cov(p/a/v)=1.00/0.00/0.00
+[513/700] ql3b_Video1            win=16 cov(p/a/v)=1.00/0.00/0.00
+[514/700] ql3b_Video2            win=16 cov(p/a/v)=1.00/0.00/0.00
+[515/700] qw5t_Breathing         win=16 cov(p/a/v)=1.00/0.00/1.00
+[516/700] qw5t_Counting1         win=11 cov(p/a/v)=1.00/1.00/1.00
+[517/700] qw5t_Counting2         win=11 cov(p/a/v)=1.00/1.00/1.00
+[518/700] qw5t_Counting3         win=11 cov(p/a/v)=1.00/1.00/1.00
+[519/700] qw5t_Math              win=11 cov(p/a/v)=1.00/1.00/1.00
+[520/700] qw5t_Reading           win=11 cov(p/a/v)=1.00/1.00/1.00
+[521/700] qw5t_Relax             win=16 cov(p/a/v)=1.00/0.00/1.00
+[522/700] qw5t_Speaking          win=11 cov(p/a/v)=1.00/1.00/1.00
+[523/700] qw5t_Stroop            win=11 cov(p/a/v)=1.00/1.00/1.00
+[524/700] qw5t_Video1            win=16 cov(p/a/v)=1.00/0.00/1.00
+[525/700] qw5t_Video2            win=16 cov(p/a/v)=1.00/0.00/1.00
+[526/700] qx2o_Breathing         win=16 cov(p/a/v)=1.00/0.00/0.00
+[527/700] qx2o_Counting1         win=11 cov(p/a/v)=1.00/0.00/0.00
+[528/700] qx2o_Counting2         win=11 cov(p/a/v)=1.00/0.00/0.00
+[529/700] qx2o_Counting3         win=11 cov(p/a/v)=1.00/0.00/0.00
+[530/700] qx2o_Math              win=11 cov(p/a/v)=1.00/0.00/0.00
+[531/700] qx2o_Reading           win=11 cov(p/a/v)=1.00/0.00/0.00
+[532/700] qx2o_Relax             win=16 cov(p/a/v)=1.00/0.00/0.00
+[533/700] qx2o_Speaking          win=11 cov(p/a/v)=1.00/0.00/0.00
+[534/700] qx2o_Stroop            win=11 cov(p/a/v)=1.00/0.00/0.00
+[535/700] qx2o_Video1            win=16 cov(p/a/v)=1.00/0.00/0.00
+[536/700] qx2o_Video2            win=16 cov(p/a/v)=1.00/0.00/0.00
+[537/700] r0a3_Breathing         win=16 cov(p/a/v)=1.00/0.00/0.00
+[538/700] r0a3_Counting1         win=11 cov(p/a/v)=1.00/0.00/0.00
+[539/700] r0a3_Counting2         win=11 cov(p/a/v)=1.00/0.00/0.00
+[540/700] r0a3_Counting3         win=11 cov(p/a/v)=1.00/0.00/0.00
+[541/700] r0a3_Math              win=11 cov(p/a/v)=1.00/0.00/0.00
+[542/700] r0a3_Reading           win=11 cov(p/a/v)=1.00/0.00/0.00
+[543/700] r0a3_Relax             win=16 cov(p/a/v)=1.00/0.00/0.00
+[544/700] r0a3_Speaking          win=11 cov(p/a/v)=1.00/0.00/0.00
+[545/700] r0a3_Stroop            win=11 cov(p/a/v)=1.00/0.00/0.00
+[546/700] r0a3_Video1            win=16 cov(p/a/v)=1.00/0.00/0.00
+[547/700] r0a3_Video2            win=16 cov(p/a/v)=1.00/0.00/0.00
+[548/700] r3zm_Breathing         win=16 cov(p/a/v)=1.00/0.00/1.00
+[549/700] r3zm_Counting1         win=11 cov(p/a/v)=1.00/1.00/1.00
+[550/700] r3zm_Counting2         win=11 cov(p/a/v)=1.00/1.00/1.00
+[551/700] r3zm_Counting3         win=11 cov(p/a/v)=1.00/1.00/1.00
+[552/700] r3zm_Math              win=11 cov(p/a/v)=1.00/1.00/1.00
+[553/700] r3zm_Reading           win=11 cov(p/a/v)=1.00/1.00/1.00
+[554/700] r3zm_Relax             win=16 cov(p/a/v)=1.00/0.00/1.00
+[555/700] r3zm_Speaking          win=11 cov(p/a/v)=1.00/1.00/1.00
+[556/700] r3zm_Stroop            win=11 cov(p/a/v)=1.00/1.00/1.00
+[557/700] r3zm_Video1            win=16 cov(p/a/v)=1.00/0.00/1.00
+[558/700] r3zm_Video2            win=16 cov(p/a/v)=1.00/0.00/1.00
+[559/700] r5s8_Breathing         win=16 cov(p/a/v)=1.00/0.00/1.00
+[560/700] r5s8_Counting1         win=11 cov(p/a/v)=1.00/1.00/1.00
+[561/700] r5s8_Counting2         win=11 cov(p/a/v)=1.00/1.00/1.00
+[562/700] r5s8_Counting3         win=11 cov(p/a/v)=1.00/1.00/1.00
+[563/700] r5s8_Math              win=11 cov(p/a/v)=1.00/1.00/1.00
+[564/700] r5s8_Reading           win=11 cov(p/a/v)=1.00/1.00/1.00
+[565/700] r5s8_Relax             win=16 cov(p/a/v)=1.00/0.00/1.00
+[566/700] r5s8_Speaking          win=11 cov(p/a/v)=1.00/1.00/1.00
+[567/700] r5s8_Stroop            win=11 cov(p/a/v)=1.00/1.00/1.00
+[568/700] r5s8_Video1            win=16 cov(p/a/v)=1.00/0.00/1.00
+[569/700] r5s8_Video2            win=16 cov(p/a/v)=1.00/0.00/1.00
+[570/700] t6v9_Breathing         win=16 cov(p/a/v)=1.00/0.00/1.00
+[571/700] t6v9_Counting1         win=11 cov(p/a/v)=1.00/1.00/1.00
+[572/700] t6v9_Counting2         win=11 cov(p/a/v)=1.00/1.00/1.00
+[573/700] t6v9_Counting3         win=11 cov(p/a/v)=1.00/1.00/1.00
+[574/700] t6v9_Math              win=11 cov(p/a/v)=1.00/1.00/1.00
+[575/700] t6v9_Reading           win=11 cov(p/a/v)=1.00/1.00/1.00
+[576/700] t6v9_Relax             win=16 cov(p/a/v)=1.00/0.00/1.00
+[577/700] t6v9_Speaking          win=11 cov(p/a/v)=1.00/1.00/1.00
+[578/700] t6v9_Stroop            win=11 cov(p/a/v)=1.00/1.00/1.00
+[579/700] t6v9_Video1            win=16 cov(p/a/v)=1.00/0.00/1.00
+[580/700] t6v9_Video2            win=16 cov(p/a/v)=1.00/0.00/1.00
+[581/700] tmvd_Breathing         win=16 cov(p/a/v)=1.00/0.00/1.00
+[582/700] tmvd_Counting1         win=11 cov(p/a/v)=1.00/1.00/1.00
+[583/700] tmvd_Counting2         win=11 cov(p/a/v)=1.00/1.00/1.00
+[584/700] tmvd_Counting3         win=11 cov(p/a/v)=1.00/1.00/1.00
+[585/700] tmvd_Math              win=11 cov(p/a/v)=1.00/1.00/1.00
+[586/700] tmvd_Reading           win=11 cov(p/a/v)=1.00/1.00/1.00
+[587/700] tmvd_Relax             win=16 cov(p/a/v)=1.00/0.00/1.00
+[588/700] tmvd_Speaking          win=11 cov(p/a/v)=1.00/1.00/1.00
+[589/700] tmvd_Stroop            win=11 cov(p/a/v)=1.00/1.00/1.00
+[590/700] tmvd_Video1            win=16 cov(p/a/v)=1.00/0.00/1.00
+[591/700] tmvd_Video2            win=16 cov(p/a/v)=1.00/0.00/1.00
+[592/700] u3v9_Breathing         win=16 cov(p/a/v)=1.00/0.00/0.00
+[593/700] u3v9_Counting1         win=11 cov(p/a/v)=1.00/1.00/0.00
+[594/700] u3v9_Counting2         win=11 cov(p/a/v)=1.00/1.00/0.00
+[595/700] u3v9_Counting3         win=11 cov(p/a/v)=1.00/1.00/0.00
+[596/700] u3v9_Math              win=11 cov(p/a/v)=1.00/1.00/0.00
+[597/700] u3v9_Reading           win=11 cov(p/a/v)=1.00/1.00/0.00
+[598/700] u3v9_Relax             win=16 cov(p/a/v)=1.00/0.00/0.00
+[599/700] u3v9_Speaking          win=11 cov(p/a/v)=1.00/1.00/0.00
+[600/700] u3v9_Stroop            win=11 cov(p/a/v)=1.00/1.00/0.00
+[601/700] u3v9_Video1            win=16 cov(p/a/v)=1.00/0.00/0.00
+[602/700] u3v9_Video2            win=16 cov(p/a/v)=1.00/0.00/0.00
+[603/700] uymz_Breathing         win=16 cov(p/a/v)=1.00/0.00/1.00
+[604/700] uymz_Counting1         win=11 cov(p/a/v)=1.00/1.00/1.00
+[605/700] uymz_Counting2         win=11 cov(p/a/v)=1.00/1.00/1.00
+[606/700] uymz_Counting3         win=11 cov(p/a/v)=1.00/1.00/1.00
+[607/700] uymz_Math              win=11 cov(p/a/v)=1.00/1.00/1.00
+[608/700] uymz_Reading           win=11 cov(p/a/v)=1.00/1.00/1.00
+[609/700] uymz_Relax             win=16 cov(p/a/v)=1.00/0.00/1.00
+[610/700] uymz_Speaking          win=11 cov(p/a/v)=1.00/1.00/1.00
+[611/700] uymz_Stroop            win=11 cov(p/a/v)=1.00/1.00/1.00
+[612/700] uymz_Video1            win=16 cov(p/a/v)=1.00/0.00/1.00
+[613/700] uymz_Video2            win=16 cov(p/a/v)=1.00/0.00/1.00
+[614/700] uyrl_Breathing         win=16 cov(p/a/v)=1.00/0.00/0.00
+[615/700] uyrl_Counting1         win=11 cov(p/a/v)=1.00/0.00/0.00
+[616/700] uyrl_Counting2         win=11 cov(p/a/v)=1.00/0.00/0.00
+[617/700] uyrl_Counting3         win=11 cov(p/a/v)=1.00/0.00/0.00
+[618/700] uyrl_Math              win=11 cov(p/a/v)=1.00/0.00/0.00
+[619/700] uyrl_Reading           win=11 cov(p/a/v)=1.00/0.00/0.00
+[620/700] uyrl_Relax             win=16 cov(p/a/v)=1.00/0.00/0.00
+[621/700] uyrl_Speaking          win=11 cov(p/a/v)=1.00/0.00/0.00
+[622/700] uyrl_Stroop            win=11 cov(p/a/v)=1.00/0.00/0.00
+[623/700] uyrl_Video1            win=16 cov(p/a/v)=1.00/0.00/0.00
+[624/700] uyrl_Video2            win=16 cov(p/a/v)=1.00/0.00/0.00
+[625/700] v8mh_Breathing         win=16 cov(p/a/v)=1.00/0.00/1.00
+[626/700] v8mh_Counting1         win=11 cov(p/a/v)=1.00/1.00/1.00
+[627/700] v8mh_Counting2         win=11 cov(p/a/v)=1.00/1.00/1.00
+[628/700] v8mh_Counting3         win=11 cov(p/a/v)=1.00/1.00/1.00
+[629/700] v8mh_Math              win=11 cov(p/a/v)=1.00/1.00/1.00
+[630/700] v8mh_Reading           win=11 cov(p/a/v)=1.00/1.00/1.00
+[631/700] v8mh_Relax             win=16 cov(p/a/v)=1.00/0.00/1.00
+[632/700] v8mh_Speaking          win=11 cov(p/a/v)=1.00/1.00/1.00
+[633/700] v8mh_Stroop            win=11 cov(p/a/v)=1.00/1.00/1.00
+[634/700] v8mh_Video1            win=16 cov(p/a/v)=1.00/0.00/1.00
+[635/700] v8mh_Video2            win=16 cov(p/a/v)=1.00/0.00/1.00
+[636/700] w2t5_Breathing         win=16 cov(p/a/v)=1.00/0.00/1.00
+[637/700] w2t5_Counting1         win=11 cov(p/a/v)=1.00/1.00/1.00
+[638/700] w2t5_Counting2         win=11 cov(p/a/v)=1.00/1.00/1.00
+[639/700] w2t5_Counting3         win=11 cov(p/a/v)=1.00/1.00/1.00
+[640/700] w2t5_Math              win=11 cov(p/a/v)=1.00/1.00/1.00
+[641/700] w2t5_Reading           win=11 cov(p/a/v)=1.00/1.00/1.00
+[642/700] w2t5_Relax             win=16 cov(p/a/v)=1.00/0.00/1.00
+[643/700] w2t5_Speaking          win=11 cov(p/a/v)=1.00/1.00/1.00
+[644/700] w2t5_Stroop            win=11 cov(p/a/v)=1.00/1.00/1.00
+[645/700] w2t5_Video1            win=16 cov(p/a/v)=1.00/0.00/1.00
+[646/700] w2t5_Video2            win=16 cov(p/a/v)=1.00/0.00/1.00
+[647/700] wfsl_Breathing         win=16 cov(p/a/v)=1.00/0.00/0.00
+[648/700] wfsl_Counting1         win=11 cov(p/a/v)=1.00/0.00/0.00
+[649/700] wfsl_Counting2         win=11 cov(p/a/v)=1.00/0.00/0.00
+[650/700] wfsl_Counting3         win=11 cov(p/a/v)=1.00/0.00/0.00
+[651/700] wfsl_Math              win=11 cov(p/a/v)=1.00/0.00/0.00
+[652/700] wfsl_Reading           win=11 cov(p/a/v)=1.00/0.00/0.00
+[653/700] wfsl_Speaking          win=11 cov(p/a/v)=1.00/0.00/0.00
+[654/700] wfsl_Stroop            win=11 cov(p/a/v)=1.00/0.00/0.00
+[655/700] wfsl_Video1            win=16 cov(p/a/v)=1.00/0.00/0.00
+[656/700] wfsl_Video2            win=16 cov(p/a/v)=1.00/0.00/0.00
+[657/700] wssm_Breathing         win=16 cov(p/a/v)=1.00/0.00/1.00
+[658/700] wssm_Counting1         win=11 cov(p/a/v)=1.00/1.00/1.00
+[659/700] wssm_Counting2         win=11 cov(p/a/v)=1.00/1.00/1.00
+[660/700] wssm_Counting3         win=11 cov(p/a/v)=1.00/1.00/1.00
+[661/700] wssm_Math              win=11 cov(p/a/v)=1.00/1.00/1.00
+[662/700] wssm_Reading           win=11 cov(p/a/v)=1.00/1.00/1.00
+[663/700] wssm_Relax             win=16 cov(p/a/v)=1.00/0.00/1.00
+[664/700] wssm_Speaking          win=11 cov(p/a/v)=1.00/1.00/1.00
+[665/700] wssm_Stroop            win=11 cov(p/a/v)=1.00/1.00/1.00
+[666/700] wssm_Video1            win=16 cov(p/a/v)=1.00/0.00/1.00
+[667/700] wssm_Video2            win=16 cov(p/a/v)=1.00/0.00/1.00
+[668/700] x1q3_Breathing         win=16 cov(p/a/v)=1.00/0.00/1.00
+[669/700] x1q3_Counting1         win=11 cov(p/a/v)=1.00/1.00/1.00
+[670/700] x1q3_Counting2         win=11 cov(p/a/v)=1.00/1.00/1.00
+[671/700] x1q3_Counting3         win=11 cov(p/a/v)=1.00/1.00/1.00
+[672/700] x1q3_Math              win=11 cov(p/a/v)=1.00/1.00/1.00
+[673/700] x1q3_Reading           win=11 cov(p/a/v)=1.00/1.00/1.00
+[674/700] x1q3_Relax             win=16 cov(p/a/v)=1.00/0.00/1.00
+[675/700] x1q3_Speaking          win=11 cov(p/a/v)=1.00/1.00/1.00
+[676/700] x1q3_Stroop            win=11 cov(p/a/v)=1.00/1.00/1.00
+[677/700] x1q3_Video1            win=16 cov(p/a/v)=1.00/0.00/1.00
+[678/700] x1q3_Video2            win=16 cov(p/a/v)=1.00/0.00/1.00
+[679/700] y8c3_Breathing         win=16 cov(p/a/v)=1.00/0.00/1.00
+[680/700] y8c3_Counting1         win=11 cov(p/a/v)=1.00/1.00/1.00
+[681/700] y8c3_Counting2         win=11 cov(p/a/v)=1.00/1.00/1.00
+[682/700] y8c3_Counting3         win=11 cov(p/a/v)=1.00/1.00/1.00
+[683/700] y8c3_Math              win=11 cov(p/a/v)=1.00/1.00/1.00
+[684/700] y8c3_Reading           win=11 cov(p/a/v)=1.00/1.00/1.00
+[685/700] y8c3_Relax             win=16 cov(p/a/v)=1.00/0.00/1.00
+[686/700] y8c3_Speaking          win=11 cov(p/a/v)=1.00/1.00/1.00
+[687/700] y8c3_Stroop            win=11 cov(p/a/v)=1.00/1.00/1.00
+[688/700] y8c3_Video1            win=16 cov(p/a/v)=1.00/0.00/1.00
+[689/700] y8c3_Video2            win=16 cov(p/a/v)=1.00/0.00/1.00
+[690/700] y9z6_Breathing         win=16 cov(p/a/v)=1.00/0.00/1.00
+[691/700] y9z6_Counting1         win=11 cov(p/a/v)=1.00/1.00/1.00
+[692/700] y9z6_Counting2         win=11 cov(p/a/v)=1.00/1.00/1.00
+[693/700] y9z6_Counting3         win=11 cov(p/a/v)=1.00/1.00/1.00
+[694/700] y9z6_Math              win=11 cov(p/a/v)=1.00/1.00/1.00
+[695/700] y9z6_Reading           win=11 cov(p/a/v)=1.00/1.00/1.00
+[696/700] y9z6_Relax             win=16 cov(p/a/v)=1.00/0.00/1.00
+[697/700] y9z6_Speaking          win=11 cov(p/a/v)=1.00/1.00/1.00
+[698/700] y9z6_Stroop            win=11 cov(p/a/v)=1.00/1.00/1.00
+[699/700] y9z6_Video1            win=16 cov(p/a/v)=1.00/0.00/1.00
+[700/700] y9z6_Video2            win=16 cov(p/a/v)=1.00/0.00/1.00
+[preprocess] cache -> F:\stressID\research_way\data\cache_full | 700 ok, 0 failed
+== stage preprocess took 930s
+
+[run_full] total 930s | results -> F:\stressID\research_way\results\full
