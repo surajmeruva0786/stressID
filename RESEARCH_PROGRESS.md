@@ -226,3 +226,63 @@ TRAINING STRATEGY
 |---|---|
 | 2026-06-04 | Initial research plan created — baselines analyzed, architecture designed, future work prioritized |
 | 2026-06-04 | Added `.claude/settings.local.json` with PostToolUse hook for auto-commit and push on every Write/Edit |
+| 2026-07-28 | `research_way/` implementation built and validated on a 16-subject / 6-task subset |
+| 2026-07-29 | **Trained on the entire corpus** — 64 subjects, 11 tasks, 700 recordings, 5-fold GroupKFold, 30 fold-models. Results in `research_way/results/full/` |
+
+---
+
+## 9. Full-Corpus Results (2026-07-29)
+
+Protocol: 5-fold subject GroupKFold, 3 seeds × 5 folds × {temporal, static} = 30
+fold-models, best-val-F1 checkpoint per fold. 700 recordings / 64 subjects / 11 tasks.
+
+### 9.1 The finding: modality availability leaks the label
+
+Audio exists only for the 7 speech tasks, which are mostly the stressful ones:
+P(stress | audio) = 0.71 vs P(stress | no audio) = 0.31.
+
+| classifier (leakage-free, 700 recordings) | macro F1 |
+|---|---|
+| `availability_only` — **3 presence bits, no signal content** | **0.697** |
+| feature fusion (RF) | 0.685 |
+| audio (logreg) | 0.686 |
+| physio (logreg) | 0.565 |
+| trained multimodal transformer (temporal) | 0.671 |
+
+The 1.2 M-parameter multimodal model **loses to three presence bits**. Any
+missing-modality claim on StressID is uninterpretable without controlling for this.
+
+### 9.2 Model performance with the shortcut removed
+
+Scored only on the 364 recordings where all three modalities naturally exist
+(availability constant, so it cannot be read):
+
+| variant | macro F1 [95% CI] | majority reference | margin |
+|---|---|---|---|
+| static | 0.476 [0.452, 0.504] | 0.418 | +0.058 |
+| temporal | 0.487 [0.451, 0.525] | 0.418 | +0.069 |
+
+Small but reliably above the majority reference — an improvement on the 16-subject
+subset, where the margin was −0.007 / +0.028 (at chance).
+
+### 9.3 Null results (report as null)
+
+- **Temporal vs static:** +0.011 [−0.041, +0.063], p = 0.677. Weakness #1 in §3 is
+  not addressed by temporal modelling at this data scale.
+- **Missing-modality cost:** of 12 paired condition-vs-full tests, one is nominally
+  significant and none survives Bonferroni. Degradation curves are flat-to-rising.
+- **3-class collapse (weakness #9) persists:** per-class recall 0.05 / 0.39 / 0.60,
+  macro F1 0.318 — essentially unchanged by 7× more data than the subset run.
+- **Overfitting:** train BCE → 0.09 while val F1 peaks between epoch 1 and 22 and
+  decays. 448 training recordings cannot train three encoders + fusion from scratch.
+
+### 9.4 What this changes about the plan
+
+§4.1 (temporal) and §4.3 (cross-modal fusion) are implemented and do **not** produce
+gains on StressID alone — so they cannot carry the paper by themselves. The two viable
+directions are now §4.4-as-contribution (the confound + leakage-free protocol is the
+result) and §4.7 / Stage −1 self-supervised or multi-dataset pretraining, which the
+memorisation behaviour shows is the binding constraint.
+
+Suggested retitle, replacing §7's options:
+*"Modality Availability Leaks the Label: A Confound in Multimodal Stress Benchmarks"*
