@@ -76,12 +76,12 @@ def _fit_eval(X: np.ndarray, y: np.ndarray, tr: np.ndarray, te: np.ndarray,
 
 def run(cfg: Config | None = None) -> pd.DataFrame:
     cfg = cfg or Config()
-    man = load_manifest()
+    man = load_manifest(cfg)
     feats = extract_static_features(cfg, man)
     y = man["binary"].values
     subj = man["subject"].values
 
-    folds = load_splits()
+    folds = load_splits(cfg)
     grouped = [(np.where(~np.isin(subj, f["test"]))[0],
                 np.where(np.isin(subj, f["test"]))[0]) for f in folds]
     kf = KFold(n_splits=cfg.n_folds, shuffle=True, random_state=cfg.seed)
