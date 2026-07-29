@@ -221,6 +221,10 @@ def run(cfg: Config | None = None) -> dict:
     report["E12_degradation_curve"] = curve.to_dict("records")
     report["E12_paired_tests"] = [p for p in e12_pairs if p]
 
+    vs_full = _vs_full(per_run)
+    vs_full.to_csv(rd / "e12_vs_full_tests.csv", index=False)
+    report["E12_condition_vs_full"] = vs_full.to_dict("records")
+
     # ---- E13: calibration under missing modalities
     rel_rows, ece_rows = [], []
     for (variant, cond), g in preds.groupby(["variant", "condition"]):
