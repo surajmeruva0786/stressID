@@ -101,24 +101,25 @@ nothing else has to change.
 ## ⚠ Confound found while building this: modality availability leaks the label
 
 In StressID, audio exists **only for the 7 speech tasks**, and those are mostly the
-stressful ones. Across the **whole dataset** (not just this subset):
+stressful ones. Over the full 700-recording corpus:
 
 ```
-P(stress | audio file exists) = 0.683
-P(stress | no audio file)     = 0.246
+P(stress | audio file exists) = 0.71
+P(stress | no audio file)     = 0.31
 ```
 
 So "is there an audio file?" is itself a strong stress cue. The `availability_only`
 row in `baselines.csv` makes the cost concrete — it is a classifier fed **only the
 three modality-presence bits and no signal content whatsoever**:
 
-| baseline (GroupKFold) | accuracy | macro F1 |
+| baseline (5-fold GroupKFold, 700 recordings) | accuracy | macro F1 |
 |---|---|---|
-| physio (logreg) | 0.646 | 0.642 |
-| audio (logreg) | 0.708 | 0.704 |
-| video (logreg) | 0.510 | 0.503 |
-| feature fusion (RF) | 0.750 | 0.747 |
-| **availability_only** | **0.781** | **0.774** |
+| physio (logreg / RF) | 0.569 / 0.546 | 0.565 / 0.540 |
+| audio (logreg / RF) | 0.689 / 0.681 | 0.686 / 0.678 |
+| video (logreg / RF) | 0.601 / 0.626 | 0.590 / 0.622 |
+| feature fusion (RF) | 0.691 | 0.685 |
+| decision fusion (RF) | 0.690 | 0.688 |
+| **availability_only** | **0.700 / 0.698** | **0.697 / 0.696** |
 
 Three modality-presence bits beat every real multimodal baseline. Any model that can
 observe which modalities are present — which is exactly what a missing-modality
