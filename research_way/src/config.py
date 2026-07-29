@@ -13,8 +13,7 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parents[2]          # F:\stressID
 DATASET_ROOT = REPO_ROOT / "StressID Dataset"
 RESEARCH_ROOT = REPO_ROOT / "research_way"
-DATA_DIR = RESEARCH_ROOT / "data_small"
-CACHE_DIR = DATA_DIR / "cache"
+DATA_DIR = RESEARCH_ROOT / "data"
 RESULTS_DIR = RESEARCH_ROOT / "results"
 
 MODALITIES = ("physio", "audio", "video")
