@@ -94,6 +94,11 @@ class Config:
 
     # ---- bookkeeping ----
     run_name: str = "small"
+    # Manifest / splits / window cache are namespaced by this tag. The cache MUST
+    # be per-tag: physio is z-scored per subject with stats pooled over that
+    # subject's recordings *in the manifest*, so the same (subject, task) window
+    # sequence differs between the 6-task subset and the 11-task full corpus.
+    data_tag: str = "small"
 
     @property
     def window_samples_physio(self) -> int:
@@ -101,7 +106,15 @@ class Config:
 
     @property
     def cache_dir(self) -> Path:
-        return CACHE_DIR
+        return DATA_DIR / f"cache_{self.data_tag}"
+
+    @property
+    def manifest_path(self) -> Path:
+        return DATA_DIR / f"manifest_{self.data_tag}.csv"
+
+    @property
+    def splits_path(self) -> Path:
+        return DATA_DIR / f"splits_{self.data_tag}.json"
 
     @property
     def results_dir(self) -> Path:
@@ -113,3 +126,24 @@ class Config:
 
 
 DEFAULT = Config()
+
+
+def full_config(**overrides) -> Config:
+    """The whole corpus: every subject, all 11 tasks, no modality requirement.
+
+    64 subjects / 700 recordings. Physio exists for every recording; audio only
+    for the 7 speech tasks (54% of recordings) and video for 83%, so the
+    missing-modality path is driven entirely by real absence.
+    """
+    cfg = Config(
+        n_subjects=64,
+        tasks=ALL_TASKS,
+        require_all_modalities=False,
+        require_all_tasks=False,
+        n_folds=5,
+        run_name="full",
+        data_tag="full",
+    )
+    for k, v in overrides.items():
+        setattr(cfg, k, v)
+    return cfg
