@@ -178,7 +178,64 @@ Written to `results/small/`:
 | `e13_calibration.csv`, `e13_reliability_bins.csv` | E13 — ECE and reliability bins |
 | `figures.png` | degradation curve, ECE vs. #missing, reliability diagram |
 
-## What the first full run actually found
+## What the FULL-CORPUS run found
+
+30 runs (3 seeds × 5 folds × {temporal, static}), 40 epochs each, ~3 h on a Quadro P1000.
+700 recordings, 64 subjects, 11 tasks. Results in `results/full/`.
+
+**The shortcut audit is still the result — but the signal is no longer zero.**
+
+| scope | variant | n | pos rate | macro F1 [95% CI] | majority-class F1 | margin |
+|---|---|---|---|---|---|---|
+| all | static | 700 | 0.53 | 0.654 [0.634, 0.671] | 0.345 | +0.309 |
+| all | temporal | 700 | 0.53 | 0.671 [0.648, 0.692] | 0.345 | +0.326 |
+| complete | static | 364 | 0.72 | 0.476 [0.452, 0.504] | 0.418 | +0.058 |
+| complete | temporal | 364 | 0.72 | 0.487 [0.451, 0.525] | 0.418 | +0.069 |
+
+Read the two scopes together. On all 700 recordings the model looks strong (+0.31 over
+the majority reference) — but it scores **below the `availability_only` probe**
+(0.671 vs 0.697 macro F1). A 1.2 M-parameter multimodal transformer losing to three
+presence bits is the cleanest possible statement that the "all" column is measuring
+availability, not stress.
+
+On the 364 naturally-complete recordings, where availability is constant and cannot be
+read, the margin drops to +0.058 / +0.069. That is small, but unlike the 16-subject
+subset (where it was **−0.007 / +0.028**, i.e. at or below chance) it is now reliably
+positive: both CI lower bounds (0.452, 0.451) sit above the 0.418 majority reference.
+Scaling from 96 to 700 recordings turned "no measurable signal" into "a small,
+statistically resolvable one". That is the honest headline.
+
+Everything else is null, and should be reported as null:
+
+- **E2 / E4** temporal − static = **+0.011 [−0.041, +0.063], p = 0.677** (n = 15 paired
+  runs). No temporal effect. The subset run gave −0.035, p = 0.375; at 7× the data the
+  estimate has moved to ~0 with a tighter interval, so this is now a reasonably
+  well-powered null rather than an underpowered one.
+- **E12** degradation curves are flat to slightly *rising*: static 0.476 → 0.484 → 0.486
+  and temporal 0.487 → 0.483 → 0.489 as 0 → 1 → 2 modalities are removed.
+- **E12b** (`e12_vs_full_tests.csv`) tests that directly — does removing a modality cost
+  anything? Of 12 paired comparisons, exactly one is nominally significant
+  (static / `no_audio`, +0.053 [+0.006, +0.098], p = 0.022) and it does **not** survive
+  Bonferroni correction for 12 tests. One nominal hit in twelve is what chance produces.
+  The defensible reading is that no modality is contributing measurably — and the sign
+  on `no_audio` and `physio_only` (both positive in both variants) hints that audio is
+  if anything a distractor once availability is held constant.
+- **E8** 3-class recall is 0.05 / 0.39 / 0.60 (static) and 0.05 / 0.37 / 0.71 (temporal),
+  macro F1 0.318 for both — the minority-class collapse of the PDF's O6, essentially
+  unchanged by 7× more data.
+- **E13** ECE 0.109–0.146, and now the *static* model is the better-calibrated one
+  (0.109 vs 0.146 at full modality), reversing the subset result. With accuracy this
+  close to the reference, ECE differences of this size are not worth interpreting.
+
+**Training behaviour worth knowing.** Train BCE falls to ~0.09 while validation F1 peaks
+early and decays — the model memorises the ~450 training recordings. Best-val epoch
+across the 30 runs is scattered from 1 to 22 with nothing selected past 22, so the back
+half of the 40-epoch OneCycle schedule is dead weight, and the spread looks more like
+val-F1 noise on 10 validation subjects than a stable early-stopping point. Best-checkpoint
+selection makes the reported numbers valid, but a shorter schedule with explicit early
+stopping would be the honest configuration.
+
+## What the earlier 16-subject subset run found
 
 24 runs (3 seeds × 4 folds × {temporal, static}), 40 epochs each, ~20 min on a Quadro P1000.
 
