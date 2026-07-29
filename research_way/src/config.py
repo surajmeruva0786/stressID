@@ -35,6 +35,7 @@ class Config:
     n_subjects: int = 16
     tasks: tuple = SMALL_TASKS
     require_all_modalities: bool = True   # subject must have physio+audio+video dirs
+    require_all_tasks: bool = True        # subject must have every task in `tasks`
     seed: int = 1337
 
     # ---- windowing (Stage 1) ----
