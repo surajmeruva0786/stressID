@@ -163,7 +163,7 @@ Set `tasks` in `src/config.py` to run it that way.
 
 ## Outputs
 
-Written to `results/small/`:
+Written to `results/full/` (or `results/small/` for the subset run):
 
 | file | content |
 |---|---|
