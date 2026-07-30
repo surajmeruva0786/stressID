@@ -467,13 +467,39 @@ checkpoint saves, reloads, and reproduces logits bit-identically
 must be published separately** (release asset / Zenodo) to satisfy the
 reproducibility requirement.
 
-### 11.5 Retrain reproducibility
+### 11.5 Retrain reproducibility — completed 2026-07-30 22:38
 
-The 2026-07-30 re-run uses the same fixed splits and seeds. Per-fold best val F1
-tracks the 2026-07-29 run closely but not bit-identically (cuDNN
-nondeterminism) — e.g. temporal seed 0: fold 1 = 0.682 and fold 2 = 0.735 both
-reproduce exactly, fold 3 = 0.759 vs. 0.764. **The numbers in §9 and §10 refer to
-the 2026-07-29 run** preserved in `results/full_run1_20260729/`.
+The re-run used the same fixed splits and seeds and took 11,453 s (30 fold-models,
+30 checkpoints, 135 MB). Headline metrics reproduce:
+
+| Metric (macro F1 unless noted) | run 1 (07-29) | run 2 (07-30) | Δ |
+|---|---|---|---|
+| all-700, static | 0.6540 | 0.6540 | **0.0000** |
+| all-700, temporal | 0.6710 | 0.6726 | +0.0016 |
+| complete-364, static | 0.4759 | 0.4759 | **0.0000** |
+| complete-364, temporal | 0.4866 | 0.4850 | −0.0016 |
+| E2 temporal−static (F1) | +0.011, p = 0.677 | +0.009, p = 0.721 | still null |
+| E2 temporal−static (acc) | +0.027, p = 0.015 | +0.023, p = 0.037 | still below the 0.717 majority floor |
+
+The **static** variant reproduces bit-identically; **temporal** drifts by ±0.002
+(cuDNN nondeterminism in the attention/LSTM kernels). **Every conclusion in §9 and
+§10 is unchanged**, including the E12 caution: temporal accuracy is again
+nominally significant and again sits below the 0.717 always-"stressed" floor
+(0.690 temporal / 0.667 static), so it still must not be reported as a gain.
+E12b again returns exactly one nominally significant cell of 12
+(static / no_audio, p = 0.019), which again fails Bonferroni (0.05/12 = 0.0042).
+
+**The numbers quoted in §9 and §10 refer to the 2026-07-29 run** preserved in
+`results/full_run1_20260729/`; `results/full/` now holds run 2 plus the weights.
+
+> **Operational note.** The re-run was launched as
+> `python run_full.py --stage train ... ; if ($?) { ... --stage evaluate }`.
+> The evaluate stage silently did **not** fire: in PowerShell 5.1, `2>&1` on a
+> native exe wraps stderr lines as ErrorRecords and sets `$?` to `$false` even on
+> exit code 0 — and torch emits `UserWarning`s to stderr. That briefly left
+> `results/full/` holding new `predictions.csv` beside evaluation CSVs from the
+> previous day. Fixed by running the evaluate stage separately (4 s). Chain
+> pipeline stages on explicit `$LASTEXITCODE`, not `$?`.
 
 ### 11.6 Environment
 
