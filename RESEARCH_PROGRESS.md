@@ -233,6 +233,9 @@ TRAINING STRATEGY
 | 2026-06-04 | Added `.claude/settings.local.json` with PostToolUse hook for auto-commit and push on every Write/Edit |
 | 2026-07-28 | `research_way/` implementation built and validated on a 16-subject / 6-task subset |
 | 2026-07-29 | **Trained on the entire corpus** — 64 subjects, 11 tasks, 700 recordings, 5-fold GroupKFold, 30 fold-models. Results in `research_way/results/full/` |
+| 2026-07-30 | Benchmarked against the StressID origin paper and the pipeline objectives doc → `research_way/RESULTS_AND_COMPARISON.md` (§10) |
+| 2026-07-30 | Added checkpoint persistence (`src/checkpoint.py`) and re-ran the full corpus to produce saved weights (§11) |
+| 2026-07-30 | Untracked `research_way/src/__pycache__` — gitignored but still tracked, so the auto-commit hook committed `.pyc` churn on every run |
 
 ---
 
