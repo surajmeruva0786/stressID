@@ -7,7 +7,9 @@
 > Headline finding is negative-but-publishable: a modality-availability confound
 > in StressID dominates every multimodal number, and the temporal/fusion
 > contributions are not supported once it is controlled for.
-> Model weights are now persisted per fold (§11); prior runs discarded them.
+> Model weights are now persisted per fold and the corpus has been retrained to
+> produce them — 30 checkpoints in `research_way/results/full/checkpoints/` (§11).
+> The retrain reproduces every headline number (§11.5).
 
 ---
 
