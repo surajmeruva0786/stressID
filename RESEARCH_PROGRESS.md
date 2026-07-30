@@ -211,6 +211,9 @@ TRAINING STRATEGY
 | 6 | Label refinement via physiological clustering | TODO |
 | 7 | **Stage −1 multi-dataset pretraining** — now the critical path | TODO |
 | 8 | Speech-tasks-only corpus (removes the confound from training) | TODO — one config change |
+| 9 | Persist trained fold weights (was discarded after each run) | **DONE** (2026-07-30, §11) |
+| 10 | Head-to-head comparison vs. origin paper + objectives doc | **DONE** — `research_way/RESULTS_AND_COMPARISON.md` |
+| 11 | E0 — re-implement the 3 competitor papers on our splits | TODO — Q1-critical per objectives doc |
 
 ---
 
