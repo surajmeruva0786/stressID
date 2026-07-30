@@ -60,3 +60,4 @@ encoder_layer.norm_first was True
   warnings.warn(
       ep  0 loss=1.340 bce=0.660 inv=1.308 valF1=0.632
       ep 10 loss=0.998 bce=0.472 inv=0.767 valF1=0.670
+      ep 20 loss=0.720 bce=0.313 inv=0.501 valF1=0.705

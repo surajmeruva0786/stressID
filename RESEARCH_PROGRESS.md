@@ -1,11 +1,13 @@
 # StressID — Research Progress & Future Work Plan
 
-> **Last updated:** 2026-07-29  
-> **Status:** Full-corpus run complete — see `research_way/` and §9 below.
+> **Last updated:** 2026-07-30  
+> **Status:** Full-corpus run complete and benchmarked against prior work —
+> see `research_way/` and §9–§11 below.
 > The planned architecture is implemented and trained on all 700 recordings.
 > Headline finding is negative-but-publishable: a modality-availability confound
 > in StressID dominates every multimodal number, and the temporal/fusion
 > contributions are not supported once it is controlled for.
+> Model weights are now persisted per fold (§11); prior runs discarded them.
 
 ---
 
