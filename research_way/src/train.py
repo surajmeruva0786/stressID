@@ -60,7 +60,8 @@ def predict(model, loader, cfg: Config, force_mask=None) -> dict:
 
 
 def train_one_fold(cfg: Config, man: pd.DataFrame, fold: dict, seed: int,
-                   temporal: bool, verbose: bool = False) -> tuple:
+                   temporal: bool, verbose: bool = False,
+                   save_ckpt: bool = True) -> tuple:
     set_seed(seed)
     subject_vocab = {s: i for i, s in enumerate(sorted(man["subject"].unique()))}
     norm = compute_norm(man, cfg, fold["train"])
