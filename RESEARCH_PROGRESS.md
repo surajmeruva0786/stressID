@@ -235,6 +235,7 @@ TRAINING STRATEGY
 | 2026-07-29 | **Trained on the entire corpus** — 64 subjects, 11 tasks, 700 recordings, 5-fold GroupKFold, 30 fold-models. Results in `research_way/results/full/` |
 | 2026-07-30 | Benchmarked against the StressID origin paper and the pipeline objectives doc → `research_way/RESULTS_AND_COMPARISON.md` (§10) |
 | 2026-07-30 | Added checkpoint persistence (`src/checkpoint.py`) and re-ran the full corpus to produce saved weights (§11) |
+| 2026-07-30 | Re-run finished (11,453 s): 30 checkpoints / 135 MB in `results/full/checkpoints/`. Headline metrics reproduce; static is bit-identical, temporal drifts ±0.002. All §9/§10 conclusions unchanged (§11.5) |
 | 2026-07-30 | Untracked `research_way/src/__pycache__` — gitignored but still tracked, so the auto-commit hook committed `.pyc` churn on every run |
 
 ---
