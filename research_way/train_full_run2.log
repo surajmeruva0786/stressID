@@ -59,3 +59,4 @@ UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False b
 encoder_layer.norm_first was True
   warnings.warn(
       ep  0 loss=1.340 bce=0.660 inv=1.308 valF1=0.632
+      ep 10 loss=0.998 bce=0.472 inv=0.767 valF1=0.670
