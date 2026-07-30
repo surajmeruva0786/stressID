@@ -143,7 +143,7 @@ def train_one_fold(cfg: Config, man: pd.DataFrame, fold: dict, seed: int,
 
 
 def run(cfg: Config | None = None, variants=("temporal", "static"),
-        verbose: bool = False) -> pd.DataFrame:
+        verbose: bool = False, save_ckpt: bool = True) -> pd.DataFrame:
     cfg = cfg or Config()
     if cfg.device == "cuda" and not torch.cuda.is_available():
         cfg.device = "cpu"
