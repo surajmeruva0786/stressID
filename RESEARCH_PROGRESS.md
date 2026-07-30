@@ -298,3 +298,184 @@ memorisation behaviour shows is the binding constraint.
 
 Suggested retitle, replacing §7's options:
 *"Modality Availability Leaks the Label: A Confound in Multimodal Stress Benchmarks"*
+
+---
+
+## 10. Comparison Against Prior Work (2026-07-30)
+
+Full write-up: **`research_way/RESULTS_AND_COMPARISON.md`**.
+Regenerate with `python research_way/compare_papers.py` →
+`research_way/paper_comparable_metrics.csv`.
+
+Compared against two documents: the **StressID origin paper**
+(`stressid_paper.pdf`, NeurIPS 2023 D&B — reports results) and the
+**pipeline objectives doc** (`research_way/StressID_Paper_Pipeline_Objectives (1).pdf`
+— defines targets O1–O7 / E0–E13).
+
+### 10.1 Metric and protocol mismatch (must be stated in any comparison)
+
+The origin paper reports **weighted F1 + balanced accuracy** over **10 random
+80/20 task-level splits** (subjects on both sides) with **SMOTE**. We report
+**macro F1** under **subject GroupKFold** with no SMOTE. The metric choice alone
+is worth ~0.14 F1 on the imbalanced subset: the same temporal model scores
+**0.628 weighted F1 but 0.487 macro F1** on the 364 all-modality recordings.
+
+Trivial-classifier floors (always predict "stressed"):
+
+| Subset | pos rate | weighted F1 | macro F1 | balanced acc |
+|---|---|---|---|---|
+| all 700 | 0.526 | 0.362 | 0.345 | 0.500 |
+| all-modality 364 | 0.717 | **0.599** | 0.418 | 0.500 |
+
+The paper's best multimodal result (0.72 weighted F1) is **+0.12 over doing
+nothing**, not +0.72.
+
+### 10.2 Matched-protocol reproduction
+
+Our classical baselines re-run under the paper's own protocol (random 80/20 ×10,
+weighted F1) match or beat its published numbers:
+
+| Ours (paper protocol) | wF1 | Paper's comparable row | Paper wF1 |
+|---|---|---|---|
+| feature_fusion + RF | **0.740** | Feature fusion + SVM / MLP / DBN | 0.64 / 0.66 / 0.58 |
+| decision_fusion + RF | 0.726 | SVM + Average rule fusion | 0.72 |
+| audio + RF | 0.723 | Audio HC + kNN | 0.67 |
+| physio + RF | 0.670 | Physio HC + RF | **0.73** |
+| video + RF | 0.657 | AUs + kNN | 0.70 |
+
+Physio/video trail because the paper uses far richer handcrafted features
+(98 HRV/EDA/RRV descriptors, OpenFace AUs) vs. our crude window statistics.
+The fusion rows landing in the same band validates the reimplementation.
+
+### 10.3 Cost of removing subject leakage
+
+Same features, only the split rule changes (weighted F1):
+
+| Method | random 80/20 (leaky) | subject GroupKFold | inflation |
+|---|---|---|---|
+| physio + RF | 0.670 | 0.543 | **+0.127** |
+| feature_fusion + RF | 0.740 | 0.687 | +0.053 |
+| audio + RF | 0.723 | 0.681 | +0.042 |
+| decision_fusion + RF | 0.726 | 0.690 | +0.036 |
+| **availability_only + RF** | 0.697 | 0.699 | **−0.002** |
+
+Physiology inflates most — subject-specific baselines get memorised — and it is
+the modality the origin paper reports its *best* unimodal number on (0.73).
+`availability_only` inflates by ~zero, exactly as it must (presence bits carry no
+subject identity); that expected null is an internal validity check on the audit.
+
+### 10.4 Our model vs. the paper's reported numbers — we do not win
+
+| Model | protocol | wF1 | macro F1 | bal acc |
+|---|---|---|---|---|
+| Paper: SVM + Average rule fusion | random 80/20 + SMOTE | **0.72** | n/r | **0.65** |
+| Ours: MST-temporal | subject GroupKFold | 0.628 | 0.487 | 0.531 |
+| Ours: MST-static | subject GroupKFold | 0.610 | 0.476 | 0.520 |
+| *trivial always-"stressed"* | — | *0.599* | *0.418* | *0.500* |
+
+Margin over the trivial floor: **+0.029 for us vs. +0.121 for the paper** (~4×).
+Decomposition, largest first: (1) the paper's protocol leaks subjects (§10.3),
+(2) its handcrafted features encode decades of HRV/EDA domain knowledge while our
+encoders learn from raw signal on 448 recordings and memorise, (3) SMOTE.
+**A true like-for-like comparison has not been run** — E0 (re-implementing the
+three competitor papers on our splits) remains untouched and is Q1-critical.
+
+### 10.5 What the origin paper does not report
+
+P(stress | audio present) = **0.709** (378 recs) vs. P(stress | audio absent) =
+**0.311** (322 recs). The paper's Table 3 restricts to the 370 all-modality tasks
+and notes they are "talking tasks exclusively" with 70% stress — which
+incidentally removes the shortcut from its test set, but it reports neither the
+0.599 trivial floor that restriction implies nor the availability correlation
+itself. Any work using the *full* corpus without controlling for availability is
+measuring the confound. This remains our most defensible novel contribution.
+
+### 10.6 Objectives scorecard
+
+| Obj. | Target | Status |
+|---|---|---|
+| **O1** | Leakage-free corrected benchmark | **MET** — strongest result we have |
+| **O2** | Temporal beats static | **NULL** (p = 0.677) |
+| **O3** | Cross-modal attention beats concat/decision fusion | **NOT SUPPORTED** (0.671 vs 0.688 — baseline ahead) |
+| **O4** | Graceful missing-modality degradation | **NULL** — curves flat-to-rising |
+| **O5** | StressID → WESAD transfer | NOT STARTED |
+| **O6** | Minority-class recall | **NOT MET** — class-0 recall 0.05 |
+| **O7** | Multi-dataset pretraining | NOT STARTED — now the critical path |
+| **E0** | Re-implement 3 competitors | NOT STARTED — Q1-critical |
+| **E13** | Calibration under missing modalities | DONE, direction unclear (temporal *more* overconfident) |
+
+**Caution on E12**, the objectives doc's designated headline experiment: its
+question ("does temporal context make degradation less steep?") has no measurable
+effect to compare, because neither variant degrades. The accuracy-based
+temporal-vs-static test (+0.027, p = 0.015) must **not** be reported as a gain —
+both variants sit below the 0.717 accuracy of always predicting "stressed", so it
+only shows temporal collapses toward the majority class harder.
+
+---
+
+## 11. Reproducibility & Saved Weights (2026-07-30)
+
+### 11.1 The gap this closes
+
+Runs before 2026-07-30 kept the best-val-F1 state in memory per fold and wrote
+only `predictions.csv` + metrics. Results were fully analysable but **no weights
+survived**, so inference, demos and further fine-tuning all required a ~3 h
+retrain. The objectives doc lists "code + fixed splits + **trained weights**
+released" as a non-negotiable Q1 requirement, so this was also a submission
+blocker.
+
+### 11.2 What was added
+
+- **`research_way/src/checkpoint.py`** — `save_checkpoint` / `load_checkpoint` /
+  `load_model` / `apply_norm` / `list_checkpoints`.
+- **`research_way/src/train.py`** — `train_one_fold(..., save_ckpt=True)` writes
+  the best-val-F1 state; `run()` writes `checkpoints/index.csv` ranked by val F1.
+
+Each checkpoint (~4.9 MB, 30 total ≈ 150 MB) is **self-contained**: weights, full
+`Config`, `subject_vocab`, `n_tasks`, temporal flag, best epoch / val F1, the
+fold's train/val/test subject lists, and the **fold-specific train-only audio and
+video normalisation stats**.
+
+> Those norm stats matter: they are computed from that fold's training subjects
+> only. Reusing another fold's stats at inference reintroduces exactly the leakage
+> the split exists to prevent — so always use the ones shipped in the checkpoint.
+
+### 11.3 Usage
+
+```python
+from src.checkpoint import load_model, list_checkpoints
+
+model, meta = load_model("results/full/checkpoints/temporal_seed1_fold4.pt")
+# meta: cfg, norm, subject_vocab, fold_subjects, best_val_f1, best_epoch, device
+```
+
+Verified before the production run via a 1-epoch round-trip on real data:
+checkpoint saves, reloads, and reproduces logits bit-identically
+(max |Δ| = 0.0).
+
+### 11.4 Artefact layout
+
+| Path | Contents | Tracked? |
+|---|---|---|
+| `results/full/` | current run (retrained 2026-07-30, **with** weights) | gitignored |
+| `results/full/checkpoints/` | 30 fold models + `index.csv` | gitignored |
+| `results/full_run1_20260729/` | frozen artefacts of the run §9 and §10 describe | gitignored |
+| `data/splits_full.json` | fixed GroupKFold splits | **tracked** |
+| `RESULTS_AND_COMPARISON.md`, `compare_papers.py`, `paper_comparable_metrics.csv` | §10 | **tracked** |
+
+`results/` is gitignored, so weights do not bloat the repo. **For the paper they
+must be published separately** (release asset / Zenodo) to satisfy the
+reproducibility requirement.
+
+### 11.5 Retrain reproducibility
+
+The 2026-07-30 re-run uses the same fixed splits and seeds. Per-fold best val F1
+tracks the 2026-07-29 run closely but not bit-identically (cuDNN
+nondeterminism) — e.g. temporal seed 0: fold 1 = 0.682 and fold 2 = 0.735 both
+reproduce exactly, fold 3 = 0.759 vs. 0.764. **The numbers in §9 and §10 refer to
+the 2026-07-29 run** preserved in `results/full_run1_20260729/`.
+
+### 11.6 Environment
+
+Windows 11 · Python 3.11 · torch 2.6.0+cu124 · CUDA on Quadro P1000 (4 GB) ·
+train stage ≈ 10,640 s (~3 h) for 30 fold-models.
