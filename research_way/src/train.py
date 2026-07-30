@@ -154,14 +154,15 @@ def run(cfg: Config | None = None, variants=("temporal", "static"),
     cfg.results_dir.mkdir(parents=True, exist_ok=True)
     cfg.save(cfg.results_dir / "config.json")
 
-    all_rows, log = [], []
+    all_rows, log, ckpts = [], [], []
     t0 = time.time()
     for variant in variants:
         temporal = variant == "temporal"
         for seed in cfg.seeds:
             for fold in folds:
                 ts = time.time()
-                df, best = train_one_fold(cfg, man, fold, seed, temporal, verbose)
+                df, best = train_one_fold(cfg, man, fold, seed, temporal, verbose,
+                                          save_ckpt=save_ckpt)
                 df["variant"] = variant
                 df["seed"] = seed
                 df["fold"] = fold["fold"]
@@ -171,11 +172,21 @@ def run(cfg: Config | None = None, variants=("temporal", "static"),
                        f"({time.time() - ts:.0f}s)")
                 print(msg, flush=True)
                 log.append(msg)
+                if best.get("ckpt") is not None:
+                    ckpts.append({"variant": variant, "seed": seed, "fold": fold["fold"],
+                                  "best_val_f1": best["f1"], "best_epoch": best["epoch"],
+                                  "path": best["ckpt"].name,
+                                  "size_mb": round(best["ckpt"].stat().st_size / 1e6, 2)})
 
     preds = pd.concat(all_rows, ignore_index=True)
     out = cfg.results_dir / "predictions.csv"
     preds.to_csv(out, index=False)
     (cfg.results_dir / "train_log.txt").write_text("\n".join(log), encoding="utf-8")
+    if ckpts:
+        idx = pd.DataFrame(ckpts).sort_values("best_val_f1", ascending=False)
+        idx.to_csv(cfg.results_dir / "checkpoints" / "index.csv", index=False)
+        print(f"[train] saved {len(ckpts)} checkpoints "
+              f"({idx['size_mb'].sum():.0f} MB) -> {cfg.results_dir / 'checkpoints'}")
     print(f"[train] done in {time.time() - t0:.0f}s -> {out}  ({len(preds)} rows)")
     return preds
 
