@@ -114,6 +114,16 @@ def train_one_fold(cfg: Config, man: pd.DataFrame, fold: dict, seed: int,
 
     model.load_state_dict(best["state"])
 
+    if save_ckpt:
+        variant = "temporal" if temporal else "static"
+        best["ckpt"] = save_checkpoint(
+            checkpoint_path(cfg, variant, seed, fold["fold"]),
+            state=best["state"], cfg=cfg, variant=variant, seed=seed,
+            fold=fold["fold"], best_epoch=best["epoch"], best_val_f1=best["f1"],
+            subject_vocab=subject_vocab, norm=norm,
+            fold_subjects={k: list(fold[k]) for k in ("train", "val", "test")},
+        )
+
     rows = []
     key2meta = man.set_index("key")
     for cond, msk in MASK_CONDITIONS.items():
