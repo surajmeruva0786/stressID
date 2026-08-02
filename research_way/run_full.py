@@ -59,6 +59,8 @@ def main() -> int:
             subset.main(cfg)
         elif st == "preprocess":
             preprocess.main(cfg, force=args.force, workers=args.workers)
+        elif st == "physfeat":
+            physfeat_cache.main(cfg, force=args.force, workers=args.workers)
         elif st == "splits":
             splits.main(cfg)
         elif st == "baselines":
