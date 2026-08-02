@@ -124,20 +124,51 @@ def _eda_block(eda: np.ndarray, fs: int) -> np.ndarray:
     return _safe(run, len(EDA_FEATURES))
 
 
+def _spectral_rsp_rate(x: np.ndarray, fs: int) -> float:
+    """Respiration rate (breaths/min) from the dominant 0.1-0.5 Hz component.
+
+    A 10 s window holds only ~2-3 breaths, so peak counting is unreliable and
+    breath-to-breath variability is often uncomputable. The spectral peak is
+    well defined at this length, so this is the rate feature that survives on
+    every window; the peak-based ones are kept as extra signal when available.
+    """
+    x = x - x.mean()
+    if len(x) < fs or not np.any(x):
+        return 0.0
+    spec = np.abs(np.fft.rfft(x * np.hanning(len(x))))
+    freqs = np.fft.rfftfreq(len(x), d=1.0 / fs)
+    band = (freqs >= 0.1) & (freqs <= 0.5)               # 6-30 breaths/min
+    if not band.any():
+        return 0.0
+    return float(freqs[band][np.argmax(spec[band])] * 60.0)
+
+
 def _rsp_block(rsp: np.ndarray, fs: int) -> np.ndarray:
     def run():
         clean = nk.rsp_clean(rsp, sampling_rate=fs)
-        _, info = nk.rsp_peaks(clean, sampling_rate=fs)
-        peaks = np.asarray(info.get("RSP_Peaks", []), dtype=float)
-        if len(peaks) < 3:
-            return np.zeros(len(RSP_FEATURES))
+        spec_rate = _spectral_rsp_rate(clean, fs)
 
-        bb_ms = np.diff(peaks) / fs * 1000.0            # breath-to-breath
-        rate = 60000.0 / np.clip(bb_ms, 1e-6, None)
-        amps = clean[np.asarray(peaks, dtype=int)]
-        rrv = np.sqrt((np.diff(bb_ms) ** 2).mean()) if len(bb_ms) > 1 else 0.0
-        return np.array([rate.mean(), rate.std(), amps.mean(), amps.std(),
-                         rrv, float(len(peaks))])
+        rate_mean = rate_std = amp_mean = amp_std = rrv = 0.0
+        n_pk = 0.0
+        try:
+            _, info = nk.rsp_peaks(clean, sampling_rate=fs)
+            peaks = np.asarray(info.get("RSP_Peaks", []), dtype=float)
+            peaks = peaks[np.isfinite(peaks)]
+            n_pk = float(len(peaks))
+            if len(peaks) >= 1:
+                amps = clean[np.asarray(peaks, dtype=int)]
+                amp_mean, amp_std = float(amps.mean()), float(amps.std())
+            if len(peaks) >= 2:                          # 1 interval is enough for a rate
+                bb_ms = np.diff(peaks) / fs * 1000.0
+                rate = 60000.0 / np.clip(bb_ms, 1e-6, None)
+                rate_mean, rate_std = float(rate.mean()), float(rate.std())
+                if len(bb_ms) > 1:
+                    rrv = float(np.sqrt((np.diff(bb_ms) ** 2).mean()))
+        except Exception:
+            pass
+
+        return np.array([rate_mean, rate_std, amp_mean, amp_std,
+                         rrv, n_pk, spec_rate])
     return _safe(run, len(RSP_FEATURES))
 
 
