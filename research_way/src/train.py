@@ -112,6 +112,15 @@ def train_one_fold(cfg: Config, man: pd.DataFrame, fold: dict, seed: int,
                   f"bce={agg.get('bce', 0):.3f} inv={agg.get('subj_inv', 0):.3f} "
                   f"valF1={f1:.3f}", flush=True)
 
+        # A2: the tail epochs only memorise, so stop once val F1 has stalled.
+        # NOTE this truncates the OneCycleLR schedule mid-flight; the restored
+        # weights are the best-val checkpoint, not the annealed end state.
+        if cfg.early_stop_patience and ep - best["epoch"] >= cfg.early_stop_patience:
+            if verbose:
+                print(f"      early stop at ep{ep} "
+                      f"(best {best['f1']:.3f}@ep{best['epoch']})", flush=True)
+            break
+
     model.load_state_dict(best["state"])
 
     if save_ckpt:
