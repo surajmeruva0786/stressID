@@ -141,6 +141,36 @@ class Config:
 DEFAULT = Config()
 
 
+def a1a2_config(**overrides) -> Config:
+    """§12.1 A1 + A2: domain physio features + reduced capacity.
+
+    Same corpus, splits and seeds as `full_config`, so every number is directly
+    comparable to `results/full/`. Two changes only:
+
+      A1  physio_mode="features" - hand the model neurokit2 HRV/EDA/RSP
+          descriptors instead of asking a CNN+BiLSTM to rediscover them from
+          raw signal on 448 training recordings.
+      A2  d_model 128->64, fusion/temporal layers ->1, dropout 0.2->0.4,
+          early stopping patience 8 - the 1.2 M-parameter model memorises
+          (train BCE -> 0.09 while val F1 peaks at epoch 1-22 then decays).
+
+    Both move in the same direction (less capacity spent on representation
+    learning), so they share a run; `results/full/` is the control.
+    """
+    cfg = full_config(
+        physio_mode="features",
+        d_model=64,
+        fusion_layers=1,
+        temporal_layers=1,
+        dropout=0.4,
+        early_stop_patience=8,
+        run_name="a1a2",
+    )
+    for k, v in overrides.items():
+        setattr(cfg, k, v)
+    return cfg
+
+
 def full_config(**overrides) -> Config:
     """The whole corpus: every subject, all 11 tasks, no modality requirement.
 
