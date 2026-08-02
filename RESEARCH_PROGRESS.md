@@ -646,6 +646,11 @@ Two internal controls, both of which returned the value they had to:
 Without those, a 0.487 result would be indistinguishable from a bug. With them,
 it is a measurement.
 
+### Phase 7 — A1 + A2 attempted and failed (2026-08-02)
+
+See §14. Both interventions were implemented, run on the full corpus, and did
+not improve the leakage-free number. Recorded as a null.
+
 ### Recurring lesson
 
 Three separate times the flattering number was the wrong one: random splits
