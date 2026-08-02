@@ -36,9 +36,11 @@ def main() -> int:
     ap.add_argument("--folds", type=int, default=None)
     ap.add_argument("--seeds", type=int, default=None, help="number of seeds")
     ap.add_argument("--device", default=None)
+    ap.add_argument("--variant", choices=("full", "a1a2"), default="full",
+                    help="'a1a2' = §12.1 domain physio features + reduced capacity")
     args = ap.parse_args()
 
-    cfg = full_config()
+    cfg = a1a2_config() if args.variant == "a1a2" else full_config()
     if args.epochs:
         cfg.epochs = args.epochs
     if args.folds:
