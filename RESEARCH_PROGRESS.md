@@ -3,8 +3,8 @@
 > **Last updated:** 2026-08-02  
 > **Status:** Full-corpus run complete and benchmarked against prior work —
 > see `research_way/` and §9–§11 below. Improvement plan in §12, project
-> history in §13. **In progress:** §12 A1 (domain physio features) + A2
-> (capacity reduction / regularisation).
+> history in §13. **Latest:** §12 A1 (domain physio features) + A2 (capacity
+> reduction) were run and **failed** — no gain, temporal −0.041 (§14).
 > The planned architecture is implemented and trained on all 700 recordings.
 > Headline finding is negative-but-publishable: a modality-availability confound
 > in StressID dominates every multimodal number, and the temporal/fusion
@@ -659,3 +659,87 @@ temporal accuracy result that reads p = 0.015 while sitting *below* a
 do-nothing classifier. Each looked like a result and was an artefact. Every
 headline number in this project is now reported against an explicit trivial
 baseline for that exact subset.
+
+---
+
+## 14. A1 + A2 Result — Negative (2026-08-02)
+
+Run: `results/a1a2/` · config `a1a2_config()` · same corpus, splits and seeds as
+`results/full/` (the control) · 3,798 s (63 min) vs. 11,453 s · 30 checkpoints,
+37 MB vs. 135 MB.
+
+### 14.1 A1's stated rationale was invalid
+
+A1 was justified by "the origin paper's handcrafted physio features reach 0.73
+where our learned encoder gets 0.54–0.57." **That comparison was wrong, and it is
+the exact error this project exists to document**: 0.73 is the paper's *leaky*
+number, 0.54–0.57 is ours *leakage-free*. §10.3 measures physio inflation at
++0.127, so handcrafted features under GroupKFold should land near **0.60**, not
+0.73. The real headroom was ~0.03, not ~0.19.
+
+A cheap GroupKFold check on the extracted features confirmed this before the
+training run:
+
+| Physio representation | macro F1 |
+|---|---|
+| raw waveform + logreg | 0.565 |
+| A1 features + logreg | 0.565 (±0.000) |
+| raw waveform + RF | 0.540 |
+| A1 features + RF | **0.573** (+0.033) |
+
+### 14.2 Result: no improvement; temporal got worse
+
+macro F1, leakage-free scope (364 all-modality recordings) in bold:
+
+| Scope / variant | control (`full`) | A1+A2 (`a1a2`) | Δ |
+|---|---|---|---|
+| **complete-364, temporal** | **0.4850** | **0.4439** | **−0.041** |
+| **complete-364, static** | **0.4759** | **0.4752** | −0.001 |
+| all-700, temporal | 0.6726 | 0.6574 | −0.015 |
+| all-700, static | 0.6540 | 0.6445 | −0.010 |
+
+Static is unchanged; **temporal lost 0.041 and now scores *below* static**
+(0.444 vs 0.475), reversing the control's ordering. Both remain far from the
+§12.0 target of 0.55–0.60. Bootstrap CIs overlap
+(temporal control [0.451, 0.523] vs a1a2 [0.415, 0.479]), so this is best read
+as "no gain, probably a loss for temporal" rather than a precise effect size.
+
+### 14.3 Why it likely failed
+
+- **Capacity was not the binding constraint.** Early stopping fired on **30/30**
+  folds, and mean best epoch only moved 9.6 → 6.9. The model peaks early and
+  decays *regardless* of size — shrinking it 1.24 M → 312 k params (25%) did not
+  change that shape, it just lowered the ceiling.
+- **The temporal transformer needed the width.** It lost most from
+  `d_model` 128→64 and `temporal_layers` 2→1, which is consistent with temporal
+  being the component with the most parameters to spare.
+- **Early stopping may have truncated late peaks.** Control best epochs reach 22;
+  A1+A2 never exceeds 15. Patience 8 from an early peak can stop before a second
+  rise.
+
+### 14.4 Design flaw to avoid repeating
+
+**Five things changed at once** (physio representation, `d_model`,
+`fusion_layers`, `temporal_layers`, `dropout`, early stopping), so the −0.041 is
+unattributable. A1 and A2 were bundled because they "move in the same direction";
+that reasoning was wrong — it bought one run's worth of time and cost the ability
+to interpret the result. Ablate one axis at a time, or at minimum keep A1 and A2
+in separate runs.
+
+### 14.5 What this adds to the story
+
+A fourth null, and a consistent one: temporal modelling, cross-modal fusion,
+missing-modality robustness, and now representation + capacity changes all fail
+to move this dataset. Every intervention that redistributes *how* a fixed 448
+training recordings are modelled returns nothing. That is increasingly strong
+support for the §12.2 B3 / O7 diagnosis — **data volume, not architecture or
+representation, is the binding constraint** — and it makes the confound finding
+(§10.5) the paper's viable centre of gravity.
+
+### 14.6 Next
+
+Do **not** run more capacity/representation variants. Remaining Tier A items
+(A3 speaking-tasks-only, A4 continuous-score supervision) test *different*
+axes — the training distribution and the supervision signal — and are still
+worth running, one change per run. B1 (subject-adaptive calibration) remains the
+highest-value untested idea.
