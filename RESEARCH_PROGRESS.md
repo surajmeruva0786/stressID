@@ -510,3 +510,147 @@ E12b again returns exactly one nominally significant cell of 12
 
 Windows 11 · Python 3.11 · torch 2.6.0+cu124 · CUDA on Quadro P1000 (4 GB) ·
 train stage ≈ 10,640 s (~3 h) for 30 fold-models.
+
+---
+
+## 12. Improvement Plan (2026-08-02)
+
+### 12.0 Realistic target
+
+On 364 recordings / 64 subjects with noisy self-report labels and the
+availability shortcut removed, **0.55–0.60 macro F1 would be a strong result**
+(current: 0.487). Anything near 0.75 on this data implies either subject leakage
+or weighted F1 read on an imbalanced subset. Calibrate to that band.
+
+### 12.1 Tier A — cheap, highest payoff per unit effort
+
+| # | Action | Rationale | Status |
+|---|---|---|---|
+| **A1** | **Replace raw-signal physio encoding with domain features** (neurokit2 HRV / EDA / RSP per *window*, feeding the same temporal model) | The origin paper's handcrafted physio features reach 0.73 where our learned encoder gets 0.54–0.57. A CNN+BiLSTM cannot rediscover HRV from 448 recordings, and the loss curves show it memorises instead. Largest single lever available. | **IN PROGRESS** |
+| **A2** | **Cut capacity + regularise**: `d_model` 128→64, fusion/temporal layers →1, dropout →0.4, early stopping on val F1 (patience ~8) | 1.2 M parameters on 448 training recordings. Train BCE → 0.09 while val F1 peaks at epoch 1–22 then decays. Essentially free to try. | **IN PROGRESS** |
+| **A3** | **Speaking-tasks-only training** (`cfg.tasks` = the 7 speech tasks) | Every such recording has all three modalities, so the availability shortcut is absent from *training*, not merely from evaluation. Currently the model spends capacity learning the trapdoor. One config change, ~3 h. | TODO |
+| **A4** | **Use the continuous 0–10 stress score as primary supervision** (raise `w_regression`, or ordinal regression + threshold) | Binarising throws away information we already have. Same labels, strictly more signal, and it attacks the class-collapse problem. Head already exists at `w_regression=0.2`. | TODO |
+
+### 12.2 Tier B — real work, real payoff
+
+| # | Action | Rationale |
+|---|---|---|
+| **B1** | **Subject-adaptive calibration (few-shot)** — normalise/adapt against 2–3 labelled samples per test subject (e.g. their Relax baseline) | Inter-subject variation is the dominant noise source here — precisely why leakage inflated physio by +0.127. Turns the leakage problem into a feature, and is realistic for deployment. Highest-value item the objectives doc under-prioritised. |
+| **B2** | **Fine-tune wav2vec2 / HuBERT** for audio | Audio is already the strongest honest modality (0.686 vs physio 0.565) and is the one place an off-the-shelf foundation model exists. `AudioEncoder` has a documented drop-in slot. Needs `pip install transformers`. |
+| **B3** | **Stage −1 multi-dataset pretraining (O7)** | Correct diagnosis of the overfitting, but the most expensive item (acquire + harmonise WESAD / K-EmoCon / SWELL). Do only after Tier A says whether the architecture deserves it. |
+
+### 12.3 Explicitly not doing
+
+More temporal-architecture variants or cross-modal-attention tuning. Both were
+tested properly and returned null (§9.3). Adding capacity to a model that already
+memorises by epoch 1 will not help.
+
+### 12.4 Highest-value item for the paper
+
+**E0 — re-implement the three competitor papers on our GroupKFold splits.** The
+objectives doc calls it Q1-critical, and given §10.5 they very likely sit inside
+the same availability confound. That converts the finding from "our model
+underperforms" into "published numbers on this benchmark need revisiting", which
+is a far stronger paper than any accuracy gain Tier A is likely to buy.
+
+---
+
+## 13. Project Journey
+
+Condensed history of how this project reached its current state, including the
+wrong turns — they are the reason several results are trustworthy.
+
+### Phase 1 — Baseline analysis (2026-06-04)
+
+Started from the StressID origin paper and the `stressID-main/` reference
+notebooks. Catalogued 9 critical weaknesses (§3), of which #4 — random splits
+instead of subject-grouped — turned out to matter most. Designed the target
+architecture (§5) and prioritised future work into three tiers (§4). Added a
+PostToolUse hook that auto-commits and pushes on every Write/Edit.
+
+### Phase 2 — Implementation and subset validation (2026-07-28)
+
+Built `research_way/` from scratch: windowing, three modality encoders,
+cross-modal fusion with modality dropout, temporal aggregation, three output
+heads, and a Stage-6 evaluation suite (E1–E13). Validated on a 16-subject /
+6-task subset. **Result: the model sat at chance** (margin over majority −0.007
+static / +0.028 temporal). Attributed to subset size, which motivated Phase 3.
+
+### Phase 3 — Full corpus (2026-07-29)
+
+Scaled to all 64 subjects / 11 tasks / 700 recordings. 5-fold GroupKFold × 3
+seeds × 2 variants = 30 fold-models, ~3 h. Two things emerged:
+
+1. Model performance improved over the subset but stayed modest (0.487 macro F1
+   against a 0.418 floor).
+2. **The availability confound** (§9.1) — the decisive finding. Three presence
+   bits with no signal content beat every trained model.
+
+Temporal modelling, cross-modal fusion and missing-modality robustness all
+returned statistically null (§9.3).
+
+### Phase 4 — Weights lost, then recovered (2026-07-30)
+
+The terminal running Phase 3 was closed. Investigation confirmed training had
+completed cleanly (`[train] done in 10640s`, 30 fold-models logged, all
+downstream evaluation artefacts present, everything committed). **However: no
+weights had ever been written to disk** — `train_one_fold` kept the best state
+in memory and persisted only predictions. Since the objectives doc lists released
+weights as a non-negotiable Q1 requirement, this was a submission blocker, not
+just an inconvenience.
+
+Added `src/checkpoint.py`, wired it into `train.py`, verified with a 1-epoch
+round-trip on real data (reload reproduced logits bit-identically), backed up the
+Phase-3 artefacts to `results/full_run1_20260729/`, and retrained. **Static
+reproduced bit-identically, temporal drifted ±0.002; every conclusion held**
+(§11.5).
+
+*Mistake worth recording:* the retrain was launched as
+`... --stage train ; if ($?) { ... --stage evaluate }`. PowerShell 5.1 sets `$?`
+to `$false` when a native exe writes to stderr under `2>&1` — and torch emits
+`UserWarning`s — so the evaluate stage silently never ran, briefly leaving
+`results/full/` with fresh predictions beside stale evaluation CSVs. Chain on
+`$LASTEXITCODE`, not `$?`.
+
+### Phase 5 — Benchmarking against prior work (2026-07-30)
+
+Compared against the origin paper and the internal objectives doc (§10,
+`research_way/RESULTS_AND_COMPARISON.md`). The comparison could not be done
+naively: the paper reports weighted F1 + balanced accuracy over leaky random
+splits with SMOTE, we report macro F1 under GroupKFold. **The metric choice alone
+is worth ~0.14 F1** — the same model reads 0.628 weighted vs 0.487 macro. So the
+results were recomputed under the paper's own metrics *and* protocol
+(`compare_papers.py`).
+
+Outcome: our baselines reproduce the paper under its rules (0.740 vs 0.72), the
+leakage correction costs 0.04–0.13 with physio worst at +0.127, and **our trained
+model does not beat the published numbers** (+0.029 over the trivial floor vs
+their +0.121). Recorded plainly rather than framed away.
+
+### Phase 6 — Improvement plan (2026-08-02)
+
+Accepted that the planned architectural contributions (O2/O3/O4) are null and
+cannot carry a paper, and re-planned around what the evidence supports: §12.
+Began A1 + A2.
+
+### What made the negative results trustworthy
+
+Two internal controls, both of which returned the value they had to:
+
+- `availability_only` inflates by **−0.002** under leaky splits — presence bits
+  carry no subject identity, so leakage cannot help them. Confirms the leakage
+  measurement is real and not a resampling artefact.
+- Our classical baselines **reproduce the origin paper under its own protocol**
+  (0.740 vs 0.72). Confirms the pipeline is not simply broken.
+
+Without those, a 0.487 result would be indistinguishable from a bug. With them,
+it is a measurement.
+
+### Recurring lesson
+
+Three separate times the flattering number was the wrong one: random splits
+(+0.127 on physio), weighted F1 on a 72%-positive subset (+0.14), and the
+temporal accuracy result that reads p = 0.015 while sitting *below* a
+do-nothing classifier. Each looked like a result and was an artefact. Every
+headline number in this project is now reported against an explicit trivial
+baseline for that exact subset.
