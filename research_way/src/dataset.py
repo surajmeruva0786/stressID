@@ -86,9 +86,10 @@ class StressIDWindows(Dataset):
 
 
 def compute_norm(manifest: pd.DataFrame, cfg: Config, subjects: list[str]) -> dict:
-    """Audio/video standardisation stats from TRAIN subjects only (no leakage)."""
+    """Audio/video/physio-feature standardisation stats from TRAIN subjects only."""
     a_sum = a_sq = a_n = 0.0
     v_sum = v_sq = v_n = 0.0
+    pf_rows = []
     for key in manifest[manifest["subject"].isin(subjects)]["key"]:
         with np.load(cfg.cache_dir / f"{key}.npz") as z:
             m, a, v = z["mask"], z["audio"].astype(np.float32), z["video"].astype(np.float32)
@@ -99,6 +100,12 @@ def compute_norm(manifest: pd.DataFrame, cfg: Config, subjects: list[str]) -> di
         if iv.any():
             x = v[iv]
             v_sum += x.sum(); v_sq += (x ** 2).sum(); v_n += x.size
+        if cfg.physio_mode == "features":
+            with np.load(cfg.physfeat_dir / f"{key}.npz") as z:
+                f = z["feat"].astype(np.float32)
+            ip = m[:, 0] > 0
+            if ip.any():
+                pf_rows.append(f[ip])
 
     def _ms(s, sq, n):
         if n == 0:
@@ -108,7 +115,15 @@ def compute_norm(manifest: pd.DataFrame, cfg: Config, subjects: list[str]) -> di
 
     am, astd = _ms(a_sum, a_sq, a_n)
     vm, vstd = _ms(v_sum, v_sq, v_n)
-    return {"audio_mean": am, "audio_std": astd, "video_mean": vm, "video_std": vstd}
+    out = {"audio_mean": am, "audio_std": astd, "video_mean": vm, "video_std": vstd}
+
+    if cfg.physio_mode == "features":
+        # per-dimension, unlike audio/video: the 29 descriptors span ~5 orders
+        # of magnitude (pnn50 in %, raw EDA in ADC counts).
+        X = np.concatenate(pf_rows) if pf_rows else np.zeros((1, 1), np.float32)
+        out["pf_mean"] = X.mean(0).astype(np.float32)
+        out["pf_std"] = np.maximum(X.std(0), 1e-3).astype(np.float32)
+    return out
 
 
 def collate(batch: list[dict]) -> dict:
