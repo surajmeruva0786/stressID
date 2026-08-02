@@ -197,8 +197,13 @@ class TemporalCrossModalNet(nn.Module):
         self.cfg, self.temporal = cfg, temporal
         d = cfg.d_model
 
+        if cfg.physio_mode == "features":                # A1
+            from .physio_features import N_FEATURES
+            physio_enc = PhysioFeatureEncoder(cfg, N_FEATURES)
+        else:
+            physio_enc = PhysioEncoder(cfg, len(cfg.physio_channels))
         self.enc = nn.ModuleDict({
-            "physio": PhysioEncoder(cfg, len(cfg.physio_channels)),
+            "physio": physio_enc,
             "audio": AudioEncoder(cfg),
             "video": VideoEncoder(cfg),
         })
