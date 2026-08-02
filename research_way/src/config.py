@@ -93,6 +93,10 @@ class Config:
     grad_clip: float = 1.0
     seeds: tuple = (0, 1, 2)              # >=3 seeds for CI reporting
     device: str = "cuda"
+    # A2: stop once val F1 has not improved for this many epochs (0 = never).
+    # Val F1 peaks between epoch 1 and 22 and then decays while train BCE keeps
+    # falling to 0.09, so the late epochs are pure memorisation.
+    early_stop_patience: int = 0
 
     # ---- evaluation ----
     ece_bins: int = 10
