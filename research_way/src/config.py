@@ -50,6 +50,11 @@ class Config:
     physio_fs_raw: int = 500
     physio_fs: int = 64                   # resample target -> 640 samples/window
     physio_channels: tuple = ("ECG", "EDA", "RR")
+    # "raw"      -> 1D-CNN + BiLSTM over the resampled waveform (original)
+    # "features" -> A1: neurokit2 HRV/EDA/RSP descriptors per window -> MLP.
+    # A1 exists because the learned encoder memorises on 448 recordings while
+    # the origin paper's handcrafted features reach 0.73 (see §12.1).
+    physio_mode: str = "raw"
 
     # ---- audio (log-mel front end; drop-in slot for wav2vec2) ----
     audio_sr: int = 16000
