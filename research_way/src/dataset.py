@@ -50,7 +50,14 @@ class StressIDWindows(Dataset):
         win_mask[:n] = 1.0
         mod_mask = d["mask"].astype(np.float32) * win_mask[:, None]
 
-        physio = d["physio"].astype(np.float32)
+        if self.cfg.physio_mode == "features":           # A1: [W, D] descriptors
+            physio = d["physio_feat"].astype(np.float32)
+            if "pf_mean" in self.norm:
+                # per-dimension: HRV is O(10-1000 ms), raw EDA is O(1e4)
+                physio = (physio - self.norm["pf_mean"]) / self.norm["pf_std"]
+                physio = np.clip(physio, -10.0, 10.0)
+        else:                                            # raw waveform [W, T, 3]
+            physio = d["physio"].astype(np.float32)
         audio = d["audio"].astype(np.float32)
         video = d["video"].astype(np.float32)
 
