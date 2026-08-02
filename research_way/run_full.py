@@ -19,11 +19,11 @@ import argparse
 import sys
 import time
 
-from src.config import full_config
-from src import subset, preprocess, splits, baselines, train, evaluate
+from src.config import full_config, a1a2_config
+from src import subset, preprocess, splits, baselines, train, evaluate, physfeat_cache
 
 
-STAGES = ("subset", "preprocess", "splits", "baselines", "train", "evaluate")
+STAGES = ("subset", "preprocess", "physfeat", "splits", "baselines", "train", "evaluate")
 
 
 def main() -> int:
