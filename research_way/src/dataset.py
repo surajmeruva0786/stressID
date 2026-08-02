@@ -56,6 +56,7 @@ class StressIDWindows(Dataset):
                 # per-dimension: HRV is O(10-1000 ms), raw EDA is O(1e4)
                 physio = (physio - self.norm["pf_mean"]) / self.norm["pf_std"]
                 physio = np.clip(physio, -10.0, 10.0)
+            physio = physio * mod_mask[:, 0][:, None]    # zero padded windows
         else:                                            # raw waveform [W, T, 3]
             physio = d["physio"].astype(np.float32)
         audio = d["audio"].astype(np.float32)
