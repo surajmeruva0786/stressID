@@ -1,0 +1,132 @@
+﻿
+========================================================================
+== STAGE: train
+========================================================================
+      ep  0 loss=1.392 bce=0.699 inv=1.118 valF1=0.509
+      ep 10 loss=1.046 bce=0.502 inv=0.887 valF1=0.629
+      early stop at ep17 (best 0.666@ep9)
+[train] temporal seed=0 fold=0 bestValF1=0.666@ep9 (146s)
+      ep  0 loss=1.389 bce=0.696 inv=1.009 valF1=0.468
+      ep 10 loss=1.063 bce=0.510 inv=0.863 valF1=0.632
+      early stop at ep11 (best 0.709@ep3)
+[train] temporal seed=0 fold=1 bestValF1=0.709@ep3 (101s)
+      ep  0 loss=1.463 bce=0.739 inv=1.158 valF1=0.426
+      ep 10 loss=1.083 bce=0.527 inv=0.880 valF1=0.722
+      early stop at ep11 (best 0.740@ep3)
+[train] temporal seed=0 fold=2 bestValF1=0.740@ep3 (101s)
+      ep  0 loss=1.420 bce=0.706 inv=1.187 valF1=0.489
+      ep 10 loss=1.071 bce=0.514 inv=0.847 valF1=0.745
+      early stop at ep16 (best 0.770@ep8)
+[train] temporal seed=0 fold=3 bestValF1=0.770@ep8 (137s)
+      ep  0 loss=1.387 bce=0.688 inv=1.116 valF1=0.508
+      ep 10 loss=1.103 bce=0.523 inv=0.929 valF1=0.687
+      ep 20 loss=0.839 bce=0.365 inv=0.669 valF1=0.540
+      early stop at ep23 (best 0.697@ep15)
+[train] temporal seed=0 fold=4 bestValF1=0.697@ep15 (180s)
+      ep  0 loss=1.375 bce=0.664 inv=1.110 valF1=0.545
+      ep 10 loss=0.985 bce=0.460 inv=0.779 valF1=0.626
+      early stop at ep16 (best 0.662@ep8)
+[train] temporal seed=1 fold=0 bestValF1=0.662@ep8 (130s)
+      ep  0 loss=1.325 bce=0.656 inv=1.019 valF1=0.572
+      ep 10 loss=1.062 bce=0.503 inv=0.887 valF1=0.581
+      early stop at ep11 (best 0.691@ep3)
+[train] temporal seed=1 fold=1 bestValF1=0.691@ep3 (96s)
+      ep  0 loss=1.432 bce=0.715 inv=1.239 valF1=0.610
+      ep 10 loss=1.114 bce=0.555 inv=0.950 valF1=0.645
+      early stop at ep11 (best 0.731@ep3)
+[train] temporal seed=1 fold=2 bestValF1=0.731@ep3 (96s)
+      ep  0 loss=1.378 bce=0.678 inv=1.107 valF1=0.659
+      ep 10 loss=1.046 bce=0.494 inv=0.799 valF1=0.691
+      early stop at ep16 (best 0.749@ep8)
+[train] temporal seed=1 fold=3 bestValF1=0.749@ep8 (128s)
+      ep  0 loss=1.347 bce=0.665 inv=0.907 valF1=0.577
+      ep 10 loss=1.053 bce=0.494 inv=0.846 valF1=0.660
+      early stop at ep12 (best 0.706@ep4)
+[train] temporal seed=1 fold=4 bestValF1=0.706@ep4 (104s)
+      ep  0 loss=1.431 bce=0.688 inv=1.175 valF1=0.582
+      ep 10 loss=1.057 bce=0.492 inv=0.834 valF1=0.595
+      early stop at ep13 (best 0.697@ep5)
+[train] temporal seed=2 fold=0 bestValF1=0.697@ep5 (109s)
+      ep  0 loss=1.383 bce=0.668 inv=1.096 valF1=0.575
+      ep 10 loss=1.033 bce=0.495 inv=0.766 valF1=0.624
+      early stop at ep13 (best 0.682@ep5)
+[train] temporal seed=2 fold=1 bestValF1=0.682@ep5 (109s)
+      ep  0 loss=1.454 bce=0.736 inv=1.074 valF1=0.552
+      ep 10 loss=1.070 bce=0.530 inv=0.868 valF1=0.691
+      early stop at ep15 (best 0.756@ep7)
+[train] temporal seed=2 fold=2 bestValF1=0.756@ep7 (122s)
+      ep  0 loss=1.448 bce=0.700 inv=1.128 valF1=0.591
+      ep 10 loss=1.040 bce=0.505 inv=0.747 valF1=0.752
+      early stop at ep19 (best 0.758@ep11)
+[train] temporal seed=2 fold=3 bestValF1=0.758@ep11 (149s)
+      ep  0 loss=1.414 bce=0.687 inv=1.098 valF1=0.547
+      ep 10 loss=1.096 bce=0.513 inv=0.992 valF1=0.643
+      early stop at ep13 (best 0.724@ep5)
+[train] temporal seed=2 fold=4 bestValF1=0.724@ep5 (112s)
+      ep  0 loss=1.477 bce=0.695 inv=2.092 valF1=0.454
+      ep 10 loss=1.060 bce=0.495 inv=1.094 valF1=0.657
+      early stop at ep18 (best 0.657@ep10)
+[train] static   seed=0 fold=0 bestValF1=0.657@ep10 (146s)
+      ep  0 loss=1.469 bce=0.695 inv=1.905 valF1=0.508
+      ep 10 loss=1.080 bce=0.521 inv=1.064 valF1=0.594
+      early stop at ep15 (best 0.735@ep7)
+[train] static   seed=0 fold=1 bestValF1=0.735@ep7 (133s)
+      ep  0 loss=1.515 bce=0.753 inv=1.786 valF1=0.480
+      ep 10 loss=1.135 bce=0.551 inv=1.194 valF1=0.705
+      ep 20 loss=0.869 bce=0.394 inv=0.860 valF1=0.645
+      early stop at ep23 (best 0.750@ep15)
+[train] static   seed=0 fold=2 bestValF1=0.750@ep15 (188s)
+      ep  0 loss=1.464 bce=0.711 inv=1.718 valF1=0.504
+      ep 10 loss=1.080 bce=0.516 inv=1.050 valF1=0.645
+      early stop at ep15 (best 0.666@ep7)
+[train] static   seed=0 fold=3 bestValF1=0.666@ep7 (133s)
+      ep  0 loss=1.459 bce=0.690 inv=1.894 valF1=0.392
+      ep 10 loss=1.109 bce=0.521 inv=1.175 valF1=0.642
+      ep 20 loss=0.771 bce=0.330 inv=0.653 valF1=0.623
+      early stop at ep22 (best 0.705@ep14)
+[train] static   seed=0 fold=4 bestValF1=0.705@ep14 (184s)
+      ep  0 loss=1.453 bce=0.665 inv=1.928 valF1=0.461
+      ep 10 loss=1.045 bce=0.482 inv=1.142 valF1=0.613
+      early stop at ep14 (best 0.670@ep6)
+[train] static   seed=1 fold=0 bestValF1=0.670@ep6 (124s)
+      ep  0 loss=1.388 bce=0.646 inv=1.481 valF1=0.553
+      ep 10 loss=1.017 bce=0.465 inv=1.076 valF1=0.515
+      early stop at ep12 (best 0.681@ep4)
+[train] static   seed=1 fold=1 bestValF1=0.681@ep4 (107s)
+      ep  0 loss=1.509 bce=0.715 inv=2.028 valF1=0.480
+      ep 10 loss=1.092 bce=0.547 inv=1.017 valF1=0.588
+      early stop at ep12 (best 0.725@ep4)
+[train] static   seed=1 fold=2 bestValF1=0.725@ep4 (107s)
+      ep  0 loss=1.467 bce=0.673 inv=1.953 valF1=0.471
+      ep 10 loss=1.053 bce=0.497 inv=1.101 valF1=0.710
+      early stop at ep19 (best 0.725@ep11)
+[train] static   seed=1 fold=3 bestValF1=0.725@ep11 (154s)
+      ep  0 loss=1.425 bce=0.644 inv=1.873 valF1=0.500
+      ep 10 loss=1.066 bce=0.503 inv=1.087 valF1=0.669
+      early stop at ep14 (best 0.716@ep6)
+[train] static   seed=1 fold=4 bestValF1=0.716@ep6 (123s)
+      ep  0 loss=1.490 bce=0.645 inv=2.327 valF1=0.624
+      ep 10 loss=1.062 bce=0.486 inv=1.164 valF1=0.646
+      early stop at ep16 (best 0.674@ep8)
+[train] static   seed=2 fold=0 bestValF1=0.674@ep8 (133s)
+      ep  0 loss=1.427 bce=0.626 inv=1.853 valF1=0.573
+      ep 10 loss=1.064 bce=0.490 inv=1.230 valF1=0.534
+      early stop at ep11 (best 0.682@ep3)
+[train] static   seed=2 fold=1 bestValF1=0.682@ep3 (100s)
+      ep  0 loss=1.478 bce=0.696 inv=1.755 valF1=0.634
+      ep 10 loss=1.092 bce=0.522 inv=1.184 valF1=0.652
+      early stop at ep11 (best 0.731@ep3)
+[train] static   seed=2 fold=2 bestValF1=0.731@ep3 (100s)
+      ep  0 loss=1.449 bce=0.659 inv=1.796 valF1=0.614
+      ep 10 loss=1.060 bce=0.490 inv=1.220 valF1=0.635
+      early stop at ep13 (best 0.750@ep5)
+[train] static   seed=2 fold=3 bestValF1=0.750@ep5 (115s)
+      ep  0 loss=1.411 bce=0.625 inv=1.685 valF1=0.569
+      ep 10 loss=1.036 bce=0.471 inv=1.153 valF1=0.601
+      early stop at ep15 (best 0.678@ep7)
+[train] static   seed=2 fold=4 bestValF1=0.678@ep7 (130s)
+[train] saved 30 checkpoints (37 MB) -> F:\stressID\research_way\results\a1a2\checkpoints
+[train] done in 3798s -> F:\stressID\research_way\results\a1a2\predictions.csv  (29400 rows)
+== stage train took 3798s
+
+[run_full] total 3798s | results -> F:\stressID\research_way\results\a1a2

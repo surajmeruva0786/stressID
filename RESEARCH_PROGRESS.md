@@ -526,8 +526,8 @@ or weighted F1 read on an imbalanced subset. Calibrate to that band.
 
 | # | Action | Rationale | Status |
 |---|---|---|---|
-| **A1** | **Replace raw-signal physio encoding with domain features** (neurokit2 HRV / EDA / RSP per *window*, feeding the same temporal model) | The origin paper's handcrafted physio features reach 0.73 where our learned encoder gets 0.54–0.57. A CNN+BiLSTM cannot rediscover HRV from 448 recordings, and the loss curves show it memorises instead. Largest single lever available. | **IN PROGRESS** |
-| **A2** | **Cut capacity + regularise**: `d_model` 128→64, fusion/temporal layers →1, dropout →0.4, early stopping on val F1 (patience ~8) | 1.2 M parameters on 448 training recordings. Train BCE → 0.09 while val F1 peaks at epoch 1–22 then decays. Essentially free to try. | **IN PROGRESS** |
+| **A1** | **Replace raw-signal physio encoding with domain features** (neurokit2 HRV / EDA / RSP per *window*, feeding the same temporal model) | ~~The origin paper's handcrafted physio features reach 0.73 where our learned encoder gets 0.54–0.57.~~ **Premise was invalid — see §14.1.** | **DONE — FAILED** (§14) |
+| **A2** | **Cut capacity + regularise**: `d_model` 128→64, fusion/temporal layers →1, dropout →0.4, early stopping on val F1 (patience ~8) | 1.2 M parameters on 448 training recordings. Train BCE → 0.09 while val F1 peaks at epoch 1–22 then decays. | **DONE — FAILED** (§14) |
 | **A3** | **Speaking-tasks-only training** (`cfg.tasks` = the 7 speech tasks) | Every such recording has all three modalities, so the availability shortcut is absent from *training*, not merely from evaluation. Currently the model spends capacity learning the trapdoor. One config change, ~3 h. | TODO |
 | **A4** | **Use the continuous 0–10 stress score as primary supervision** (raise `w_regression`, or ordinal regression + threshold) | Binarising throws away information we already have. Same labels, strictly more signal, and it attacks the class-collapse problem. Head already exists at `w_regression=0.2`. | TODO |
 
