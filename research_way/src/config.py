@@ -118,6 +118,10 @@ class Config:
         return DATA_DIR / f"cache_{self.data_tag}"
 
     @property
+    def physfeat_dir(self) -> Path:
+        return DATA_DIR / f"physfeat_{self.data_tag}"
+
+    @property
     def manifest_path(self) -> Path:
         return DATA_DIR / f"manifest_{self.data_tag}.csv"
 
