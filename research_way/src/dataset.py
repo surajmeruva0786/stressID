@@ -34,7 +34,11 @@ class StressIDWindows(Dataset):
     def _load(self, key: str) -> dict:
         if key not in self._cache:
             with np.load(self.cfg.cache_dir / f"{key}.npz") as z:
-                self._cache[key] = {k: z[k] for k in z.files}
+                d = {k: z[k] for k in z.files}
+            if self.cfg.physio_mode == "features":       # A1
+                with np.load(self.cfg.physfeat_dir / f"{key}.npz") as z:
+                    d["physio_feat"] = z["feat"]
+            self._cache[key] = d
         return self._cache[key]
 
     def __getitem__(self, i: int) -> dict:
