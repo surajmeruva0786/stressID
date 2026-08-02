@@ -45,6 +45,31 @@ class PhysioEncoder(nn.Module):
         return self.norm(h)
 
 
+class PhysioFeatureEncoder(nn.Module):
+    """A1: neurokit2 HRV/EDA/RSP descriptors -> `n_tokens` tokens.
+
+    Drop-in replacement for `PhysioEncoder` (same [N, ...] -> [N, k, d]
+    contract) selected by `cfg.physio_mode == "features"`. A small MLP is the
+    right capacity here: the hard part (turning raw ECG into HRV) has already
+    been done by the feature extractor, so the network only has to weight and
+    combine ~29 numbers rather than learn peak detection from 448 recordings.
+    """
+
+    def __init__(self, cfg: Config, in_dim: int):
+        super().__init__()
+        d = cfg.d_model
+        self.k = cfg.tokens_per_modality
+        self.net = nn.Sequential(
+            nn.Linear(in_dim, d), nn.LayerNorm(d), nn.GELU(), nn.Dropout(cfg.dropout),
+            nn.Linear(d, d * self.k),
+        )
+        self.norm = nn.LayerNorm(d)
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:   # [N, D] -> [N, k, d]
+        h = self.net(x).view(x.size(0), self.k, -1)
+        return self.norm(h)
+
+
 class AudioEncoder(nn.Module):
     """log-mel -> 1D-CNN over time -> `n_tokens` tokens.
 
