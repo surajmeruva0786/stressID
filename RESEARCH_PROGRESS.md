@@ -1,8 +1,10 @@
 # StressID — Research Progress & Future Work Plan
 
-> **Last updated:** 2026-07-30  
+> **Last updated:** 2026-08-02  
 > **Status:** Full-corpus run complete and benchmarked against prior work —
-> see `research_way/` and §9–§11 below.
+> see `research_way/` and §9–§11 below. Improvement plan in §12, project
+> history in §13. **In progress:** §12 A1 (domain physio features) + A2
+> (capacity reduction / regularisation).
 > The planned architecture is implemented and trained on all 700 recordings.
 > Headline finding is negative-but-publishable: a modality-availability confound
 > in StressID dominates every multimodal number, and the temporal/fusion
