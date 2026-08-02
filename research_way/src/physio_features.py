@@ -42,7 +42,7 @@ ECG_FEATURES = ["hr_mean", "hr_std", "sdnn", "rmssd", "pnn20", "pnn50",
 EDA_FEATURES = ["scl_mean", "scl_std", "scl_slope", "scl_range",
                 "scr_n_peaks", "scr_amp_mean", "scr_amp_max", "phasic_std"]
 RSP_FEATURES = ["rsp_rate", "rsp_rate_std", "rsp_amp_mean", "rsp_amp_std",
-                "rrv_rmssd", "rsp_n_breaths"]
+                "rrv_rmssd", "rsp_n_breaths", "rsp_rate_spec"]
 RAW_FEATURES = ["ecg_std", "eda_mean", "eda_slope", "rsp_std"]
 
 FEATURE_NAMES = ECG_FEATURES + EDA_FEATURES + RSP_FEATURES + RAW_FEATURES
