@@ -151,34 +151,57 @@ def run(cfg: Config, run_name: str, subject_relative: bool = False,
         if te.sum() == 0 or tr.sum() == 0:
             continue
 
-        # ---- INNER selection: GroupKFold over TRAIN subjects only
+        # ---- INNER selection: GroupKFold over TRAIN subjects only.
+        # Build out-of-fold inner probabilities for every config, then use them
+        # to choose BOTH the configs and the ensemble size k. Choosing k by
+        # comparing outer scores afterwards is test-set fishing -- it is exactly
+        # how 0.544 was manufactured in §15.3.
         tr_subj = subj[tr]
         n_inner = min(3, len(np.unique(tr_subj)))
         inner = GroupKFold(n_splits=n_inner)
-        scores = {}
+        ytr = y[tr]
+        oof = {}
         for fs_name, blocks in FEATURE_SETS.items():
             X = np.concatenate([feats[b] for b in blocks], axis=1)
-            Xtr, ytr = X[tr], y[tr]
+            Xtr = X[tr]
             for m_name, mk in zoo.items():
-                vals = []
+                p_oof = np.full(len(ytr), np.nan)
                 for itr, ite in inner.split(Xtr, ytr, groups=tr_subj):
                     try:
                         c = mk(); c.fit(Xtr[itr], ytr[itr])
-                        vals.append(f1_score(ytr[ite], c.predict(Xtr[ite]),
-                                             average="macro", zero_division=0))
+                        p_oof[ite] = (c.predict_proba(Xtr[ite])[:, 1]
+                                      if hasattr(c, "predict_proba")
+                                      else c.decision_function(Xtr[ite]))
                     except Exception:
-                        vals.append(0.0)
-                scores[(fs_name, m_name)] = float(np.mean(vals))
+                        p_oof[ite] = 0.5
+                p_oof = np.nan_to_num(p_oof, nan=0.5)
+                oof[(fs_name, m_name)] = p_oof
+                s = f1_score(ytr, (p_oof >= 0.5).astype(int),
+                             average="macro", zero_division=0)
                 inner_rows.append({"fold": fo["fold"], "features": fs_name,
-                                   "model": m_name, "inner_macro_f1": np.mean(vals)})
+                                   "model": m_name, "inner_macro_f1": s})
 
+        scores = {k: f1_score(ytr, (v >= 0.5).astype(int), average="macro",
+                              zero_division=0) for k, v in oof.items()}
         ranked = sorted(scores.items(), key=lambda kv: kv[1], reverse=True)
-        top = ranked[:ensemble_top_k]
-        per_fold_choice.append({"fold": fo["fold"],
-                                "picked": " | ".join(f"{fs}/{mn}" for (fs, mn), _ in top),
-                                "inner_best": ranked[0][1]})
 
-        # ---- OUTER evaluation: refit the inner winners, soft-vote them
+        # pick ensemble size on the SAME inner OOF predictions (train-only)
+        k_scores = {}
+        for k in K_GRID:
+            if k > len(ranked):
+                continue
+            pe = np.mean([oof[cfg] for cfg, _ in ranked[:k]], axis=0)
+            k_scores[k] = f1_score(ytr, (pe >= 0.5).astype(int),
+                                   average="macro", zero_division=0)
+        best_k = max(k_scores, key=k_scores.get)
+        top = ranked[:best_k]
+        per_fold_choice.append({
+            "fold": fo["fold"], "chosen_k": best_k,
+            "inner_score_at_k": k_scores[best_k],
+            "k_grid_scores": " ".join(f"{k}:{v:.3f}" for k, v in sorted(k_scores.items())),
+            "picked": " | ".join(f"{fs}/{mn}" for (fs, mn), _ in top)})
+
+        # ---- OUTER evaluation: refit the inner winners on the full train fold
         probs = []
         for (fs_name, m_name), _ in top:
             X = np.concatenate([feats[b] for b in FEATURE_SETS[fs_name]], axis=1)
@@ -189,13 +212,14 @@ def run(cfg: Config, run_name: str, subject_relative: bool = False,
             probs.append(p)
         pred_ens = (np.mean(probs, axis=0) >= 0.5).astype(int)
 
-        # single best inner model, for an ensemble-vs-single comparison
+        # single best inner model, reported for reference only -- NOT selectable
         (fs1, m1), _ = ranked[0]
         X1 = np.concatenate([feats[b] for b in FEATURE_SETS[fs1]], axis=1)
         c1 = zoo[m1](); c1.fit(X1[tr], y[tr])
         pred_single = c1.predict(X1[te])
 
         outer_rows.append({"fold": fo["fold"], "n_test": int(te.sum()),
+                           "chosen_k": best_k,
                            **{f"ens_{k}": v for k, v in _score(y[te], pred_ens).items()},
                            **{f"single_{k}": v for k, v in _score(y[te], pred_single).items()}})
 
