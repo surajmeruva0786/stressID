@@ -833,3 +833,45 @@ Two things to be careful about:
    model is the largest untapped feature-side gain.
 3. **C5 — A4 continuous-score supervision** as an auxiliary target.
 4. **C6 — calibrated probability stacking** across modalities.
+
+### 15.6 C3 result + a campaign-level bias warning (2026-08-03)
+
+| run | selection of ensemble size k | macro F1 | single-model (reference) |
+|---|---|---|---|
+| `c1_nested_ensemble` | **k = 3 fixed a priori** | **0.5327** | 0.4870 |
+| `c2_subject_relative` | k = 3 fixed a priori, + personalised features | 0.5199 | 0.5371 |
+| `c3_inner_selected_k` | **k chosen per fold by inner CV** (mean k = 2.8) | **0.4898** | 0.5088 |
+
+**Letting inner CV choose k made things worse** (0.533 → 0.490), landing back at
+the deep model's 0.485. Adaptive selection on ~290 training samples adds more
+variance than the flexibility is worth. c1's fixed k = 3 is itself a valid
+nested procedure — k was set a priori, not tuned on outer folds — so **0.5327
+remains the best legitimate non-personalised result**, and C3 is recorded as a
+null for adaptive k.
+
+#### The bias this campaign is accumulating
+
+C3 was run to remove a post-hoc choice, and it surfaced a larger one. **Every
+iteration is scored on the same five outer folds, and the campaign keeps the
+best.** Each run's number is individually unbiased, but *the maximum over many
+runs is not* — this is the same selection-on-test problem as §15.3, one level up.
+
+Concretely: three runs so far, plus the 49 configs each explores internally.
+The more variants tried, the more the campaign best drifts above its true
+expected value. This does not invalidate any single number, but it does mean
+**the campaign's running best must not be quoted as a clean estimate.**
+
+Mitigations adopted from here:
+
+1. **Every run is logged in `reports/runs_index.csv`, including failures** — the
+   count of attempts is part of the result and is never pruned to flatter it.
+2. **Pre-register each iteration's hypothesis in §15.5 before running it**, so
+   the run count is honest rather than reconstructed afterwards.
+3. **A final held-out confirmation is required before any SOTA claim.** The
+   campaign best gets re-validated once, under a protocol fixed in advance, and
+   *that* number is what gets reported — not the max over the search.
+
+Given four consecutive nulls at the architecture level (§14.5) and now a null on
+adaptive selection, the realistic expectation is that the leakage-free ceiling on
+this data sits near **0.50–0.55**, not the 0.72 the published leaky protocol
+reports.

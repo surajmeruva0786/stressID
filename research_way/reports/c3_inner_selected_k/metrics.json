@@ -1,0 +1,15 @@
+{
+  "run_name": "c3_inner_selected_k",
+  "timestamp": "2026-08-03 14:28:17",
+  "verdict": "no improvement",
+  "delta_vs_best": -0.042950275282110595,
+  "duration_s": 298.46029257774353,
+  "complete364_macro_f1": 0.48978415749252535,
+  "complete364_macro_f1_single_ref": 0.5087907448363227,
+  "mean_chosen_k": 2.8,
+  "complete364_weighted_f1": 0.5808288128700431,
+  "complete364_balanced_acc": 0.516550493994423,
+  "complete364_accuracy": 0.5863852813852815,
+  "n_folds": 5,
+  "subject_relative": false
+}

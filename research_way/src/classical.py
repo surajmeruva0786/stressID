@@ -44,6 +44,7 @@ from .splits import load_splits
 from .report import write_report
 
 BASELINE_TASKS = ("Relax", "Breathing")     # low-stress, no audio -> outside the 364
+K_GRID = (1, 2, 3, 5, 8)                    # candidate ensemble sizes, chosen by inner CV
 
 
 # ------------------------------------------------------------------- features
@@ -226,7 +227,8 @@ def run(cfg: Config, run_name: str, subject_relative: bool = False,
     outer = pd.DataFrame(outer_rows)
     headline = {
         "complete364_macro_f1": float(outer["ens_macro_f1"].mean()),
-        "complete364_macro_f1_single": float(outer["single_macro_f1"].mean()),
+        "complete364_macro_f1_single_ref": float(outer["single_macro_f1"].mean()),
+        "mean_chosen_k": float(outer["chosen_k"].mean()),
         "complete364_weighted_f1": float(outer["ens_weighted_f1"].mean()),
         "complete364_balanced_acc": float(outer["ens_balanced_acc"].mean()),
         "complete364_accuracy": float(outer["ens_accuracy"].mean()),
