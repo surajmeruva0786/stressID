@@ -1,0 +1,16 @@
+{
+  "run_name": "c4b_video_features_fixedk",
+  "timestamp": "2026-08-03 15:16:02",
+  "verdict": "no improvement",
+  "delta_vs_best": -0.022754060579738833,
+  "duration_s": 530.676527261734,
+  "complete364_macro_f1": 0.5099803721948971,
+  "complete364_macro_f1_single_ref": 0.5116378616737266,
+  "mean_chosen_k": 3.0,
+  "fixed_k": true,
+  "complete364_weighted_f1": 0.5950035587420978,
+  "complete364_balanced_acc": 0.5299785111649685,
+  "complete364_accuracy": 0.5922077922077922,
+  "n_folds": 5,
+  "subject_relative": false
+}

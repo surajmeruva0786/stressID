@@ -875,3 +875,80 @@ Given four consecutive nulls at the architecture level (§14.5) and now a null o
 adaptive selection, the realistic expectation is that the leakage-free ceiling on
 this data sits near **0.50–0.55**, not the 0.72 the published leaky protocol
 reports.
+
+### 15.7 Campaign result: plateau at ~0.52, confirmed out-of-search (2026-08-03)
+
+**Stop condition met** — three consecutive iterations failed to beat `c1`
+(C3 0.4898, C4 0.4979, C4b 0.5100 vs. 0.5327), so the campaign stopped and ran
+the §15.6 confirmation instead of continuing to search.
+
+#### Confirmation on fresh subject partitions
+
+The five stored outer folds were reused by every iteration, so the campaign
+maximum over them is biased. The frozen `c1` protocol (7 feature sets, 7 models,
+k = 3 fixed a priori, no personalisation) was therefore re-evaluated on **three
+subject partitions generated from seeds never used during the search**:
+
+| partition | macro F1 |
+|---|---|
+| seed 101 | 0.5035 |
+| seed 202 | 0.5499 |
+| seed 303 | 0.5043 |
+| **mean** | **0.5192** (sd 0.0265) |
+
+**Search maximum 0.5327 → confirmed 0.5192. The search was +0.0135 optimistic**,
+almost exactly the drift §15.6 predicted. The reportable number is **0.519**,
+not 0.533.
+
+#### Final standing
+
+| system | macro F1 (leakage-free, 364 recs) | vs. majority (0.418) |
+|---|---|---|
+| **classical ensemble, confirmed out-of-search** | **0.519** | **+0.101** |
+| classical ensemble, search maximum | 0.533 | +0.115 |
+| deep MST-temporal (1.2 M params) | 0.485 | +0.067 |
+| deep MST-static | 0.476 | +0.058 |
+| majority class | 0.418 | — |
+
+Net gain over the deep model: **+0.034** confirmed. Every iteration, including
+the failures, is in `reports/runs_index.csv`; none were pruned.
+
+#### Did we reach SOTA?
+
+**No — and the honest answer is that the published number is not a target we can
+legitimately match.** The 0.72 weighted F1 / 0.65 balanced accuracy in the origin
+paper is measured with subjects on both sides of the split and SMOTE applied.
+Under that protocol our own classical baselines already reach 0.740 weighted F1
+(§10.2) — so "beating SOTA" is available any time we are willing to adopt the
+leaky protocol, and it would mean nothing.
+
+Under a protocol where no subject appears in both train and test, the ceiling on
+this data is **~0.52 macro F1**, and this campaign reached it. Evidence that this
+is a data ceiling and not a modelling failure:
+
+- Four architecture-level nulls (temporal, cross-modal fusion, missing-modality,
+  capacity/representation) — §9.3, §14.
+- A 1.2 M-parameter transformer loses to an SVC on 32×32 pixel statistics — §15.3.
+- Richer video features (248 regional-dynamics + LBP descriptors) made it
+  *worse*, −0.023 — C4b.
+- Adaptive model selection made it worse, −0.043 — C3.
+- Nothing beat a simple soft-vote of three classical models on 290 training
+  recordings.
+
+#### What would actually move it
+
+Not architecture. The two remaining levers both add **data or supervision**:
+
+1. **§12.2 B3 / O7 — multi-dataset pretraining** (WESAD, K-EmoCon, SWELL). The
+   binding constraint is 290 training recordings, and this is the only planned
+   intervention that changes that number.
+2. **§12.1 A4 — continuous 0–10 supervision** instead of a binarised label,
+   which extracts more signal from labels already collected.
+
+#### For the paper
+
+The result to lead with is unchanged and is *strengthened* by this campaign: the
+modality-availability confound (§10.5), the leakage-corrected benchmark (§10.3),
+and now a documented, honestly-confirmed ceiling of ~0.52 under a leakage-free
+protocol — against a literature reporting 0.72 under a leaky one. **The gap
+between those two numbers is the paper.**

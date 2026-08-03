@@ -40,6 +40,7 @@ from sklearn.svm import SVC
 
 from .config import Config, full_config
 from .baselines import extract_static_features
+from .video_features import extract_recording as extract_video_features
 from .splits import load_splits
 from .report import write_report
 
@@ -63,6 +64,27 @@ def build_features(cfg: Config, man: pd.DataFrame) -> dict[str, np.ndarray]:
         # window-sequence summary: level, spread and extremes over the recording
         pf.append(np.concatenate([v.mean(0), v.std(0), v.min(0), v.max(0)]))
     feats["physfeat"] = np.nan_to_num(np.stack(pf))
+
+    # C4: richer video descriptors (regional dynamics + LBP texture), cached
+    vf_dir = cfg.physfeat_dir.parent / f"videofeat_{cfg.data_tag}"
+    vf_dir.mkdir(parents=True, exist_ok=True)
+    vf = []
+    for key in man["key"]:
+        cache = vf_dir / f"{key}.npz"
+        if cache.exists():
+            with np.load(cache) as z:
+                f = z["feat"]
+        else:
+            with np.load(cfg.cache_dir / f"{key}.npz") as z:
+                f = extract_video_features(z["video"], z["mask"],
+                                           int(z["n_windows"]), cfg.max_windows)
+            np.savez_compressed(cache, feat=f)
+        v = f[(f != 0).any(axis=1)]
+        if len(v) == 0:
+            v = np.zeros((1, f.shape[1]), np.float32)
+        vf.append(np.concatenate([v.mean(0), v.std(0)]))
+    feats["videofeat"] = np.nan_to_num(np.stack(vf))
+
     return {k: np.nan_to_num(v.astype(np.float64)) for k, v in feats.items()}
 
 
@@ -112,6 +134,10 @@ def model_zoo() -> dict:
 
 
 FEATURE_SETS = {
+    "videofeat": ["videofeat"],
+    "videofeat+video": ["videofeat", "video"],
+    "videofeat+audio": ["videofeat", "audio"],
+    "videofeat+physfeat+audio": ["videofeat", "physfeat", "audio"],
     "video": ["video"],
     "audio": ["audio"],
     "physfeat": ["physfeat"],
@@ -119,6 +145,7 @@ FEATURE_SETS = {
     "audio+video": ["audio", "video"],
     "physfeat+audio+video": ["physfeat", "audio", "video"],
     "all": ["physio", "physfeat", "audio", "video"],
+    "all+videofeat": ["physio", "physfeat", "audio", "video", "videofeat"],
 }
 
 
@@ -129,8 +156,31 @@ def _score(y_true, y_pred) -> dict:
             "accuracy": accuracy_score(y_true, y_pred)}
 
 
+C1_FEATURE_SETS = ("video", "audio", "physfeat", "physfeat+video", "audio+video",
+                   "physfeat+audio+video", "all")   # frozen c1 protocol
+
+
+def _fresh_folds(subj: np.ndarray, n_folds: int, seed: int) -> list[dict]:
+    """New subject partitions, independent of data/splits_*.json.
+
+    The five stored outer folds have been reused by every iteration, so the
+    campaign maximum over them is optimistically biased (§15.6). Confirming on
+    partitions never touched during the search is the only way to get a number
+    that is not a search artefact.
+    """
+    rng = np.random.default_rng(seed)
+    subjects = np.unique(subj)
+    rng.shuffle(subjects)
+    chunks = np.array_split(subjects, n_folds)
+    return [{"fold": i, "test": list(c)} for i, c in enumerate(chunks)]
+
+
 def run(cfg: Config, run_name: str, subject_relative: bool = False,
-        ensemble_top_k: int = 3, notes: str = "") -> dict:
+        ensemble_top_k: int = 3, notes: str = "", fixed_k: bool = False,
+        splits_seed: int | None = None, c1_only: bool = False) -> dict:
+    """`fixed_k=True` pins the ensemble size to `ensemble_top_k` a priori (the
+    c1 protocol). `fixed_k=False` lets inner CV choose it per fold (c3), which
+    §15.6 showed costs ~0.043 -- so comparisons must hold this constant."""
     t0 = time.time()
     man = pd.read_csv(cfg.manifest_path)
     feats = build_features(cfg, man)
@@ -140,8 +190,13 @@ def run(cfg: Config, run_name: str, subject_relative: bool = False,
     comp = ((man.has_physio == 1) & (man.has_audio == 1) & (man.has_video == 1)).values
     y = man["binary"].values
     subj = man["subject"].values
-    folds = load_splits(cfg)
+    folds = (_fresh_folds(subj, cfg.n_folds, splits_seed)
+             if splits_seed is not None else load_splits(cfg))
     zoo = model_zoo()
+    global FEATURE_SETS
+    _all_sets = FEATURE_SETS
+    if c1_only:
+        FEATURE_SETS = {k: v for k, v in FEATURE_SETS.items() if k in C1_FEATURE_SETS}
 
     outer_rows, inner_rows = [], []
     per_fold_choice = []
@@ -194,7 +249,7 @@ def run(cfg: Config, run_name: str, subject_relative: bool = False,
             pe = np.mean([oof[cfg] for cfg, _ in ranked[:k]], axis=0)
             k_scores[k] = f1_score(ytr, (pe >= 0.5).astype(int),
                                    average="macro", zero_division=0)
-        best_k = max(k_scores, key=k_scores.get)
+        best_k = ensemble_top_k if fixed_k else max(k_scores, key=k_scores.get)
         top = ranked[:best_k]
         per_fold_choice.append({
             "fold": fo["fold"], "chosen_k": best_k,
@@ -229,6 +284,8 @@ def run(cfg: Config, run_name: str, subject_relative: bool = False,
         "complete364_macro_f1": float(outer["ens_macro_f1"].mean()),
         "complete364_macro_f1_single_ref": float(outer["single_macro_f1"].mean()),
         "mean_chosen_k": float(outer["chosen_k"].mean()),
+        "fixed_k": bool(fixed_k),
+        "splits_seed": splits_seed if splits_seed is not None else "stored",
         "complete364_weighted_f1": float(outer["ens_weighted_f1"].mean()),
         "complete364_balanced_acc": float(outer["ens_balanced_acc"].mean()),
         "complete364_accuracy": float(outer["ens_accuracy"].mean()),
@@ -236,6 +293,7 @@ def run(cfg: Config, run_name: str, subject_relative: bool = False,
         "subject_relative": bool(subject_relative),
     }
 
+    FEATURE_SETS = _all_sets
     inner_df = pd.DataFrame(inner_rows)
     top_inner = (inner_df.groupby(["features", "model"])["inner_macro_f1"]
                  .mean().reset_index()
@@ -245,7 +303,7 @@ def run(cfg: Config, run_name: str, subject_relative: bool = False,
         run_name=run_name,
         headline=headline,
         config={"subject_relative": subject_relative,
-                "ensemble_top_k": ensemble_top_k,
+                "ensemble_top_k": ensemble_top_k, "fixed_k": fixed_k,
                 "feature_sets": list(FEATURE_SETS),
                 "models": list(zoo),
                 "n_folds": cfg.n_folds, "data_tag": cfg.data_tag,
@@ -264,9 +322,16 @@ def main() -> None:
     ap.add_argument("--run-name", required=True)
     ap.add_argument("--subject-relative", action="store_true")
     ap.add_argument("--top-k", type=int, default=3)
+    ap.add_argument("--splits-seed", type=int, default=None,
+                    help="generate FRESH subject partitions instead of the stored splits")
+    ap.add_argument("--c1-only", action="store_true",
+                    help="restrict to the frozen c1 feature-set list")
+    ap.add_argument("--fixed-k", action="store_true",
+                    help="pin ensemble size a priori (c1 protocol) instead of inner-CV selection")
     ap.add_argument("--notes", default="")
     a = ap.parse_args()
-    h = run(full_config(), a.run_name, a.subject_relative, a.top_k, a.notes)
+    h = run(full_config(), a.run_name, a.subject_relative, a.top_k, a.notes,
+            a.fixed_k, a.splits_seed, a.c1_only)
     print(h)
 
 
