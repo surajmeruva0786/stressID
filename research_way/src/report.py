@@ -1,12 +1,12 @@
 """Per-run reporting: every training/eval run leaves a durable record.
 
-Writes into `results/<run_name>/report/`:
+Writes into `reports/<run_name>/`:
 
     report.md    human-readable summary (config, metrics, deltas vs best)
     report.pdf   same content as a PDF (matplotlib PdfPages, no extra deps)
     metrics.json machine-readable row for the registry
 
-and appends one line to `results/RUNS.md` + `results/runs_index.csv`, the
+and appends one line to `reports/RUNS.md` + `reports/runs_index.csv`, the
 cross-run registry. Without this, runs overwrite each other's context and the
 only record of what was tried is a git log message.
 
@@ -26,10 +26,14 @@ import matplotlib.pyplot as plt
 import pandas as pd
 from matplotlib.backends.backend_pdf import PdfPages
 
-from .config import RESULTS_DIR
+from .config import RESEARCH_ROOT
 
-REGISTRY_CSV = RESULTS_DIR / "runs_index.csv"
-REGISTRY_MD = RESULTS_DIR / "RUNS.md"
+# Deliberately NOT under results/ -- that tree is gitignored (predictions.csv,
+# checkpoints, caches). Reports are the durable record of what was tried, so
+# they live in a tracked directory and are committed with the code that made them.
+REPORTS_DIR = RESEARCH_ROOT / "reports"
+REGISTRY_CSV = REPORTS_DIR / "runs_index.csv"
+REGISTRY_MD = REPORTS_DIR / "RUNS.md"
 
 # The number that matters: macro F1 on the all-modality subset under subject
 # GroupKFold. Availability is constant there, so the shortcut carries no signal.
@@ -85,7 +89,7 @@ def write_report(run_name: str, headline: dict, config: dict,
     `headline` must carry PRIMARY_METRIC; other numeric keys are recorded too.
     `tables` maps a section title -> list of row dicts.
     """
-    out = RESULTS_DIR / run_name / "report"
+    out = REPORTS_DIR / run_name
     out.mkdir(parents=True, exist_ok=True)
     ts = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     prev_name, prev_score = best_so_far()
