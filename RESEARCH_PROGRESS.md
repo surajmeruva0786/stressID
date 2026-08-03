@@ -743,3 +743,93 @@ Do **not** run more capacity/representation variants. Remaining Tier A items
 axes — the training distribution and the supervision signal — and are still
 worth running, one change per run. B1 (subject-adaptive calibration) remains the
 highest-value untested idea.
+
+---
+
+## 15. SOTA Campaign (2026-08-03 →)
+
+Standing instruction: iterate — change, retrain, analyse, document, commit,
+push, repeat — until results plateau or a target is met. Every run leaves a
+report (§15.2).
+
+### 15.1 What "SOTA" means here, stated up front
+
+The published StressID best is **0.72 weighted F1 / 0.65 balanced accuracy**,
+measured under **random 80/20 task splits with subjects on both sides** and with
+SMOTE. That number is reachable by adopting that protocol — and doing so would
+reproduce the exact error §10 exists to document. **This campaign therefore
+targets the best number under subject GroupKFold on the 364 all-modality
+recordings, and reports it against the published figure honestly rather than
+switching protocols to close the gap.**
+
+Primary metric: `complete364_macro_f1`. Majority-class reference **0.418**.
+
+### 15.2 Reporting infrastructure (built 2026-08-03)
+
+`src/report.py` writes, for **every** run, into **`research_way/reports/<run>/`**:
+`report.md`, `report.pdf`, `metrics.json` — plus a cross-run registry at
+`reports/RUNS.md` and `reports/runs_index.csv` ranking every run by the primary
+metric with its delta vs. the previous best.
+
+Reports live outside `results/` **because `results/` is gitignored**. They are
+tracked and committed with the code that produced them, so progress survives.
+
+### 15.3 The finding that redirected the campaign
+
+A diagnostic that should have been run much earlier: **what do simple classical
+models score on the leakage-free subset?** All prior baseline numbers (§10) were
+measured on all 700 recordings, where the availability shortcut inflates them.
+
+On complete-364 under GroupKFold, **seven classical configurations beat the
+1.2 M-parameter transformer**:
+
+| model | macro F1 |
+|---|---|
+| video + SVC | **0.544** |
+| video + logreg | 0.538 |
+| all-features + HGB | 0.532 |
+| video + RF | 0.510 |
+| physfeat+audio+video + HGB | 0.504 |
+| **deep MST-temporal** | **0.485** |
+| **deep MST-static** | 0.476 |
+
+The deep architecture was never the ceiling — it is worse than an SVC on video
+features. Deep representation learning on 448 training recordings is the wrong
+tool, and the campaign moved to `src/classical.py`.
+
+> Those numbers were picked by looking at outer-fold scores, i.e. test-set
+> fishing. Under proper nested CV the honest figure is 0.533 (§15.4) — the 0.544
+> was ~0.011 optimistic. Recorded because the gap is the point.
+
+### 15.4 Results so far
+
+| run | what changed | ensemble macro F1 | single-model macro F1 |
+|---|---|---|---|
+| *(control)* deep MST-temporal | — | — | 0.4850 |
+| `c1_nested_ensemble` | classical zoo, nested GroupKFold selection, soft-vote top-3 | **0.5327** | 0.4870 |
+| `c2_subject_relative` | + features relative to each subject's own Relax/Breathing baseline | 0.5199 | **0.5371** |
+
+**Best honest number so far: 0.5371** (c2, single inner-selected model),
+**+0.052 over the deep model** and **+0.119 over the majority reference**.
+
+Two things to be careful about:
+
+- **c2 is a *personalised* setting.** Features are expressed relative to that
+  subject's own Relax/Breathing baseline. Those tasks carry no audio, so they sit
+  outside the 364-recording evaluation subset — no evaluated sample is touched
+  and no label is read. It is legitimate calibration matching a real deployment,
+  but it answers a different question than c1 and is reported separately.
+- **Ensemble-vs-single must not be chosen post hoc.** c1 favours the ensemble,
+  c2 the single model. Picking the better one *after* seeing outer scores is the
+  same fishing that inflated 0.544 → the aggregation strategy must itself be
+  selected by inner CV. **That is the next iteration's fix, not a result.**
+
+### 15.5 Next iterations
+
+1. **C3 — select aggregation by inner CV** (single vs. top-k ensemble chosen on
+   inner folds), removing the post-hoc choice above. Correctness fix first.
+2. **C4 — better video features.** Video is the strongest single modality yet
+   uses crude 32×32 pixel statistics. Proper AUs (OpenFace) or a face-embedding
+   model is the largest untapped feature-side gain.
+3. **C5 — A4 continuous-score supervision** as an auxiliary target.
+4. **C6 — calibrated probability stacking** across modalities.

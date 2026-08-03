@@ -1,0 +1,14 @@
+{
+  "run_name": "c2_subject_relative",
+  "timestamp": "2026-08-03 14:20:37",
+  "verdict": "no improvement",
+  "delta_vs_best": -0.012830842552808197,
+  "duration_s": 294.2279632091522,
+  "complete364_macro_f1": 0.5199035902218277,
+  "complete364_macro_f1_single": 0.5371454658061102,
+  "complete364_weighted_f1": 0.6377736474052262,
+  "complete364_balanced_acc": 0.5456986986683117,
+  "complete364_accuracy": 0.6837662337662337,
+  "n_folds": 5,
+  "subject_relative": true
+}
