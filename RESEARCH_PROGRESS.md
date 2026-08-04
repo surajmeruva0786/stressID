@@ -1,6 +1,6 @@
 # StressID — Research Progress & Future Work Plan
 
-> **Last updated:** 2026-08-02  
+> **Last updated:** 2026-08-04  
 > **Status:** Full-corpus run complete and benchmarked against prior work —
 > see `research_way/` and §9–§11 below. Improvement plan in §12, project
 > history in §13. **Latest:** §12 A1 (domain physio features) + A2 (capacity
@@ -12,6 +12,39 @@
 > Model weights are now persisted per fold and the corpus has been retrained to
 > produce them — 30 checkpoints in `research_way/results/full/checkpoints/` (§11).
 > The retrain reproduces every headline number (§11.5).
+
+---
+
+## 0. Dataset location & re-download audit (2026-08-04)
+
+**Canonical dataset root is now `StressID Dataset new/`** (`DATASET_ROOT` in
+`research_way/src/config.py`). The dataset was re-downloaded to rule out a
+corrupted copy as the cause of the low scores.
+
+**Audit result: the re-download is byte-identical to the previous copy.**
+
+| check | old | new | verdict |
+|---|---|---|---|
+| Physiological `.txt` (MD5, all files) | 777 | 777 | 0 differing hashes |
+| Audio `.wav` (name + size) | 378 | 378 | identical |
+| Videos `.mp4` (name + size) | 629 | 629 | identical |
+| `labels.csv`, `demographics.csv`, `self_assessments.csv`, `labels_supplementary.csv` (MD5) | — | — | identical |
+
+Re-verified on the new copy: 700 labelled recordings, 64 subjects,
+`P(stress | audio present) = 0.709` (n=378) vs `P(stress | audio absent) = 0.311`
+(n=322); 364 all-modality recordings at 0.717 stress. **The modality-availability
+confound (§10.5) is structural in the recording design — audio was only captured
+for the 7 speech tasks — and is unaffected by re-downloading.**
+
+Two things must not be conflated:
+
+- **Subject leakage** is a property of the *evaluation protocol*, not of the files.
+  It *inflates* scores (§10.3); removing it is why our numbers are below the
+  paper's. No download can fix or cause it.
+- **The availability confound** is in the data, but it is by design and present in
+  every copy of StressID.
+
+Cached features in `research_way/data/` remain valid — no regeneration needed.
 
 ---
 

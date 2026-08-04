@@ -11,7 +11,7 @@ from pathlib import Path
 
 # ---------------------------------------------------------------- paths
 REPO_ROOT = Path(__file__).resolve().parents[2]          # F:\stressID
-DATASET_ROOT = REPO_ROOT / "StressID Dataset"
+DATASET_ROOT = REPO_ROOT / "StressID Dataset new"   # canonical copy (2026-08-04)
 RESEARCH_ROOT = REPO_ROOT / "research_way"
 DATA_DIR = RESEARCH_ROOT / "data"
 RESULTS_DIR = RESEARCH_ROOT / "results"
