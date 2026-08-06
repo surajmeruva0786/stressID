@@ -68,8 +68,6 @@ def protocol_swap(cfg, man, feats, y, subj) -> pd.DataFrame:
 
     # sanity: confirm the two protocols really do differ in subject overlap
     overlap = []
-    for (tr, te), tag in [(grouped[0], "groupkfold"), (random_folds[0], "random")]:
-        pass
     for name, splits in (("groupkfold", grouped), ("random_kfold_LEAKY", random_folds)):
         shared = [len(set(subj[tr]) & set(subj[te])) for tr, te in splits]
         overlap.append({"protocol": name, "mean_shared_subjects_train_test": float(np.mean(shared))})
