@@ -389,13 +389,19 @@ The fusion rows landing in the same band validates the reimplementation.
 
 Same features, only the split rule changes (weighted F1):
 
+> **Corrected 2026-08-06.** The physio row previously read 0.670 → 0.543 =
+> **+0.127**. That leaky value does not reproduce and is not supported by any
+> stored artifact — every run on disk gives +0.093, and a fresh run gives +0.098.
+> Table below is the reproducible version. See `LEAKY_PROTOCOL.md` §7 and
+> regenerate with `python research_way/prove_leakage.py`.
+
 | Method | random 80/20 (leaky) | subject GroupKFold | inflation |
 |---|---|---|---|
-| physio + RF | 0.670 | 0.543 | **+0.127** |
-| feature_fusion + RF | 0.740 | 0.687 | +0.053 |
-| audio + RF | 0.723 | 0.681 | +0.042 |
-| decision_fusion + RF | 0.726 | 0.690 | +0.036 |
-| **availability_only + RF** | 0.697 | 0.699 | **−0.002** |
+| physio + RF | 0.641 | 0.543 | **+0.098** |
+| video + RF | 0.679 | 0.622 | +0.057 |
+| feature_fusion + RF | 0.736 | 0.686 | +0.051 |
+| audio + RF | 0.716 | 0.681 | +0.035 |
+| **availability_only + RF** | 0.694 | 0.699 | **−0.004** |
 
 Physiology inflates most — subject-specific baselines get memorised — and it is
 the modality the origin paper reports its *best* unimodal number on (0.73).
