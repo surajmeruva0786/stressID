@@ -149,7 +149,7 @@ def identity_oracle(cfg, man, y, subj) -> dict:
 
 
 def main() -> None:
-    cfg = Config()
+    cfg = full_config()          # 700 recordings / 64 subjects, not the 96-rec subset
     man = load_manifest(cfg)
     print(f"[proof] manifest: {len(man)} recordings, {man['subject'].nunique()} subjects")
 
