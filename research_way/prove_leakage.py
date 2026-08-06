@@ -36,7 +36,7 @@ from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import StandardScaler
 
 from src.baselines import extract_static_features
-from src.config import Config, RESEARCH_ROOT
+from src.config import RESEARCH_ROOT, full_config
 from src.dataset import load_manifest
 from src.splits import load_splits
 
