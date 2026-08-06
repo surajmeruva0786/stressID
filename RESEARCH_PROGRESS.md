@@ -1,6 +1,6 @@
 # StressID — Research Progress & Future Work Plan
 
-> **Last updated:** 2026-08-04  
+> **Last updated:** 2026-08-06  
 > **Status:** Full-corpus run complete and benchmarked against prior work —
 > see `research_way/` and §9–§11 below. Improvement plan in §12, project
 > history in §13. **Latest:** §12 A1 (domain physio features) + A2 (capacity
