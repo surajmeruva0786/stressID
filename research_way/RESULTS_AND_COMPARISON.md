@@ -111,20 +111,23 @@ which validates the reimplementation.
 
 Identical features and classifiers, only the split rule changes:
 
+> **Corrected 2026-08-06.** The physio row previously read 0.670 → 0.543 =
+> **+0.127**. That leaky value is unsupported by any stored artifact (all runs
+> give +0.093; a fresh run gives +0.098). See `../LEAKY_PROTOCOL.md` §7.
+
 | Method | Random 80/20 (leaky) | Subject GroupKFold | Inflation |
 |---|---|---|---|
-| physio + RF | 0.670 | 0.543 | **+0.127** |
-| feature_fusion + RF | 0.740 | 0.687 | +0.053 |
-| decision_fusion + RF | 0.726 | 0.690 | +0.036 |
-| video + RF | 0.657 | 0.622 | +0.035 |
-| audio + RF | 0.723 | 0.681 | +0.042 |
-| **availability_only + RF** | 0.697 | 0.699 | **−0.002** |
+| physio + RF | 0.641 | 0.543 | **+0.098** |
+| video + RF | 0.679 | 0.622 | +0.057 |
+| feature_fusion + RF | 0.736 | 0.686 | +0.051 |
+| audio + RF | 0.716 | 0.681 | +0.035 |
+| **availability_only + RF** | 0.694 | 0.699 | **−0.004** |
 
-*(weighted F1; the macro-F1 version is in `paper_comparable_metrics.csv`.)*
+*(weighted F1; regenerate with `python research_way/prove_leakage.py`.)*
 
 Two things to note:
 
-1. **Physiology inflates most (+0.127).** With subjects on both sides of the split,
+1. **Physiology inflates most (+0.098).** With subjects on both sides of the split,
    a physio model can memorise individual resting heart rate and skin conductance
    baselines. This is the single largest correction to prior StressID numbers, and
    physiology is the modality the origin paper reports its *best* unimodal result on
