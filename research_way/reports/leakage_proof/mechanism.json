@@ -6,36 +6,36 @@
     },
     {
       "protocol": "random_kfold_LEAKY",
-      "mean_shared_subjects_train_test": 13.25
+      "mean_shared_subjects_train_test": 58.4
     }
   ],
   "identity_probe": {
     "physio": {
-      "subject_id_accuracy": 0.6668421052631579,
-      "chance": 0.0625,
-      "times_chance": 10.669473684210526
+      "subject_id_accuracy": 0.6485714285714286,
+      "chance": 0.015625,
+      "times_chance": 41.50857142857143
     },
     "audio": {
-      "subject_id_accuracy": 0.4794736842105262,
-      "chance": 0.0625,
-      "times_chance": 7.6715789473684195
+      "subject_id_accuracy": 0.4671428571428572,
+      "chance": 0.015625,
+      "times_chance": 29.89714285714286
     },
     "video": {
-      "subject_id_accuracy": 0.5842105263157895,
-      "chance": 0.0625,
-      "times_chance": 9.347368421052632
+      "subject_id_accuracy": 0.40285714285714286,
+      "chance": 0.015625,
+      "times_chance": 25.782857142857143
     },
-    "_n_subjects": 16,
-    "_n_recordings": 96
+    "_n_subjects": 64,
+    "_n_recordings": 700
   },
   "identity_oracle": {
     "random_split_oracle": {
-      "acc": 0.46875000000000006,
-      "f1_macro": 0.4525598822473823,
-      "f1_weighted": 0.46314955299330296
+      "acc": 0.6328571428571428,
+      "f1_macro": 0.6277837632316363,
+      "f1_weighted": 0.6304654587636972
     },
     "test_subjects_seen_in_train": 1.0,
     "groupkfold_oracle": "undefined - test subjects never appear in train",
-    "mean_within_subject_label_consistency": 0.59375
+    "mean_within_subject_label_consistency": 0.7076704545454545
   }
 }
