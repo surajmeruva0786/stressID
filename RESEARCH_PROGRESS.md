@@ -574,7 +574,7 @@ or weighted F1 read on an imbalanced subset. Calibrate to that band.
 
 | # | Action | Rationale |
 |---|---|---|
-| **B1** | **Subject-adaptive calibration (few-shot)** — normalise/adapt against 2–3 labelled samples per test subject (e.g. their Relax baseline) | Inter-subject variation is the dominant noise source here — precisely why leakage inflated physio by +0.127. Turns the leakage problem into a feature, and is realistic for deployment. Highest-value item the objectives doc under-prioritised. |
+| **B1** | **Subject-adaptive calibration (few-shot)** — normalise/adapt against 2–3 labelled samples per test subject (e.g. their Relax baseline) | Inter-subject variation is the dominant noise source here — precisely why leakage inflated physio by +0.098. Turns the leakage problem into a feature, and is realistic for deployment. Highest-value item the objectives doc under-prioritised. |
 | **B2** | **Fine-tune wav2vec2 / HuBERT** for audio | Audio is already the strongest honest modality (0.686 vs physio 0.565) and is the one place an off-the-shelf foundation model exists. `AudioEncoder` has a documented drop-in slot. Needs `pip install transformers`. |
 | **B3** | **Stage −1 multi-dataset pretraining (O7)** | Correct diagnosis of the overfitting, but the most expensive item (acquire + harmonise WESAD / K-EmoCon / SWELL). Do only after Tier A says whether the architecture deserves it. |
 
@@ -662,7 +662,7 @@ results were recomputed under the paper's own metrics *and* protocol
 (`compare_papers.py`).
 
 Outcome: our baselines reproduce the paper under its rules (0.740 vs 0.72), the
-leakage correction costs 0.04–0.13 with physio worst at +0.127, and **our trained
+leakage correction costs 0.03–0.10 with physio worst at +0.098, and **our trained
 model does not beat the published numbers** (+0.029 over the trivial floor vs
 their +0.121). Recorded plainly rather than framed away.
 
@@ -693,7 +693,7 @@ not improve the leakage-free number. Recorded as a null.
 ### Recurring lesson
 
 Three separate times the flattering number was the wrong one: random splits
-(+0.127 on physio), weighted F1 on a 72%-positive subset (+0.14), and the
+(+0.098 on physio), weighted F1 on a 72%-positive subset (+0.14), and the
 temporal accuracy result that reads p = 0.015 while sitting *below* a
 do-nothing classifier. Each looked like a result and was an artefact. Every
 headline number in this project is now reported against an explicit trivial
@@ -713,8 +713,8 @@ A1 was justified by "the origin paper's handcrafted physio features reach 0.73
 where our learned encoder gets 0.54–0.57." **That comparison was wrong, and it is
 the exact error this project exists to document**: 0.73 is the paper's *leaky*
 number, 0.54–0.57 is ours *leakage-free*. §10.3 measures physio inflation at
-+0.127, so handcrafted features under GroupKFold should land near **0.60**, not
-0.73. The real headroom was ~0.03, not ~0.19.
++0.098, so handcrafted features under GroupKFold should land near **0.63**, not
+0.73. The real headroom was ~0.06, not ~0.19.
 
 A cheap GroupKFold check on the extracted features confirmed this before the
 training run:
