@@ -1,6 +1,9 @@
 # StressID — Research Progress & Future Work Plan
 
-> **Last updated:** 2026-08-06  
+> **Last updated:** 2026-08-11  
+> **Next steps live in [`RESEARCH_AGENDA.md`](RESEARCH_AGENDA.md)** — the
+> modelling campaign is closed at 0.519 and the work has pivoted to generalising
+> the leakage measurement (§16).  
 > **Status:** Full-corpus run complete and benchmarked against prior work —
 > see `research_way/` and §9–§11 below. Improvement plan in §12, project
 > history in §13. **Latest:** §12 A1 (domain physio features) + A2 (capacity
