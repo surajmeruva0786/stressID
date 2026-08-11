@@ -162,6 +162,16 @@ model for free.
 - Identity alone, with no signal, beats real leakage-free models (E-D).
 
 **Does not prove:**
+- *Where* the leak lives. The chain E-C → E-D runs through **C = 0.708, the
+  within-subject label consistency** — and that is a property of self-report, not
+  of physiology. The biometric reading (physiology identifies people) and the
+  labelling reading (participants use 0–10 scales idiosyncratically, so a global
+  binarisation threshold makes each subject's label near-constant) both predict
+  everything measured above. Discriminating them is workstream **L5** in
+  [`RESEARCH_AGENDA.md`](RESEARCH_AGENDA.md), and it is the next experiment to run.
+- That subject-disjoint splitting removes *all* leakage. These folds are
+  subject-disjoint but **task-overlapping**; stimulus leakage is untested here and
+  is workstream **L1**.
 - That published StressID results are *only* leakage. The origin paper also uses
   far richer handcrafted features (98 HRV/EDA/RRV descriptors, OpenFace AUs) than
   our crude window statistics, plus SMOTE. Leakage is one component of the gap,
