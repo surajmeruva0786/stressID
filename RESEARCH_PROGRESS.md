@@ -991,3 +991,71 @@ modality-availability confound (§10.5), the leakage-corrected benchmark (§10.3
 and now a documented, honestly-confirmed ceiling of ~0.52 under a leakage-free
 protocol — against a literature reporting 0.72 under a leaky one. **The gap
 between those two numbers is the paper.**
+
+---
+
+## 16. Research agenda after the plateau (2026-08-11)
+
+The StressID modelling campaign is closed: four architecture-level nulls, a
+confirmed out-of-search ceiling of 0.519, and a 1.2 M-parameter transformer that
+loses to an SVC on 32×32 pixel statistics. **No further architecture work is
+planned on this dataset** — see `RESEARCH_AGENDA.md` §5 for the standing bar any
+new run must clear.
+
+### 16.1 Why the current framing is not yet a paper
+
+`LEAKY_PROTOCOL.md` proves the leakage claim on StressID. As a submission that is
+a **single-dataset critique**, and the predictable reviewer response is that
+subject-independent evaluation has been standard advice in EEG/affective
+computing for a decade. The evidence is not the weakness — the scope is.
+
+**The pivot:** treat leakage as a *quantity* that can be measured a priori,
+predicted across datasets, and reported as a mandatory baseline, rather than as a
+property of one benchmark.
+
+### 16.2 The six workstreams
+
+Full detail, predictions, and kill conditions: **`RESEARCH_AGENDA.md`**.
+
+| ID | Workstream | Cost | Novelty | Runs on |
+|---|---|---|---|---|
+| **L0** | Prior-art sweep — decides the title, blocking | 2–3 d | — | literature |
+| **L5** | **Is the leak label-side or signal-side?** | 3–5 d | **highest** | local data |
+| **L1** | Task/stimulus leakage — the 2×2 protocol grid | 1 w | high | local data |
+| **L2** | Predict inflation from (I, C) across 5–8 datasets | 3–4 w | high | new datasets |
+| **L6** | k-shot calibration curve — leakage as a continuum | 1 w | medium-high | local data |
+| **L3** | Literature audit — corrected numbers for N papers | 2–3 w | medium | literature |
+| **L4** | `leakcheck` package + reporting checklist | 1 w | tool | — |
+
+### 16.3 The two ideas that matter most
+
+**L5 — the leak may be in the labels, not the physiology.** The number that makes
+the identity oracle work is C = 0.708, within-subject label consistency — a
+property of *self-report*, not of ECG. Participants use 0–10 scales
+idiosyncratically, so a **global** binarisation threshold makes each subject's
+label near-constant and "which subject is this" becomes a near-sufficient
+statistic for the label. Test: re-derive labels by **per-subject median split** of
+`self_assessments.csv`, then re-run `prove_leakage.py` end to end. Prediction —
+I (identifiability) barely moves because the features are untouched, while
+inflation and the oracle collapse. If they do, the headline becomes *"self-report
+idiosyncrasy, not physiology, is what random splits exploit"*, which generalises
+to every self-reported affect dataset. If they do not, the current biometric
+story is confirmed by having ruled out its main alternative. **Both outcomes are
+publishable**, which is why it runs first.
+
+**L1 — there is a second leak we have not removed.** Our protocol is
+subject-disjoint but **task-overlapping**: every test recording's task also
+appears in training, and each task carries a fixed stress semantic for nearly
+everyone, so a model can score by recognising the *stimulus* rather than the
+stress response. The modality-availability confound (§9.1) is a symptom of this,
+not a separate phenomenon. The both-disjoint cell of the 2×2 grid has never been
+reported for this dataset. Class balance shifts hard across task-disjoint folds,
+so every cell must be reported as **margin over its own majority floor**.
+
+### 16.4 Decision gate
+
+At the end of Week 3 — L0, L5 and L1 complete — the title is determined. **If
+both L5 and L1 return nulls, the existing StressID result is the whole
+contribution:** write the short version, send it to a workshop, and stop. Do not
+enter L2/L3's two-month data-acquisition commitment on the strength of the
+current result alone.

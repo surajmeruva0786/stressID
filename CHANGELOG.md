@@ -1,5 +1,38 @@
 # Changelog
 
+## 2026-08-11 — Research agenda: from a dataset critique to a methods contribution
+
+### Added
+
+- **`RESEARCH_AGENDA.md`** — the plan for what comes after the 0.519 plateau.
+  Six workstreams (L0–L6), each with its hypothesis, prediction, and an explicit
+  kill condition, plus sequencing, venues, and a Week-3 decision gate.
+- **`RESEARCH_PROGRESS.md` §16** — summary and cross-reference.
+
+### Rationale
+
+The StressID modelling campaign is closed (four architecture nulls, confirmed
+ceiling 0.519). `LEAKY_PROTOCOL.md` proves the leakage claim, but as a submission
+it is a single-dataset critique, and the standard reviewer objection —
+"subject-independent evaluation has been known for a decade" — is fair against
+that framing and cannot be answered with more StressID runs. The agenda pivots to
+measuring leakage as a *predictable quantity* across datasets.
+
+### The two priority experiments
+
+| ID | Question | Why it leads |
+|---|---|---|
+| **L5** | Is the leak label-side (self-report idiosyncrasy) or signal-side (biometrics)? | C = 0.708 is a property of self-report, not ECG. Re-derive labels by per-subject median split of `self_assessments.csv` and re-run `prove_leakage.py`: identifiability should hold while inflation collapses. **All three outcomes are publishable**, so it carries no downside risk. 3–5 days, local data. |
+| **L1** | Does stimulus/task leakage survive subject-independent splits? | Our protocol is subject-disjoint but task-overlapping; the availability confound is a symptom of this. The both-disjoint cell of the 2×2 protocol grid has never been reported. 1 week, local data. |
+
+### Explicitly out of scope
+
+No further architecture work on StressID; no attempt to beat 0.72 (reachable only
+by adopting the leaky protocol); no further data-integrity work (settled
+2026-08-04).
+
+---
+
 ## 2026-08-06 — Leakage proof, and a correction to a published-in-repo number
 
 ### Added
