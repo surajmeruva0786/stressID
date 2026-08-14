@@ -247,35 +247,30 @@ def _fit_predict(mk, X, tr, te, y):
     return 1.0 / (1.0 + np.exp(-d))
 
 
-def _inner_oof(cand, tr_i, ytr, splits) -> tuple[str, np.ndarray]:
-    """Out-of-fold inner probabilities for one candidate. Top level so the
-    process pool can pickle it."""
-    p = np.full(len(ytr), 0.5)
+def _inner_oof(cand, tr_i, yy, splits) -> tuple[str, np.ndarray]:
+    """Inner out-of-fold probabilities for one candidate.
+
+    Top-level (not a closure) so the process pool can pickle it. `splits` index
+    into `tr_i`, which in turn indexes into the scope subset; candidates always
+    receive scope-subset positions and the full scope label vector.
+    """
+    p = np.full(len(tr_i), 0.5)
     for itr, ite in splits:
         try:
-            p[ite] = cand.fit_predict(tr_i[itr], tr_i[ite], ytr_full_holder(ytr, tr_i))
+            p[ite] = cand.fit_predict(tr_i[itr], tr_i[ite], yy)
         except Exception:
             p[ite] = 0.5
     return cand.name, np.nan_to_num(p, nan=0.5)
 
 
-def ytr_full_holder(ytr, tr_i):
-    """Candidates index labels globally; give them a vector aligned to that."""
-    full = np.zeros(int(tr_i.max()) + 1, dtype=ytr.dtype)
-    full[tr_i] = ytr
-    return full
-
-
-def run_scope(cands: list, y: np.ndarray, rows: np.ndarray,
-              n_folds: int, repeats: int, seed: int, max_size: int,
-              n_bags: int, n_par: int = 1, verbose: bool = True
+def run_scope(cands: list, yy: np.ndarray, n_folds: int, repeats: int, seed: int,
+              max_size: int, n_bags: int, n_par: int = 1, verbose: bool = True
               ) -> tuple[dict, list, list]:
-    """Nested CV on the subset `rows`. Returns (headline, per-fold, inner rank).
+    """Nested CV over the scope subset. Returns (headline, per-fold, inner rank).
 
-    `cands` are candidate objects (see sota_models). They index into the scope
-    subset, so `y` here is already the scope-subset label vector.
+    `cands` are candidate objects (see `sota_models`), already restricted to the
+    scope's rows, and `yy` is the matching label vector.
     """
-    yy = y[rows] if rows.dtype == bool else y[rows]
     rskf = RepeatedStratifiedKFold(n_splits=n_folds, n_repeats=repeats,
                                    random_state=seed)
     fold_rows, inner_acc, choice_rows = [], {}, []
