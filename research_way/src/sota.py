@@ -194,6 +194,29 @@ def greedy_ensemble(oof: dict, y: np.ndarray, max_size: int = 25,
     return {k: v / tot for k, v in sorted(counts.items(), key=lambda kv: -kv[1])}
 
 
+def prune_weights(weights: dict, cum_keep: float = 0.90) -> dict:
+    """Keep the heaviest members covering `cum_keep` of the total weight.
+
+    Bagged greedy returns one entry per (bag, step) selection, which in R2 came
+    to 63-92 distinct members per fold. Most of that is a long tail picked once
+    in one bag and carrying ~1% weight. In R1 that tail was heavy enough that
+    the ensemble scored *below* its own best single member. Trimming to the
+    members that actually carry the blend keeps the diversity and drops the
+    noise; the survivors are renormalised so the blend stays a mean.
+    """
+    if not weights:
+        return weights
+    ordered = sorted(weights.items(), key=lambda kv: -kv[1])
+    keep, run = [], 0.0
+    for k, w in ordered:
+        keep.append((k, w))
+        run += w
+        if run >= cum_keep:
+            break
+    tot = sum(w for _, w in keep)
+    return {k: w / tot for k, w in keep}
+
+
 def tune_threshold(p: np.ndarray, y: np.ndarray) -> float:
     """Decision threshold maximising macro F1 on inner OOF predictions.
 
