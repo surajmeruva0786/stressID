@@ -352,10 +352,18 @@ def run(cfg: Config, run_name: str, views: list[str], repeats: int, seed: int,
     for scope in scopes:
         rows = np.ones(len(man), bool) if scope == "all700" else complete
         print(f"[sota] scope={scope} n={rows.sum()}", flush=True)
-        # Candidates carry their own design matrix, already restricted to this
-        # scope, so every candidate sees exactly the same rows in the same order.
-        cands = [SM.TabularCandidate(f"{fs}|{view}|{mname}", X[rows], mk)
-                 for (fs, view), X in mats.items()
+        # Each design matrix is written once, restricted to this scope, and
+        # referenced by path; candidates memory-map it. See TabularCandidate for
+        # why (a by-value version OOM-killed the 4-process sweep).
+        mat_dir = DATA_DIR / f"sotamat_{cfg.data_tag}"
+        mat_dir.mkdir(parents=True, exist_ok=True)
+        paths = {}
+        for (fs, view), X in mats.items():
+            p = mat_dir / f"{scope}_{fs}_{view}.npy"
+            np.save(p, np.ascontiguousarray(X[rows], dtype=np.float32))
+            paths[(fs, view)] = p
+        cands = [SM.TabularCandidate(f"{fs}|{view}|{mname}", p, mk)
+                 for (fs, view), p in paths.items()
                  for mname, mk in zoo.items()]
         h, folds, rank = run_scope(cands, y[rows], cfg.n_folds, repeats,
                                    seed, max_size, n_bags, n_par)
