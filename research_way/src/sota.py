@@ -161,10 +161,12 @@ def build_matrices(feats: dict, man: pd.DataFrame, views: list[str],
         # subject is meaningless, so it is passed through unchanged.
         viewed[v] = {k: (val if k == "avail" else fn(val, man))
                      for k, val in feats.items()}
+    wanted = feature_sets or list(FEATURE_SETS)
     out = {}
-    for fs, blocks in FEATURE_SETS.items():
+    for fs in wanted:
         for v in views:
-            out[(fs, v)] = np.concatenate([viewed[v][b] for b in blocks], axis=1)
+            out[(fs, v)] = np.concatenate([viewed[v][b] for b in FEATURE_SETS[fs]],
+                                          axis=1)
     return out
 
 
