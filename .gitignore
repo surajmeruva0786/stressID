@@ -12,3 +12,6 @@ __pycache__/
 .DS_Store
 ._.DS_Store
 ._*
+
+# SOTA campaign feature cache (regenerable: python -m src.sota)
+research_way/data/sotafeat_*/
