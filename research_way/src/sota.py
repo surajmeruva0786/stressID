@@ -151,7 +151,8 @@ FEATURE_SETS = {
 }
 
 
-def build_matrices(feats: dict, man: pd.DataFrame, views: list[str]) -> dict:
+def build_matrices(feats: dict, man: pd.DataFrame, views: list[str],
+                   feature_sets: list[str] | None = None) -> dict:
     """{(feature_set, view) -> [N, D]} — every design matrix a candidate can use."""
     viewed = {}
     for v in views:
