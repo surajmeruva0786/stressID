@@ -373,7 +373,12 @@ def run(cfg: Config, run_name: str, views: list[str], repeats: int, seed: int,
         # Each design matrix is written once, restricted to this scope, and
         # referenced by path; candidates memory-map it. See TabularCandidate for
         # why (a by-value version OOM-killed the 4-process sweep).
-        mat_dir = DATA_DIR / f"sotamat_{cfg.data_tag}"
+        #
+        # The directory is per-run. Sharing one across runs cost R1 a third
+        # attempt: orphaned workers from a previous crashed run still held
+        # memmaps on the .npy files, and Windows then refuses to reopen them for
+        # writing (OSError 22). Per-run paths cannot collide with a dead run.
+        mat_dir = DATA_DIR / f"sotamat_{cfg.data_tag}" / run_name
         mat_dir.mkdir(parents=True, exist_ok=True)
         paths = {}
         for (fs, view), X in mats.items():
