@@ -109,13 +109,28 @@ def model_zoo(fast: bool = False) -> dict:
         pass
     try:
         import xgboost as xgb
+        dev = "cuda" if HAVE_GPU else "cpu"
         zoo["xgb"] = lambda: xgb.XGBClassifier(
             n_estimators=500, learning_rate=0.05, max_depth=4,
             subsample=0.8, colsample_bytree=0.5, reg_lambda=1.0,
             min_child_weight=2, random_state=0, n_jobs=-1,
-            tree_method="hist", eval_metric="logloss")
+            tree_method="hist", device=dev, eval_metric="logloss")
+        zoo["xgb_deep"] = lambda: xgb.XGBClassifier(
+            n_estimators=800, learning_rate=0.03, max_depth=7,
+            subsample=0.7, colsample_bytree=0.3, reg_lambda=3.0,
+            min_child_weight=1, random_state=1, n_jobs=-1,
+            tree_method="hist", device=dev, eval_metric="logloss")
     except Exception:
         pass
+    if HAVE_GPU:
+        try:
+            import catboost as cb
+            zoo["catboost"] = lambda: cb.CatBoostClassifier(
+                iterations=600, learning_rate=0.05, depth=6, l2_leaf_reg=3.0,
+                task_type="GPU", devices="0", verbose=0, random_seed=0,
+                auto_class_weights="Balanced", allow_writing_files=False)
+        except Exception:
+            pass
     return zoo
 
 
