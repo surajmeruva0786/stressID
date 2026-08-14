@@ -332,12 +332,15 @@ def run_scope(mats: dict, y: np.ndarray, rows: np.ndarray, zoo: dict,
 
 def run(cfg: Config, run_name: str, views: list[str], repeats: int, seed: int,
         max_size: int, n_bags: int, fast: bool, notes: str,
-        scopes: list[str]) -> dict:
+        scopes: list[str], feature_sets: list[str] | None = None,
+        models: list[str] | None = None) -> dict:
     t0 = time.time()
     man = pd.read_csv(cfg.manifest_path)
     feats = SF.build(cfg, man)
-    mats = build_matrices(feats, man, views)
+    mats = build_matrices(feats, man, views, feature_sets)
     zoo = model_zoo(fast)
+    if models:
+        zoo = {k: v for k, v in zoo.items() if k in models}
     y = man["binary"].values
     complete = ((man.has_physio == 1) & (man.has_audio == 1) &
                 (man.has_video == 1)).values
