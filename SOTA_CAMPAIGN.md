@@ -104,19 +104,52 @@ same mean and std, and the original aggregation could not tell them apart.
   perfectly calibrated classifier, and macro F1 on a 47/53 split is sensitive
   to the operating point.
 
+### Candidates (`src/sota_models.py`)
+
+A *candidate* is anything that maps (train rows, test rows) to a probability per
+test recording. One interface, three kinds, all competing on identical inner
+OOF folds and all eligible for the same ensemble — which is the point, because
+they fail differently:
+
+* **`TabularCandidate`** — one feature vector per recording. The original setting.
+* **`WindowCandidate`** — fits on *window* rows. A StressID recording is not one
+  observation: it is a 60–90 s task cut into 16 overlapping 10 s windows, and
+  the task label applies to all of them. Fitting at window level turns ~560
+  training rows into ~9 000, then averages window probabilities back to a
+  recording decision. The per-window label is noisier — not every second of a
+  Stroop task is stressful — but the sample count grows 16×, and 700×1500 is
+  exactly the ratio that has been binding on this dataset.
+* **`TorchWindowCandidate`** — a masked sequence encoder on the GPU (~130 k
+  parameters at `d_model=96`). Deliberately small: this repo already recorded
+  that a 1.2 M-parameter transformer memorises 448 recordings instead of
+  generalising, and the fix for that is not a bigger model. Its capacity goes
+  into temporal aggregation — the shape of the response over the task — which
+  is the one thing the tabular candidates structurally cannot express.
+
 ### Compute
 
 The box is shared with two other training jobs. Budget: 6 of 12 cores, small
-GPU footprint. XGBoost runs on the Quadro P1000 (12 s → 6 s per fit on the
-700×1505 matrix even with the card at 95% utilisation from the other jobs).
-CatBoost was benchmarked and dropped: 143 s per GPU fit for macro F1 0.642
-against XGBoost's 6 s for 0.650.
+GPU footprint, and the inner sweep parallelised across 4 processes.
+
+Measured on this hardware, on the real 700×1505 design matrix:
+
+| Decision | Measurement | Outcome |
+|---|---|---|
+| XGBoost on the Quadro P1000 | 12 s CPU → 6 s GPU per fit, with the card already 95% busy from the other jobs | kept, on GPU |
+| CatBoost on GPU | 143 s per fit, macro F1 0.642 | **dropped** — XGBoost scored 0.650 in 6 s |
+| Serial inner sweep | >20 min for a *single* outer fold (~2.5 h/round) | **replaced** by a 4-process sweep |
+
+The serial cost is why the harness was refactored onto candidate objects before
+any result was collected: five rounds at 2.5 h each is not a loop, it is a
+weekend. The refactor was verified behaviour-preserving — the smoke
+configuration returns c364 macro F1 `0.5863077474990014` before and after,
+digit for digit.
 
 ---
 
 ## 2. Rounds
 
-### R1 — baseline, `raw` view only  *(running)*
+### R1 — baseline, `raw` view only
 
 Purpose: the number every later round must beat, with **no** subject-referenced
 normalisation, so the contribution of the `rel`/`z` views can be attributed
