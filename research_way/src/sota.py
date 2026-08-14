@@ -388,6 +388,8 @@ def run(cfg: Config, run_name: str, views: list[str], repeats: int, seed: int,
         cands = [SM.TabularCandidate(f"{fs}|{view}|{mname}", p, mk)
                  for (fs, view), p in paths.items()
                  for mname, mk in zoo.items()]
+        cands += _window_candidates(cfg, man, rows, scope, views, windows,
+                                    torch_archs, zoo)
         h, folds, rank = run_scope(cands, y[rows], cfg.n_folds, repeats,
                                    seed, max_size, n_bags, n_par)
         headline.update({f"{scope}_{k}": v for k, v in h.items()})
