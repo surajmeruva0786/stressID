@@ -399,7 +399,7 @@ def run(cfg: Config, run_name: str, views: list[str], repeats: int, seed: int,
               "views": views, "feature_sets": list(FEATURE_SETS),
               "models": list(zoo), "greedy_max_size": max_size,
               "greedy_bags": n_bags, "feature_version": SF.FEATURE_VERSION,
-              "scopes": scopes, "fast": fast,
+              "scopes": scopes, "fast": fast, "n_par": n_par, "jobs": JOBS,
               "selection": "bagged greedy w/ replacement on inner OOF; "
                            "threshold tuned on inner OOF"}
     sota_report.write(run_name, headline, config, notes, tables,
