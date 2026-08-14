@@ -10,3 +10,4 @@ These numbers are **not** comparable to `reports/RUNS.md` (subject-held-out).
 | s3_prune | 0.7505 | 0.7512 | 0.7514 | nan | no improvement | 2026-08-15 03:58:09 |
 | s1_baseline_raw | 0.7419 | 0.7426 | 0.7429 | 0.6518 | FIRST RUN | 2026-08-15 01:09:00 |
 | s0_smoke | nan | nan | nan | 0.6723 | FIRST RUN | 2026-08-14 23:43:24 |
+| s0_win_smoke | nan | nan | nan | 0.6356 | no improvement | 2026-08-15 04:02:47 |
