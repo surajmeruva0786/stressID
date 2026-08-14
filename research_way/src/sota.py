@@ -247,15 +247,39 @@ def _fit_predict(mk, X, tr, te, y):
     return 1.0 / (1.0 + np.exp(-d))
 
 
-def run_scope(mats: dict, y: np.ndarray, rows: np.ndarray, zoo: dict,
+def _inner_oof(cand, tr_i, ytr, splits) -> tuple[str, np.ndarray]:
+    """Out-of-fold inner probabilities for one candidate. Top level so the
+    process pool can pickle it."""
+    p = np.full(len(ytr), 0.5)
+    for itr, ite in splits:
+        try:
+            p[ite] = cand.fit_predict(tr_i[itr], tr_i[ite], ytr_full_holder(ytr, tr_i))
+        except Exception:
+            p[ite] = 0.5
+    return cand.name, np.nan_to_num(p, nan=0.5)
+
+
+def ytr_full_holder(ytr, tr_i):
+    """Candidates index labels globally; give them a vector aligned to that."""
+    full = np.zeros(int(tr_i.max()) + 1, dtype=ytr.dtype)
+    full[tr_i] = ytr
+    return full
+
+
+def run_scope(cands: list, y: np.ndarray, rows: np.ndarray,
               n_folds: int, repeats: int, seed: int, max_size: int,
-              n_bags: int, verbose: bool = True) -> tuple[dict, list, list]:
-    """Nested CV on the subset `rows`. Returns (headline, per-fold, inner rank)."""
-    idx = np.where(rows)[0]
-    yy = y[idx]
+              n_bags: int, n_par: int = 1, verbose: bool = True
+              ) -> tuple[dict, list, list]:
+    """Nested CV on the subset `rows`. Returns (headline, per-fold, inner rank).
+
+    `cands` are candidate objects (see sota_models). They index into the scope
+    subset, so `y` here is already the scope-subset label vector.
+    """
+    yy = y[rows] if rows.dtype == bool else y[rows]
     rskf = RepeatedStratifiedKFold(n_splits=n_folds, n_repeats=repeats,
                                    random_state=seed)
     fold_rows, inner_acc, choice_rows = [], {}, []
+    by_name = {c.name: c for c in cands}
 
     for fi, (tr_i, te_i) in enumerate(rskf.split(np.zeros(len(yy)), yy)):
         t0 = time.time()
@@ -263,22 +287,29 @@ def run_scope(mats: dict, y: np.ndarray, rows: np.ndarray, zoo: dict,
         inner = StratifiedKFold(n_splits=4, shuffle=True, random_state=seed + fi)
         splits = list(inner.split(np.zeros(len(ytr)), ytr))
 
+        # Candidates are independent, so the inner sweep is embarrassingly
+        # parallel. It is also where ~95% of the wall clock goes: 64 candidates
+        # x 4 inner fits per outer fold. Serial, one outer fold took >20 min on
+        # this (shared) box.
+        gpu_c = [c for c in cands if getattr(c, "uses_gpu", False)]
+        cpu_c = [c for c in cands if not getattr(c, "uses_gpu", False)]
+        results = []
+        if n_par > 1 and cpu_c:
+            from joblib import Parallel, delayed
+            results += Parallel(n_jobs=n_par, backend="loky", verbose=0)(
+                delayed(_inner_oof)(c, tr_i, ytr, splits) for c in cpu_c)
+        else:
+            results += [_inner_oof(c, tr_i, ytr, splits) for c in cpu_c]
+        # GPU candidates stay serial: one 4 GB card, already shared with the
+        # user's other training jobs.
+        results += [_inner_oof(c, tr_i, ytr, splits) for c in gpu_c]
+
         oof = {}
-        for (fs, view), X in mats.items():
-            Xs = X[idx]
-            for mname, mk in zoo.items():
-                p = np.full(len(ytr), 0.5)
-                for itr, ite in splits:
-                    try:
-                        p[ite] = _fit_predict(mk, Xs[tr_i], itr, ite, ytr)
-                    except Exception:
-                        p[ite] = 0.5
-                p = np.nan_to_num(p, nan=0.5)
-                key = f"{fs}|{view}|{mname}"
-                oof[key] = p
-                s = f1_score(ytr, (p >= 0.5).astype(int), average="macro",
-                             zero_division=0)
-                inner_acc.setdefault(key, []).append(s)
+        for name, p in results:
+            oof[name] = p
+            inner_acc.setdefault(name, []).append(
+                f1_score(ytr, (p >= 0.5).astype(int), average="macro",
+                         zero_division=0))
 
         weights = greedy_ensemble(oof, ytr, max_size=max_size, n_bags=n_bags,
                                   seed=seed + fi)
