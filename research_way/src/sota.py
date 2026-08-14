@@ -362,7 +362,7 @@ def run_scope(cands: list, yy: np.ndarray, n_folds: int, repeats: int, seed: int
 def run(cfg: Config, run_name: str, views: list[str], repeats: int, seed: int,
         max_size: int, n_bags: int, fast: bool, notes: str,
         scopes: list[str], feature_sets: list[str] | None = None,
-        models: list[str] | None = None) -> dict:
+        models: list[str] | None = None, n_par: int = 4) -> dict:
     t0 = time.time()
     man = pd.read_csv(cfg.manifest_path)
     feats = SF.build(cfg, man)
