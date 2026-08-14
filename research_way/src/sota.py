@@ -351,7 +351,7 @@ def run_scope(cands: list, yy: np.ndarray, n_folds: int, repeats: int, seed: int
             headline[f"{c}_std"] = float(df[c].std())
     headline["single_macro_f1"] = float(df["single_macro_f1"].mean())
     headline["n_eval_folds"] = int(len(df))
-    headline["n_recordings"] = int(len(idx))
+    headline["n_recordings"] = int(len(yy))
 
     rank = sorted(((k, float(np.mean(v))) for k, v in inner_acc.items()),
                   key=lambda kv: -kv[1])[:25]
