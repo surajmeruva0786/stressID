@@ -237,9 +237,25 @@ def _inner_oof(cand, tr_i, yy, splits) -> tuple[str, np.ndarray]:
     return cand.name, np.nan_to_num(p, nan=0.5)
 
 
+def _serial_sweep(cands: list, tr_i, yy, splits, verbose: bool) -> list:
+    """Serial inner sweep with progress. On this box the parallel path is not
+    always the fast path -- with the other training jobs resident there is well
+    under a gigabyte free, and three sweep workers push the machine into swap.
+    Progress output exists so a slow round is distinguishable from a hung one."""
+    out = []
+    t0 = time.time()
+    for i, c in enumerate(cands):
+        out.append(_inner_oof(c, tr_i, yy, splits))
+        if verbose and (i + 1) % 8 == 0:
+            el = time.time() - t0
+            print(f"    [{i + 1}/{len(cands)}] {el:.0f}s elapsed, "
+                  f"{el / (i + 1):.1f}s/candidate", flush=True)
+    return out
+
+
 def run_scope(cands: list, yy: np.ndarray, n_folds: int, repeats: int, seed: int,
-              max_size: int, n_bags: int, n_par: int = 1, verbose: bool = True
-              ) -> tuple[dict, list, list]:
+              max_size: int, n_bags: int, n_par: int = 1, verbose: bool = True,
+              inner_folds: int = 4) -> tuple[dict, list, list]:
     """Nested CV over the scope subset. Returns (headline, per-fold, inner rank).
 
     `cands` are candidate objects (see `sota_models`), already restricted to the
@@ -253,7 +269,8 @@ def run_scope(cands: list, yy: np.ndarray, n_folds: int, repeats: int, seed: int
     for fi, (tr_i, te_i) in enumerate(rskf.split(np.zeros(len(yy)), yy)):
         t0 = time.time()
         ytr, yte = yy[tr_i], yy[te_i]
-        inner = StratifiedKFold(n_splits=4, shuffle=True, random_state=seed + fi)
+        inner = StratifiedKFold(n_splits=inner_folds, shuffle=True,
+                                random_state=seed + fi)
         splits = list(inner.split(np.zeros(len(ytr)), ytr))
 
         # Candidates are independent, so the inner sweep is embarrassingly
@@ -279,12 +296,12 @@ def run_scope(cands: list, yy: np.ndarray, n_folds: int, repeats: int, seed: int
                 # rather than lose the work.
                 print(f"  [warn] parallel sweep failed ({type(e).__name__}); "
                       f"falling back to serial", flush=True)
-                results += [_inner_oof(c, tr_i, yy, splits) for c in cpu_c]
+                results += _serial_sweep(cpu_c, tr_i, yy, splits, verbose)
         else:
-            results += [_inner_oof(c, tr_i, yy, splits) for c in cpu_c]
+            results += _serial_sweep(cpu_c, tr_i, yy, splits, verbose)
         # GPU candidates stay serial: one 4 GB card, already shared with the
         # user's other training jobs.
-        results += [_inner_oof(c, tr_i, yy, splits) for c in gpu_c]
+        results += _serial_sweep(gpu_c, tr_i, yy, splits, verbose)
 
         oof = {}
         for name, p in results:
@@ -392,12 +409,17 @@ def _window_candidates(cfg: Config, man, rows, scope: str, views: list[str],
 def run(cfg: Config, run_name: str, views: list[str], repeats: int, seed: int,
         max_size: int, n_bags: int, fast: bool, notes: str,
         scopes: list[str], feature_sets: list[str] | None = None,
-        models: list[str] | None = None, n_par: int = 4) -> dict:
+        models: list[str] | None = None, n_par: int = 4,
+        windows: list[str] | None = None,
+        torch_archs: list[str] | None = None,
+        inner_folds: int = 4) -> dict:
     t0 = time.time()
     man = pd.read_csv(cfg.manifest_path)
     feats = SF.build(cfg, man)
     mats = build_matrices(feats, man, views, feature_sets)
     zoo = model_zoo(fast, max(1, JOBS // max(1, n_par)))
+    windows = windows or []
+    torch_archs = torch_archs or []
     if models:
         zoo = {k: v for k, v in zoo.items() if k in models}
     y = man["binary"].values
@@ -434,7 +456,8 @@ def run(cfg: Config, run_name: str, views: list[str], repeats: int, seed: int,
         cands += _window_candidates(cfg, man, rows, scope, views, windows,
                                     torch_archs, zoo)
         h, folds, rank = run_scope(cands, y[rows], cfg.n_folds, repeats,
-                                   seed, max_size, n_bags, n_par)
+                                   seed, max_size, n_bags, n_par,
+                                   inner_folds=inner_folds)
         headline.update({f"{scope}_{k}": v for k, v in h.items()})
         tables[f"Per-fold — {scope}"] = folds
         tables[f"Inner-CV candidate ranking — {scope}"] = rank
@@ -445,6 +468,8 @@ def run(cfg: Config, run_name: str, views: list[str], repeats: int, seed: int,
               "models": list(zoo), "greedy_max_size": max_size,
               "greedy_bags": n_bags, "feature_version": SF.FEATURE_VERSION,
               "scopes": scopes, "fast": fast, "n_par": n_par, "jobs": JOBS,
+              "window_views": windows, "torch_archs": torch_archs,
+              "inner_folds": inner_folds,
               "selection": "bagged greedy w/ replacement on inner OOF; "
                            "threshold tuned on inner OOF"}
     sota_report.write(run_name, headline, config, notes, tables,
@@ -471,6 +496,11 @@ def main() -> None:
     ap.add_argument("--scopes", default="all700,c364")
     ap.add_argument("--feature-sets", default="", help="comma list; default all")
     ap.add_argument("--models", default="", help="comma list; default all")
+    ap.add_argument("--inner-folds", type=int, default=4)
+    ap.add_argument("--windows", default="",
+                    help="comma list of views for window-level candidates, e.g. raw,z")
+    ap.add_argument("--torch-archs", default="",
+                    help="comma list of GPU sequence archs: gru,attn,mean")
     ap.add_argument("--n-par", type=int, default=4,
                     help="candidates evaluated in parallel processes")
     ap.add_argument("--notes", default="")
@@ -478,7 +508,9 @@ def main() -> None:
     h = run(full_config(), a.run_name, a.views.split(","), a.repeats, a.seed,
             a.max_size, a.bags, a.fast, a.notes, a.scopes.split(","),
             [s for s in a.feature_sets.split(",") if s],
-            [s for s in a.models.split(",") if s], a.n_par)
+            [s for s in a.models.split(",") if s], a.n_par,
+            [s for s in a.windows.split(",") if s],
+            [s for s in a.torch_archs.split(",") if s], a.inner_folds)
     for k, v in h.items():
         print(f"  {k:<32} {v}")
 
