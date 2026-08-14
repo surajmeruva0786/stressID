@@ -246,17 +246,45 @@ Secondary result: the ensemble now clearly beats its own best single member
 enough to fix it — but the member count also grew to 63–92 per fold, so the
 dilution question is still open and gets tested directly in R3.
 
-### R3 — ensemble pruning  *(running)*
+### R3 — ensemble pruning → 0.7505 (pruning **+0.0041**, but net −0.0012)
 
-Keeps only the members covering 90% of cumulative greedy weight. The long tail
-is selected once in one bag and carries ~1% weight each.
+Keeps only the members covering 90% of cumulative greedy weight, with the
+unpruned blend scored **in the same run on the same folds** as a reference.
+Views `raw,rel`; 128 candidates; `all700`; runtime 67 min.
 
-The unpruned blend is scored **in the same run, on the same folds**, as a
-reference column. That is deliberate: comparing a pruned run against R2 would
-confound pruning with the `z`-drop, whereas an in-run reference isolates it
-exactly. Views `raw,rel`; 128 candidates; `all700`.
+| Blend (identical folds) | Members | Macro F1 |
+|---|---|---|
+| **Pruned, 90% cumulative weight** | 40.4 | **0.7505** |
+| Unpruned | 66.0 | 0.7464 |
+| Best single member | 1 | 0.7337 |
 
-_Result: pending._
+Pruning is worth **+0.0041** and cuts the member count by a third. Keep it.
+
+**But R3's headline is 0.0012 *below* R2, and the in-run reference explains
+why — by contradicting the conclusion I drew in R2.**
+
+R2's unpruned blend (with `z`) scored 0.7517. R3's unpruned blend (without `z`)
+scored 0.7464. So **dropping `z` cost −0.0053**, and pruning then recovered
++0.0041 of it. `z` was contributing to the ensemble *as diversity* even though
+not one `z` candidate reached the top 25 by individual inner score.
+
+That is a real correction to R2's write-up. The accurate statement is narrower
+than the one I made:
+
+* ✅ `z` is a poor *standalone* representation — physiologically explicable, and
+  the top-25 evidence supports it.
+* ❌ "`z` contributed nothing" was wrong. A candidate can be individually weak
+  and still earn its place in a blend by being wrong in a *different direction*
+  from the strong candidates. Individual inner rank is the wrong instrument for
+  deciding ensemble membership; that is precisely what greedy selection is for.
+
+The cost is −0.0053 against a ±0.035 fold spread, i.e. well inside noise, for
++50% runtime. So `z` stays out of the fast exploratory rounds and comes back
+for the final run, where the budget is worth spending.
+
+**Method note for the write-up.** The in-run reference is what made this
+visible. Had R3 been compared against R2 across runs, "pruning helps by
+−0.0012" would have been recorded, which is both wrong and the wrong sign.
 
 ---
 

@@ -1,0 +1,23 @@
+{
+  "run_name": "s3_prune",
+  "timestamp": "2026-08-15 03:58:09",
+  "verdict": "no improvement",
+  "delta_vs_best": -0.001197750530262498,
+  "duration_s": 4044.1234800815582,
+  "all700_macro_f1": 0.7505497441514288,
+  "all700_macro_f1_std": 0.03534891402679143,
+  "all700_weighted_f1": 0.751188902955401,
+  "all700_weighted_f1_std": 0.03552577346197143,
+  "all700_balanced_acc": 0.7507434303692738,
+  "all700_balanced_acc_std": 0.034800961568175866,
+  "all700_accuracy": 0.7514285714285714,
+  "all700_accuracy_std": 0.0358568582800318,
+  "all700_roc_auc": 0.8154468896137267,
+  "all700_roc_auc_std": 0.05035480884693398,
+  "all700_single_macro_f1": 0.7336596780902254,
+  "all700_unpruned_macro_f1": 0.7463702715109953,
+  "all700_mean_members": 40.4,
+  "all700_mean_members_unpruned": 66.0,
+  "all700_n_eval_folds": 5,
+  "all700_n_recordings": 700
+}
