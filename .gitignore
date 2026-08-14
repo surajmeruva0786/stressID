@@ -15,3 +15,5 @@ __pycache__/
 
 # SOTA campaign feature cache (regenerable: python -m src.sota)
 research_way/data/sotafeat_*/
+research_way/data/sotamat_*/
+research_way/data/sotawin_*/

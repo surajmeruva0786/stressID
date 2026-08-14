@@ -6,4 +6,4 @@ These numbers are **not** comparable to `reports/RUNS.md` (subject-held-out).
 
 | run_name | c364_macro_f1 | verdict | timestamp |
 |---|---|---|---|
-| s0_smoke | 0.5863 | FIRST RUN | 2026-08-14 23:34:47 |
+| s0_smoke | 0.5863 | FIRST RUN | 2026-08-14 23:38:01 |
