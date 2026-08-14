@@ -59,7 +59,12 @@ warnings.filterwarnings("ignore")
 
 # --------------------------------------------------------------- model zoo
 
-def model_zoo(fast: bool = False) -> dict:
+def model_zoo(fast: bool = False, jobs: int | None = None) -> dict:
+    """`jobs` is the thread budget for ONE model. When the inner sweep runs
+    across `n_par` processes the caller divides the core budget by `n_par`,
+    otherwise 4 processes x 6 threads oversubscribes a 12-core box that is
+    already running two other training jobs."""
+    jobs = JOBS if jobs is None else max(1, jobs)
     n_tree = 300 if fast else 600
     zoo = {
         "logreg": lambda: make_pipeline(
@@ -74,10 +79,10 @@ def model_zoo(fast: bool = False) -> dict:
                 probability=True, random_state=0)),
         "rf": lambda: RandomForestClassifier(
             n_estimators=n_tree, min_samples_leaf=1, max_features="sqrt",
-            class_weight="balanced_subsample", random_state=0, n_jobs=JOBS),
+            class_weight="balanced_subsample", random_state=0, n_jobs=jobs),
         "extratrees": lambda: ExtraTreesClassifier(
             n_estimators=n_tree, min_samples_leaf=1, max_features="sqrt",
-            class_weight="balanced_subsample", random_state=0, n_jobs=JOBS),
+            class_weight="balanced_subsample", random_state=0, n_jobs=jobs),
         "mlp": lambda: make_pipeline(
             StandardScaler(),
             MLPClassifier(hidden_layer_sizes=(256, 64), alpha=1e-3, max_iter=600,
@@ -89,7 +94,7 @@ def model_zoo(fast: bool = False) -> dict:
             n_estimators=500, learning_rate=0.05, num_leaves=15,
             min_child_samples=10, subsample=0.8, subsample_freq=1,
             colsample_bytree=0.5, reg_lambda=1.0, class_weight="balanced",
-            random_state=0, n_jobs=JOBS, verbose=-1)
+            random_state=0, n_jobs=jobs, verbose=-1)
     except Exception:
         pass
     try:
@@ -98,13 +103,13 @@ def model_zoo(fast: bool = False) -> dict:
         zoo["xgb"] = lambda: xgb.XGBClassifier(
             n_estimators=500, learning_rate=0.05, max_depth=4,
             subsample=0.8, colsample_bytree=0.5, reg_lambda=1.0,
-            min_child_weight=2, random_state=0, n_jobs=JOBS,
+            min_child_weight=2, random_state=0, n_jobs=jobs,
             tree_method="hist", device=dev, eval_metric="logloss")
         if not fast:
             zoo["xgb_deep"] = lambda: xgb.XGBClassifier(
                 n_estimators=800, learning_rate=0.03, max_depth=7,
                 subsample=0.7, colsample_bytree=0.3, reg_lambda=3.0,
-                min_child_weight=1, random_state=1, n_jobs=JOBS,
+                min_child_weight=1, random_state=1, n_jobs=jobs,
                 tree_method="hist", device=dev, eval_metric="logloss")
     except Exception:
         pass
@@ -260,7 +265,11 @@ def run_scope(cands: list, yy: np.ndarray, n_folds: int, repeats: int, seed: int
         results = []
         if n_par > 1 and cpu_c:
             from joblib import Parallel, delayed
-            results += Parallel(n_jobs=n_par, backend="loky", verbose=0)(
+            # max_nbytes=None: candidates already reference their matrix by
+            # path, so there is nothing large left to auto-memmap, and joblib's
+            # own temp-file machinery would only add I/O.
+            results += Parallel(n_jobs=n_par, backend="loky", verbose=0,
+                                max_nbytes=None)(
                 delayed(_inner_oof)(c, tr_i, yy, splits) for c in cpu_c)
         else:
             results += [_inner_oof(c, tr_i, yy, splits) for c in cpu_c]
@@ -336,7 +345,7 @@ def run(cfg: Config, run_name: str, views: list[str], repeats: int, seed: int,
     man = pd.read_csv(cfg.manifest_path)
     feats = SF.build(cfg, man)
     mats = build_matrices(feats, man, views, feature_sets)
-    zoo = model_zoo(fast)
+    zoo = model_zoo(fast, max(1, JOBS // max(1, n_par)))
     if models:
         zoo = {k: v for k, v in zoo.items() if k in models}
     y = man["binary"].values
