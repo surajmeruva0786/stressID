@@ -24,7 +24,7 @@ from __future__ import annotations
 
 import numpy as np
 
-from .sota import JOBS, HAVE_GPU
+from .sota_env import HAVE_GPU, JOBS  # noqa: F401  (JOBS used by callers)
 
 
 class TabularCandidate:
