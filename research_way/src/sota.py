@@ -57,30 +57,6 @@ warnings.filterwarnings("ignore")
 
 # --------------------------------------------------------------- model zoo
 
-# This box also runs the user's other training jobs. Grabbing all 12 cores
-# starves them and, with 6 GB free RAM, a 12-way tree fit on a 1500-column
-# matrix is also the fastest route to swapping. Half the box is the budget.
-JOBS = int(os.environ.get("SOTA_JOBS", "6"))
-
-
-def gpu_available() -> bool:
-    """True when the CUDA device is usable for the boosted-tree learners.
-
-    The box has a Quadro P1000 (4 GB, Pascal). On the real 700x1505 design
-    matrix an XGBoost fit costs ~12 s on CPU and well under a second on the
-    GPU, so this is not a micro-optimisation: it is what makes a 200-candidate
-    nested sweep finish in minutes instead of hours.
-    """
-    try:
-        import torch
-        return bool(torch.cuda.is_available())
-    except Exception:
-        return False
-
-
-HAVE_GPU = gpu_available()
-
-
 def model_zoo(fast: bool = False) -> dict:
     n_tree = 300 if fast else 600
     zoo = {
