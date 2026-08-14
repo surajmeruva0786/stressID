@@ -346,6 +346,49 @@ def run_scope(cands: list, yy: np.ndarray, n_folds: int, repeats: int, seed: int
     return headline, fold_rows + choice_rows, inner_rank
 
 
+_WIN_CACHE: dict = {}
+
+
+def _window_candidates(cfg: Config, man, rows, scope: str, views: list[str],
+                       windows: list[str], torch_archs: list[str], zoo: dict
+                       ) -> list:
+    """Window-level and GPU sequence candidates for one scope.
+
+    `windows` names the views to build window tensors for ("raw", "z"); an
+    empty list skips window modelling entirely, which is what the earlier
+    rounds do so that the window contribution can be attributed rather than
+    assumed.
+    """
+    if not windows and not torch_archs:
+        return []
+    from . import sota_windows as SW
+    if "W" not in _WIN_CACHE:
+        W, V, _ = SW.build_windows(cfg, man)
+        _WIN_CACHE["W"], _WIN_CACHE["V"] = W, V
+    W, V = _WIN_CACHE["W"], _WIN_CACHE["V"]
+
+    out = []
+    for view in windows or ["raw"]:
+        Wv = W if view == "raw" else SW.subject_center(W, V, man, mode=view)
+        Wr, Vr = Wv[rows], V[rows]
+        if windows:
+            # Only the tree learners get the window treatment: they are the
+            # ones starved by 560 rows, and an SVC on ~9000 window rows costs
+            # more than the whole rest of the sweep.
+            for mname in ("lgbm", "xgb", "extratrees"):
+                if mname not in zoo:
+                    continue
+                for agg in ("mean", "trimmed"):
+                    out.append(SM.WindowCandidate(
+                        f"win-{view}|{agg}|{mname}", Wr, Vr, zoo[mname], agg))
+        for arch in torch_archs:
+            c = SM.TorchWindowCandidate(f"seq-{view}|{arch}|torch", Wr, Vr,
+                                        arch=arch)
+            c.uses_gpu = True
+            out.append(c)
+    return out
+
+
 def run(cfg: Config, run_name: str, views: list[str], repeats: int, seed: int,
         max_size: int, n_bags: int, fast: bool, notes: str,
         scopes: list[str], feature_sets: list[str] | None = None,
