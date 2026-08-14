@@ -1,9 +1,9 @@
 # SOTA run — `s0_smoke`
 
-**Generated:** 2026-08-14 19:19:48  
+**Generated:** 2026-08-14 19:21:10  
 **Primary (all700_macro_f1):** **nan**  
 **Best previous:** `none` at nan → **FIRST RUN** (+nan)  
-**Duration:** 65 s (1.1 min)  
+**Duration:** 51 s (0.8 min)  
 
 > **Protocol.** Subject-shared repeated stratified CV — the split rule
 > the StressID origin paper uses (random 80/20 + SMOTE). Subjects appear
