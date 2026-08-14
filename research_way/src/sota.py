@@ -386,10 +386,14 @@ def main() -> None:
     ap.add_argument("--bags", type=int, default=12)
     ap.add_argument("--fast", action="store_true")
     ap.add_argument("--scopes", default="all700,c364")
+    ap.add_argument("--feature-sets", default="", help="comma list; default all")
+    ap.add_argument("--models", default="", help="comma list; default all")
     ap.add_argument("--notes", default="")
     a = ap.parse_args()
     h = run(full_config(), a.run_name, a.views.split(","), a.repeats, a.seed,
-            a.max_size, a.bags, a.fast, a.notes, a.scopes.split(","))
+            a.max_size, a.bags, a.fast, a.notes, a.scopes.split(","),
+            [s for s in a.feature_sets.split(",") if s],
+            [s for s in a.models.split(",") if s])
     for k, v in h.items():
         print(f"  {k:<32} {v}")
 
