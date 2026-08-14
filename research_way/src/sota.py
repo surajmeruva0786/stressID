@@ -93,9 +93,6 @@ def model_zoo(fast: bool = False) -> dict:
         "extratrees": lambda: ExtraTreesClassifier(
             n_estimators=n_tree, min_samples_leaf=1, max_features="sqrt",
             class_weight="balanced_subsample", random_state=0, n_jobs=-1),
-        "hgb": lambda: HistGradientBoostingClassifier(
-            max_iter=300, learning_rate=0.06, max_leaf_nodes=15,
-            l2_regularization=1.0, random_state=0),
         "mlp": lambda: make_pipeline(
             StandardScaler(),
             MLPClassifier(hidden_layer_sizes=(256, 64), alpha=1e-3, max_iter=600,
