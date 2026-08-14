@@ -30,11 +30,25 @@ for _v in ("OMP_NUM_THREADS", "OPENBLAS_NUM_THREADS", "MKL_NUM_THREADS",
 
 
 def gpu_available() -> bool:
+    """Detect CUDA once, in the parent, and publish the answer via the env.
+
+    Worker processes must NOT reach the torch import here. Each `import torch`
+    costs ~500 MB of resident memory, and four sweep workers doing it killed
+    two R1 runs on a box with 1.7 GB free (the user's other training jobs hold
+    the rest). Workers inherit SOTA_GPU from the parent and answer from the
+    string, so only the parent ever loads torch -- and only when a torch
+    candidate is actually used.
+    """
+    cached = os.environ.get("SOTA_GPU")
+    if cached is not None:
+        return cached == "1"
     try:
         import torch
-        return bool(torch.cuda.is_available())
+        ok = bool(torch.cuda.is_available())
     except Exception:
-        return False
+        ok = False
+    os.environ["SOTA_GPU"] = "1" if ok else "0"
+    return ok
 
 
 HAVE_GPU = gpu_available()
