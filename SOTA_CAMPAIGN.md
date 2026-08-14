@@ -195,17 +195,66 @@ Top inner-CV candidates (mean over folds):
 | `all｜raw｜rf` | 0.7297 |
 | `phys+audio｜raw｜extratrees` | 0.7293 |
 
-### R2 — subject-referenced views  *(running)*
+### R2 — subject-referenced views → **0.7517** (+0.0099)
 
 The single change: every feature block is additionally offered as `rel`
 (centred on the participant's own Relax/Breathing baseline) and `z` (z-scored
-within participant). 24 matrices × 8 models = 192 candidates. `all700` only, so
-the view effect is isolated before spending a round on both scopes.
+within participant). 24 matrices × 8 models = 192 candidates, `all700` only, so
+the view effect is isolated. Runtime 99 min.
 
-This is the lever expected to matter most on a subject-shared protocol, and it
-is also the one most in need of the honesty note in §0: it is transductive, and
-it is admissible here only because this track already permits the participant
-to appear on both sides of the split.
+| Metric (`all700`) | R1 | **R2** | Δ |
+|---|---|---|---|
+| Macro F1 | 0.7419 ± 0.034 | **0.7517 ± 0.032** | **+0.0099** |
+| Weighted F1 | 0.7426 | 0.7525 | +0.0099 |
+| Balanced acc | 0.7420 | 0.7517 | +0.0097 |
+| Accuracy | 0.7429 | 0.7529 | +0.0100 |
+| ROC AUC | 0.8091 | 0.8133 | +0.0042 |
+
+Per-fold: 0.7064 / 0.7563 / 0.7966 / 0.7426 / 0.7567. The gain is not uniform —
+fold 3 went *down* 0.021 — which is the expected shape for a +0.01 mean effect
+against a ±0.03 fold spread. It is a real but modest improvement, not a
+breakthrough, and it should be read that way.
+
+**The finding that matters is in the inner ranking, not the headline.** Of the
+top 25 inner candidates, **19 use `rel`, 6 use `raw`, and zero use `z`**:
+
+| Candidate | Inner macro F1 |
+|---|---|
+| `all｜rel｜extratrees` | 0.7503 |
+| `all｜rel｜lgbm` | 0.7474 |
+| `all+avail｜rel｜extratrees` | 0.7471 |
+| `all+avail｜rel｜lgbm` | 0.7457 |
+| `all｜rel｜rf` | 0.7434 |
+
+So the two subject-referenced views are not interchangeable, and the difference
+is interpretable rather than incidental:
+
+* **`rel` works.** Subtracting a participant's own resting baseline is
+  physiologically motivated — what matters for stress is the *deviation* from
+  that person's calm state, not the absolute level, and absolute levels differ
+  enormously between people.
+* **`z` fails.** Dividing by the participant's spread across their own
+  recordings destroys exactly the signal being measured: a participant whose
+  physiology swings a lot across tasks is swinging *because* some of those
+  tasks stressed them. Normalising that away normalises away the label.
+
+`z` cost a third of this round's 99 minutes and contributed nothing. It is
+dropped from R3 onward.
+
+Secondary result: the ensemble now clearly beats its own best single member
+(0.7517 vs 0.7337), reversing R1's defect #1. More candidate diversity was
+enough to fix it — but the member count also grew to 63–92 per fold, so the
+dilution question is still open and gets tested directly in R3.
+
+### R3 — ensemble pruning  *(running)*
+
+Keeps only the members covering 90% of cumulative greedy weight. The long tail
+is selected once in one bag and carries ~1% weight each.
+
+The unpruned blend is scored **in the same run, on the same folds**, as a
+reference column. That is deliberate: comparing a pruned run against R2 would
+confound pruning with the `z`-drop, whereas an in-run reference isolates it
+exactly. Views `raw,rel`; 128 candidates; `all700`.
 
 _Result: pending._
 

@@ -278,7 +278,7 @@ def _serial_sweep(cands: list, tr_i, yy, splits, verbose: bool) -> list:
 
 def run_scope(cands: list, yy: np.ndarray, n_folds: int, repeats: int, seed: int,
               max_size: int, n_bags: int, n_par: int = 1, verbose: bool = True,
-              inner_folds: int = 4) -> tuple[dict, list, list]:
+              inner_folds: int = 4, cum_keep: float = 1.0) -> tuple[dict, list, list]:
     """Nested CV over the scope subset. Returns (headline, per-fold, inner rank).
 
     `cands` are candidate objects (see `sota_models`), already restricted to the
@@ -388,6 +388,9 @@ def run_scope(cands: list, yy: np.ndarray, n_folds: int, repeats: int, seed: int
             headline[c] = float(df[c].mean())
             headline[f"{c}_std"] = float(df[c].std())
     headline["single_macro_f1"] = float(df["single_macro_f1"].mean())
+    headline["unpruned_macro_f1"] = float(df["unpruned_macro_f1"].mean())
+    headline["mean_members"] = float(df["n_members"].mean())
+    headline["mean_members_unpruned"] = float(df["n_members_full"].mean())
     headline["n_eval_folds"] = int(len(df))
     headline["n_recordings"] = int(len(yy))
 
@@ -446,7 +449,7 @@ def run(cfg: Config, run_name: str, views: list[str], repeats: int, seed: int,
         models: list[str] | None = None, n_par: int = 4,
         windows: list[str] | None = None,
         torch_archs: list[str] | None = None,
-        inner_folds: int = 4) -> dict:
+        inner_folds: int = 4, cum_keep: float = 1.0) -> dict:
     t0 = time.time()
     man = pd.read_csv(cfg.manifest_path)
     feats = SF.build(cfg, man)
@@ -491,7 +494,8 @@ def run(cfg: Config, run_name: str, views: list[str], repeats: int, seed: int,
                                     torch_archs, zoo)
         h, folds, rank = run_scope(cands, y[rows], cfg.n_folds, repeats,
                                    seed, max_size, n_bags, n_par,
-                                   inner_folds=inner_folds)
+                                   inner_folds=inner_folds,
+                                   cum_keep=cum_keep)
         headline.update({f"{scope}_{k}": v for k, v in h.items()})
         tables[f"Per-fold — {scope}"] = folds
         tables[f"Inner-CV candidate ranking — {scope}"] = rank
@@ -503,7 +507,7 @@ def run(cfg: Config, run_name: str, views: list[str], repeats: int, seed: int,
               "greedy_bags": n_bags, "feature_version": SF.FEATURE_VERSION,
               "scopes": scopes, "fast": fast, "n_par": n_par, "jobs": JOBS,
               "window_views": windows, "torch_archs": torch_archs,
-              "inner_folds": inner_folds,
+              "inner_folds": inner_folds, "ensemble_cum_keep": cum_keep,
               "selection": "bagged greedy w/ replacement on inner OOF; "
                            "threshold tuned on inner OOF"}
     sota_report.write(run_name, headline, config, notes, tables,
@@ -531,6 +535,9 @@ def main() -> None:
     ap.add_argument("--feature-sets", default="", help="comma list; default all")
     ap.add_argument("--models", default="", help="comma list; default all")
     ap.add_argument("--inner-folds", type=int, default=4)
+    ap.add_argument("--cum-keep", type=float, default=1.0,
+                    help="prune ensemble to members covering this cumulative weight "
+                         "(1.0 = no pruning; the unpruned blend is scored either way)")
     ap.add_argument("--windows", default="",
                     help="comma list of views for window-level candidates, e.g. raw,z")
     ap.add_argument("--torch-archs", default="",
@@ -544,7 +551,8 @@ def main() -> None:
             [s for s in a.feature_sets.split(",") if s],
             [s for s in a.models.split(",") if s], a.n_par,
             [s for s in a.windows.split(",") if s],
-            [s for s in a.torch_archs.split(",") if s], a.inner_folds)
+            [s for s in a.torch_archs.split(",") if s], a.inner_folds,
+            a.cum_keep)
     for k, v in h.items():
         print(f"  {k:<32} {v}")
 
