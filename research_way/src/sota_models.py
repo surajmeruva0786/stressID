@@ -207,6 +207,12 @@ class TorchWindowCandidate:
 
         def prep(idx):
             x = (self.W[idx] - mu) / sd
+            # Hard sigma clip. neurokit2's HRV fallbacks emit sentinel
+            # magnitudes (a raw 65535 appears when R-peak detection fails on a
+            # flat window), and percentile winsorising does not always catch
+            # them because the sentinel can occupy more than 0.5% of rows. A
+            # tree learner shrugs at that; a gradient step does not.
+            x = np.clip(x, -8.0, 8.0)
             m = self.V[idx].astype(np.float32)
             return (torch.tensor(x * m[..., None], dtype=torch.float32),
                     torch.tensor(m))
