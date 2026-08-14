@@ -28,19 +28,42 @@ from .sota_env import HAVE_GPU, JOBS  # noqa: F401  (JOBS used by callers)
 
 
 class TabularCandidate:
-    """One feature vector per recording."""
+    """One feature vector per recording.
 
-    def __init__(self, name: str, X: np.ndarray, factory):
+    The design matrix is referenced by *path*, not by value, and memory-mapped
+    on first use. Holding it inline cost the campaign its first real run: with
+    64 candidates each carrying a 700x1505 float64 array, a 4-process inner
+    sweep pickled ~540 MB into workers and the OS killed them (6 GB free on a
+    box already running two other training jobs). Memory-mapping makes the
+    pickled candidate a few hundred bytes and lets every worker share one page
+    cache for the same matrix.
+    """
+
+    def __init__(self, name: str, path, factory):
         self.name = name
-        self.X = X
+        self.path = str(path)
         self.factory = factory
+        self._X = None
+
+    @property
+    def X(self) -> np.ndarray:
+        if self._X is None:
+            self._X = np.load(self.path, mmap_mode="r")
+        return self._X
+
+    def __getstate__(self):
+        d = self.__dict__.copy()
+        d["_X"] = None          # never pickle the matrix itself
+        return d
 
     def fit_predict(self, tr, te, y) -> np.ndarray:
+        X = self.X
         c = self.factory()
-        c.fit(self.X[tr], y[tr])
+        c.fit(np.ascontiguousarray(X[tr]), y[tr])
+        Xte = np.ascontiguousarray(X[te])
         if hasattr(c, "predict_proba"):
-            return c.predict_proba(self.X[te])[:, 1]
-        return 1.0 / (1.0 + np.exp(-c.decision_function(self.X[te])))
+            return c.predict_proba(Xte)[:, 1]
+        return 1.0 / (1.0 + np.exp(-c.decision_function(Xte)))
 
 
 class WindowCandidate:
