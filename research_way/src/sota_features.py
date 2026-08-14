@@ -232,9 +232,23 @@ def build(cfg: Config, man: pd.DataFrame, verbose: bool = True) -> dict[str, np.
         if verbose and (i + 1) % 100 == 0:
             print(f"[sotafeat] {i + 1}/{len(man)}", flush=True)
 
-    feats = {k: np.nan_to_num(np.stack(v).astype(np.float64)) for k, v in acc.items()}
+    feats = {k: _winsorize(np.nan_to_num(np.stack(v).astype(np.float64)))
+             for k, v in acc.items()}
     feats["avail"] = man[["has_physio", "has_audio", "has_video"]].values.astype(np.float64)
     return feats
+
+
+def _winsorize(X: np.ndarray, lo: float = 0.5, hi: float = 99.5) -> np.ndarray:
+    """Clip every column to its [0.5, 99.5] percentile range.
+
+    neurokit2's fallbacks emit sentinel magnitudes (a raw 65535 shows up in the
+    HRV block when R-peak detection fails on a flat window). One such row is
+    enough to dominate StandardScaler and flatten the whole column for the
+    linear and kernel learners. Clipping is computed over all rows and reads no
+    labels; it is a property of the feature extractor, not of the split.
+    """
+    lo_v, hi_v = np.percentile(X, [lo, hi], axis=0)
+    return np.clip(X, lo_v, hi_v)
 
 
 # ------------------------------------------------- subject-referenced views
