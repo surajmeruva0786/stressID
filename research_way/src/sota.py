@@ -333,16 +333,25 @@ def run_scope(cands: list, yy: np.ndarray, n_folds: int, repeats: int, seed: int
                 f1_score(ytr, (p >= 0.5).astype(int), average="macro",
                          zero_division=0))
 
-        weights = greedy_ensemble(oof, ytr, max_size=max_size, n_bags=n_bags,
-                                  seed=seed + fi)
+        full_w = greedy_ensemble(oof, ytr, max_size=max_size, n_bags=n_bags,
+                                 seed=seed + fi)
+        weights = prune_weights(full_w, cum_keep) if cum_keep < 1.0 else full_w
         blend_oof = sum(w * oof[k] for k, w in weights.items())
         thr = tune_threshold(blend_oof, ytr)
 
-        # ---- outer: refit every selected member on the full training fold
-        probs = np.zeros(len(te_i))
-        for key, w in weights.items():
-            probs += w * by_name[key].fit_predict(tr_i, te_i, yy)
+        # ---- outer: refit every selected member on the full training fold.
+        # Every member of the UNPRUNED set is refitted, because the unpruned
+        # blend is scored alongside as an in-run reference. That is what makes
+        # the pruning effect attributable on identical folds instead of across
+        # two runs that differ in other ways too.
+        member_p = {k: by_name[k].fit_predict(tr_i, te_i, yy) for k in full_w}
+        probs = sum(w * member_p[k] for k, w in weights.items())
         pred = (probs >= thr).astype(int)
+
+        full_oof = sum(w * oof[k] for k, w in full_w.items())
+        thr_full = tune_threshold(full_oof, ytr)
+        probs_full = sum(w * member_p[k] for k, w in full_w.items())
+        pred_full = (probs_full >= thr_full).astype(int)
 
         # Reported for reference only. The best inner candidate is NOT
         # selectable as the headline -- reporting whichever single model won on
