@@ -362,8 +362,10 @@ def run_scope(cands: list, yy: np.ndarray, n_folds: int, repeats: int, seed: int
 
         fold_rows.append({
             "fold": fi, "n_test": len(te_i), "thr": thr,
-            "n_members": len(weights),
+            "n_members": len(weights), "n_members_full": len(full_w),
             **score_all(yte, pred, probs),
+            **{f"unpruned_{k}": v for k, v in
+               score_all(yte, pred_full, probs_full).items()},
             **{f"single_{k}": v for k, v in
                score_all(yte, (p_single >= 0.5).astype(int), p_single).items()},
         })
