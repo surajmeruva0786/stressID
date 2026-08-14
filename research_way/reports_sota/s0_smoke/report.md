@@ -1,9 +1,9 @@
 # SOTA run — `s0_smoke`
 
-**Generated:** 2026-08-14 19:21:10  
+**Generated:** 2026-08-14 23:34:47  
 **Primary (all700_macro_f1):** **nan**  
 **Best previous:** `none` at nan → **FIRST RUN** (+nan)  
-**Duration:** 51 s (0.8 min)  
+**Duration:** 62 s (1.0 min)  
 
 > **Protocol.** Subject-shared repeated stratified CV — the split rule
 > the StressID origin paper uses (random 80/20 + SMOTE). Subjects appear
@@ -13,7 +13,7 @@
 
 ## What changed
 
-harness smoke test
+harness smoke after candidate refactor
 
 ## Headline metrics
 
@@ -89,6 +89,8 @@ harness smoke test
     "c364"
   ],
   "fast": true,
+  "n_par": 4,
+  "jobs": 6,
   "selection": "bagged greedy w/ replacement on inner OOF; threshold tuned on inner OOF"
 }
 ```

@@ -1,9 +1,9 @@
 {
   "run_name": "s0_smoke",
-  "timestamp": "2026-08-14 19:21:10",
+  "timestamp": "2026-08-14 23:34:47",
   "verdict": "FIRST RUN",
   "delta_vs_best": NaN,
-  "duration_s": 50.97175168991089,
+  "duration_s": 61.874669790267944,
   "c364_macro_f1": 0.5863077474990014,
   "c364_macro_f1_std": 0.02896609768059874,
   "c364_weighted_f1": 0.6860386322560311,
