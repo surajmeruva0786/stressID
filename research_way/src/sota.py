@@ -404,6 +404,13 @@ def run(cfg: Config, run_name: str, views: list[str], repeats: int, seed: int,
                            "threshold tuned on inner OOF"}
     sota_report.write(run_name, headline, config, notes, tables,
                       duration_s=time.time() - t0)
+
+    # Best-effort cleanup: ~100 MB of scratch matrices per run. Failure is fine
+    # (a straggling worker may still hold a mapping) -- the directory is
+    # gitignored and the next run writes its own.
+    import shutil
+    shutil.rmtree(DATA_DIR / f"sotamat_{cfg.data_tag}" / run_name,
+                  ignore_errors=True)
     return headline
 
 
