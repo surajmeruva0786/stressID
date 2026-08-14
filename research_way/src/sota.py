@@ -292,12 +292,12 @@ def run_scope(cands: list, yy: np.ndarray, n_folds: int, repeats: int, seed: int
         if n_par > 1 and cpu_c:
             from joblib import Parallel, delayed
             results += Parallel(n_jobs=n_par, backend="loky", verbose=0)(
-                delayed(_inner_oof)(c, tr_i, ytr, splits) for c in cpu_c)
+                delayed(_inner_oof)(c, tr_i, yy, splits) for c in cpu_c)
         else:
-            results += [_inner_oof(c, tr_i, ytr, splits) for c in cpu_c]
+            results += [_inner_oof(c, tr_i, yy, splits) for c in cpu_c]
         # GPU candidates stay serial: one 4 GB card, already shared with the
         # user's other training jobs.
-        results += [_inner_oof(c, tr_i, ytr, splits) for c in gpu_c]
+        results += [_inner_oof(c, tr_i, yy, splits) for c in gpu_c]
 
         oof = {}
         for name, p in results:
