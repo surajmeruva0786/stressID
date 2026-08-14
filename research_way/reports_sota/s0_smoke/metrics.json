@@ -1,0 +1,20 @@
+{
+  "run_name": "s0_smoke",
+  "timestamp": "2026-08-14 19:19:48",
+  "verdict": "FIRST RUN",
+  "delta_vs_best": NaN,
+  "duration_s": 65.14253759384155,
+  "c364_macro_f1": 0.5863077474990014,
+  "c364_macro_f1_std": 0.02896609768059874,
+  "c364_weighted_f1": 0.6860386322560311,
+  "c364_weighted_f1_std": 0.022994787856139082,
+  "c364_balanced_acc": 0.5829653051351165,
+  "c364_balanced_acc_std": 0.026591511843794335,
+  "c364_accuracy": 0.7141552511415525,
+  "c364_accuracy_std": 0.0314041075142455,
+  "c364_roc_auc": 0.6726254405971387,
+  "c364_roc_auc_std": 0.05711663846615239,
+  "c364_single_macro_f1": 0.5644549716392324,
+  "c364_n_eval_folds": 5,
+  "c364_n_recordings": 364
+}

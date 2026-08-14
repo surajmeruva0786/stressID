@@ -113,7 +113,11 @@ def write(run_name: str, headline: dict, config: dict, notes: str = "",
     cols = ["run_name", PRIMARY_METRIC, "all700_weighted_f1", "all700_accuracy",
             "c364_macro_f1", "verdict", "timestamp"]
     cols = [c for c in cols if c in reg.columns]
-    md = reg.sort_values(PRIMARY_METRIC, ascending=False, na_position="last")[cols]
+    # A run may cover only one scope (e.g. a c364-only probe), in which case the
+    # primary column does not exist yet; leaderboard order then falls back to
+    # recency rather than crashing the run that produced the numbers.
+    md = (reg.sort_values(PRIMARY_METRIC, ascending=False, na_position="last")
+          if PRIMARY_METRIC in reg.columns else reg)[cols]
     REGISTRY_MD.write_text(
         "# SOTA leaderboard (subject-shared / paper-comparable protocol)\n\n"
         f"Primary metric: `{PRIMARY_METRIC}`. Origin paper best weighted F1 = "
