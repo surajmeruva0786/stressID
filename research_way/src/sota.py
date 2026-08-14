@@ -51,7 +51,7 @@ from sklearn.svm import SVC
 from . import sota_features as SF
 from . import sota_models as SM
 from . import sota_report
-from .config import Config, full_config
+from .config import Config, DATA_DIR, full_config
 from .sota_env import HAVE_GPU, JOBS
 
 warnings.filterwarnings("ignore")
