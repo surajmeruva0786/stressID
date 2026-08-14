@@ -314,15 +314,15 @@ def run_scope(cands: list, yy: np.ndarray, n_folds: int, repeats: int, seed: int
         # ---- outer: refit every selected member on the full training fold
         probs = np.zeros(len(te_i))
         for key, w in weights.items():
-            fs, view, mname = key.split("|")
-            Xs = mats[(fs, view)][idx]
-            probs += w * _fit_predict(zoo[mname], Xs, tr_i, te_i, yy)
+            probs += w * by_name[key].fit_predict(tr_i, te_i, yy)
         pred = (probs >= thr).astype(int)
 
+        # Reported for reference only. The best inner candidate is NOT
+        # selectable as the headline -- reporting whichever single model won on
+        # a given fold is how a search manufactures a result it cannot repeat.
         best_single = max(oof, key=lambda k: f1_score(
             ytr, (oof[k] >= 0.5).astype(int), average="macro", zero_division=0))
-        fs, view, mname = best_single.split("|")
-        p_single = _fit_predict(zoo[mname], mats[(fs, view)][idx], tr_i, te_i, yy)
+        p_single = by_name[best_single].fit_predict(tr_i, te_i, yy)
 
         fold_rows.append({
             "fold": fi, "n_test": len(te_i), "thr": thr,
