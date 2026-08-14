@@ -216,15 +216,6 @@ def score_all(y, pred, prob=None) -> dict:
 
 # -------------------------------------------------------------- experiment
 
-def _fit_predict(mk, X, tr, te, y):
-    c = mk()
-    c.fit(X[tr], y[tr])
-    if hasattr(c, "predict_proba"):
-        return c.predict_proba(X[te])[:, 1]
-    d = c.decision_function(X[te])
-    return 1.0 / (1.0 + np.exp(-d))
-
-
 def _inner_oof(cand, tr_i, yy, splits) -> tuple[str, np.ndarray]:
     """Inner out-of-fold probabilities for one candidate.
 
