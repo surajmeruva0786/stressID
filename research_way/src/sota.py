@@ -56,6 +56,12 @@ warnings.filterwarnings("ignore")
 
 # --------------------------------------------------------------- model zoo
 
+# This box also runs the user's other training jobs. Grabbing all 12 cores
+# starves them and, with 6 GB free RAM, a 12-way tree fit on a 1500-column
+# matrix is also the fastest route to swapping. Half the box is the budget.
+JOBS = int(os.environ.get("SOTA_JOBS", "6"))
+
+
 def gpu_available() -> bool:
     """True when the CUDA device is usable for the boosted-tree learners.
 
