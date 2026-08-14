@@ -122,22 +122,18 @@ def model_zoo(fast: bool = False) -> dict:
             subsample=0.8, colsample_bytree=0.5, reg_lambda=1.0,
             min_child_weight=2, random_state=0, n_jobs=JOBS,
             tree_method="hist", device=dev, eval_metric="logloss")
-        zoo["xgb_deep"] = lambda: xgb.XGBClassifier(
-            n_estimators=800, learning_rate=0.03, max_depth=7,
-            subsample=0.7, colsample_bytree=0.3, reg_lambda=3.0,
-            min_child_weight=1, random_state=1, n_jobs=JOBS,
-            tree_method="hist", device=dev, eval_metric="logloss")
+        if not fast:
+            zoo["xgb_deep"] = lambda: xgb.XGBClassifier(
+                n_estimators=800, learning_rate=0.03, max_depth=7,
+                subsample=0.7, colsample_bytree=0.3, reg_lambda=3.0,
+                min_child_weight=1, random_state=1, n_jobs=JOBS,
+                tree_method="hist", device=dev, eval_metric="logloss")
     except Exception:
         pass
-    if HAVE_GPU:
-        try:
-            import catboost as cb
-            zoo["catboost"] = lambda: cb.CatBoostClassifier(
-                iterations=600, learning_rate=0.05, depth=6, l2_leaf_reg=3.0,
-                task_type="GPU", devices="0", verbose=0, random_seed=0,
-                auto_class_weights="Balanced", allow_writing_files=False)
-        except Exception:
-            pass
+    # CatBoost is deliberately absent. On this box the GPU is shared with the
+    # user's other training jobs and a single 600-iteration CatBoost fit took
+    # 143 s against XGBoost's 6 s for an equal test score (0.642 vs 0.650) --
+    # it would have consumed ~90% of the sweep budget for no gain.
     return zoo
 
 
