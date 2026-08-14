@@ -156,7 +156,56 @@ normalisation, so the contribution of the `rel`/`z` views can be attributed
 cleanly in R2 rather than assumed.
 
 Configuration: 8 feature sets × 8 models = 64 candidates, 5 outer folds,
-scopes `all700` and `c364`.
+3 inner folds, scopes `all700` and `c364`. Runtime 60 min.
+
+| Scope | Macro F1 | Weighted F1 | Balanced acc | Accuracy | ROC AUC |
+|---|---|---|---|---|---|
+| **all700** | **0.7419 ± 0.0338** | 0.7426 | 0.7420 | 0.7429 | 0.8091 |
+| `c364` | 0.6518 ± 0.0608 | 0.7302 | 0.6444 | 0.7473 | 0.6999 |
+
+Per-fold `all700`: 0.6851 / 0.7500 / 0.7703 / 0.7637 / 0.7403.
+
+The starting point already sits at or above both reference numbers — the origin
+paper's 0.72 weighted F1 and this repo's earlier leaky-protocol 0.728 macro F1
+— before any subject-referenced view has been used.
+
+`c364` scores lower on macro F1 and *higher* on accuracy, which is what a
+class-imbalanced subset looks like: the all-modality recordings are mostly the
+speech tasks, which are mostly stressful. It is not a regression, and the two
+scopes are not comparable to each other.
+
+**Analysis — two things wrong, to be fixed in separate rounds.**
+
+1. *The ensemble is not earning its keep.* It scores 0.7419 against its own best
+   single member's 0.7429. Bagged greedy selection returned 37–53 members per
+   fold, and the long low-weight tail dilutes rather than diversifies. Fixing
+   this belongs in its own round, not folded silently into another change.
+2. *The candidate pool is unbalanced.* The inner-CV top ten is entirely tree
+   learners on wide fusion sets (`extratrees`/`lgbm`/`rf` over `all`,
+   `all+avail`, `phys+audio`). Linear and kernel models never reach it, so they
+   are spending sweep budget without contributing selections.
+
+Top inner-CV candidates (mean over folds):
+
+| Candidate | Inner macro F1 |
+|---|---|
+| `all+avail｜raw｜extratrees` | 0.7336 |
+| `all｜raw｜extratrees` | 0.7331 |
+| `all+avail｜raw｜lgbm` | 0.7329 |
+| `all｜raw｜rf` | 0.7297 |
+| `phys+audio｜raw｜extratrees` | 0.7293 |
+
+### R2 — subject-referenced views  *(running)*
+
+The single change: every feature block is additionally offered as `rel`
+(centred on the participant's own Relax/Breathing baseline) and `z` (z-scored
+within participant). 24 matrices × 8 models = 192 candidates. `all700` only, so
+the view effect is isolated before spending a round on both scopes.
+
+This is the lever expected to matter most on a subject-shared protocol, and it
+is also the one most in need of the honesty note in §0: it is transductive, and
+it is admissible here only because this track already permits the participant
+to appear on both sides of the split.
 
 _Result: pending._
 
