@@ -383,8 +383,13 @@ def run(cfg: Config, run_name: str, views: list[str], repeats: int, seed: int,
     for scope in scopes:
         rows = np.ones(len(man), bool) if scope == "all700" else complete
         print(f"[sota] scope={scope} n={rows.sum()}", flush=True)
-        h, folds, rank = run_scope(mats, y, rows, zoo, cfg.n_folds, repeats,
-                                   seed, max_size, n_bags)
+        # Candidates carry their own design matrix, already restricted to this
+        # scope, so every candidate sees exactly the same rows in the same order.
+        cands = [SM.TabularCandidate(f"{fs}|{view}|{mname}", X[rows], mk)
+                 for (fs, view), X in mats.items()
+                 for mname, mk in zoo.items()]
+        h, folds, rank = run_scope(cands, y[rows], cfg.n_folds, repeats,
+                                   seed, max_size, n_bags, n_par)
         headline.update({f"{scope}_{k}": v for k, v in h.items()})
         tables[f"Per-fold — {scope}"] = folds
         tables[f"Inner-CV candidate ranking — {scope}"] = rank
