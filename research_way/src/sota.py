@@ -89,10 +89,10 @@ def model_zoo(fast: bool = False) -> dict:
                 probability=True, random_state=0)),
         "rf": lambda: RandomForestClassifier(
             n_estimators=n_tree, min_samples_leaf=1, max_features="sqrt",
-            class_weight="balanced_subsample", random_state=0, n_jobs=-1),
+            class_weight="balanced_subsample", random_state=0, n_jobs=JOBS),
         "extratrees": lambda: ExtraTreesClassifier(
             n_estimators=n_tree, min_samples_leaf=1, max_features="sqrt",
-            class_weight="balanced_subsample", random_state=0, n_jobs=-1),
+            class_weight="balanced_subsample", random_state=0, n_jobs=JOBS),
         "mlp": lambda: make_pipeline(
             StandardScaler(),
             MLPClassifier(hidden_layer_sizes=(256, 64), alpha=1e-3, max_iter=600,
@@ -104,7 +104,7 @@ def model_zoo(fast: bool = False) -> dict:
             n_estimators=500, learning_rate=0.05, num_leaves=15,
             min_child_samples=10, subsample=0.8, subsample_freq=1,
             colsample_bytree=0.5, reg_lambda=1.0, class_weight="balanced",
-            random_state=0, n_jobs=-1, verbose=-1)
+            random_state=0, n_jobs=JOBS, verbose=-1)
     except Exception:
         pass
     try:
@@ -113,12 +113,12 @@ def model_zoo(fast: bool = False) -> dict:
         zoo["xgb"] = lambda: xgb.XGBClassifier(
             n_estimators=500, learning_rate=0.05, max_depth=4,
             subsample=0.8, colsample_bytree=0.5, reg_lambda=1.0,
-            min_child_weight=2, random_state=0, n_jobs=-1,
+            min_child_weight=2, random_state=0, n_jobs=JOBS,
             tree_method="hist", device=dev, eval_metric="logloss")
         zoo["xgb_deep"] = lambda: xgb.XGBClassifier(
             n_estimators=800, learning_rate=0.03, max_depth=7,
             subsample=0.7, colsample_bytree=0.3, reg_lambda=3.0,
-            min_child_weight=1, random_state=1, n_jobs=-1,
+            min_child_weight=1, random_state=1, n_jobs=JOBS,
             tree_method="hist", device=dev, eval_metric="logloss")
     except Exception:
         pass
