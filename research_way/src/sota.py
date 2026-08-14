@@ -265,12 +265,21 @@ def run_scope(cands: list, yy: np.ndarray, n_folds: int, repeats: int, seed: int
         results = []
         if n_par > 1 and cpu_c:
             from joblib import Parallel, delayed
-            # max_nbytes=None: candidates already reference their matrix by
-            # path, so there is nothing large left to auto-memmap, and joblib's
-            # own temp-file machinery would only add I/O.
-            results += Parallel(n_jobs=n_par, backend="loky", verbose=0,
-                                max_nbytes=None)(
-                delayed(_inner_oof)(c, tr_i, yy, splits) for c in cpu_c)
+            try:
+                # max_nbytes=None: candidates already reference their matrix by
+                # path, so there is nothing large left to auto-memmap, and
+                # joblib's temp-file machinery would only add I/O.
+                results += Parallel(n_jobs=n_par, backend="loky", verbose=0,
+                                    max_nbytes=None)(
+                    delayed(_inner_oof)(c, tr_i, yy, splits) for c in cpu_c)
+            except Exception as e:
+                # Memory pressure on this box is not under our control -- the
+                # other training jobs grow and shrink. A round that dies at
+                # fold 3 after an hour is worse than a slow round, so fall back
+                # rather than lose the work.
+                print(f"  [warn] parallel sweep failed ({type(e).__name__}); "
+                      f"falling back to serial", flush=True)
+                results += [_inner_oof(c, tr_i, yy, splits) for c in cpu_c]
         else:
             results += [_inner_oof(c, tr_i, yy, splits) for c in cpu_c]
         # GPU candidates stay serial: one 4 GB card, already shared with the
