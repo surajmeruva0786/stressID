@@ -21,6 +21,13 @@ import os
 
 JOBS = int(os.environ.get("SOTA_JOBS", "6"))
 
+# Every worker process inherits these. Without them each of the 4 sweep workers
+# would spin up its own BLAS thread pool sized to all 12 cores, and the
+# oversubscription costs more than the parallelism gains.
+for _v in ("OMP_NUM_THREADS", "OPENBLAS_NUM_THREADS", "MKL_NUM_THREADS",
+           "NUMEXPR_NUM_THREADS"):
+    os.environ.setdefault(_v, "2")
+
 
 def gpu_available() -> bool:
     try:
