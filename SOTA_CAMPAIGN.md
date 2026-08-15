@@ -522,6 +522,37 @@ references and paired tests on identical folds fixed all three, and
 
 ---
 
+## 2bb. All three StressID targets
+
+StressID ships three targets. The campaign optimised the binary one; these are
+the other two, run with the same recipe (raw + `rel` views, window-level
+candidates, bagged greedy selection on inner OOF, 90% pruning) on unseen
+seed-101 partitions.
+
+| Target | Metric | Result | Reference point |
+|---|---|---|---|
+| **Binary stress** | macro F1 | **0.7484 ± 0.033** | paper 0.72 weighted F1; majority 0.344 |
+| **3-class affect** | macro F1 | **0.6214 ± 0.014** | chance 0.333 |
+| | accuracy | 0.6471 ± 0.018 | |
+| **Stress score (0–10)** | Pearson *r* | **0.673 ± 0.030** | |
+| | Spearman *r* | 0.660 ± 0.031 | |
+| | RMSE | **1.857 ± 0.107** | predicting the mean = 2.488 |
+| | R² | 0.440 ± 0.040 | |
+
+Three things worth noting rather than just tabulating:
+
+* **The regression is the most interpretable result.** The target is a
+  self-reported 0–10 rating with SD 2.488, so predicting the mean for every
+  recording gives RMSE 2.488. The model reaches 1.857 — a **25% error
+  reduction**, explaining 44% of the variance in what people said about their
+  own stress.
+* **Pearson and Spearman agree closely** (0.673 vs 0.660), so the relationship
+  is essentially monotonic rather than being carried by a handful of extreme
+  recordings.
+* **The affect task is the most stable**, with a fold spread of ±0.014 against
+  the binary task's ±0.033 — which is what a better-balanced target
+  (253/202/245) should look like.
+
 ## 2c. StressID has a *second* protocol confound: recording duration
 
 Found while adding whole-recording physiology, and caught before it reached any
