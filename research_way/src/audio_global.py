@@ -16,12 +16,26 @@ so these are implemented directly from the waveform:
 
   F0        autocorrelation pitch track, 60-400 Hz -> mean, std, range, slope,
             and the fraction of frames that are voiced
-  jitter    mean absolute period-to-period change, normalised by mean period
-  shimmer   the same for cycle amplitude
+  jitter    mean absolute FRAME-to-frame change in estimated period, normalised
+            by the mean period
+  shimmer   the same for frame RMS amplitude
   HNR       from the height of the normalised autocorrelation peak
   spectral  centroid, spread, rolloff, flatness, slope, the alpha ratio and the
             Hammarberg index -- the standard "energy moved upward" descriptors
   loudness  RMS level, its variability, and the voiced-segment RATE
+
+What `jitter` and `shimmer` here are NOT
+----------------------------------------
+Praat's jitter and shimmer are *cycle-to-cycle*: they require locating
+individual glottal pulses. These are computed between analysis frames at a 10 ms
+hop, so each value summarises roughly one to two glottal cycles rather than
+exactly one. They therefore measure short-term perturbation of period and
+amplitude, which is the same construct, at coarser resolution and a different
+scale -- the values here run ~0.1 where Praat's local jitter runs ~0.01. They
+are useful features and they are not interchangeable with published jitter
+figures, so they should not be reported as though they were. The same caveat
+applies to HNR, which is derived from the autocorrelation peak and reads several
+dB lower than Praat's harmonicity.
 
 Audio exists for only 378 of 700 recordings (the speech tasks), and absent
 audio yields the zero vector, which downstream standardisation maps to the
