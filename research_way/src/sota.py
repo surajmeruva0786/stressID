@@ -141,8 +141,18 @@ FEATURE_SETS = {
 
 
 def build_matrices(feats: dict, man: pd.DataFrame, views: list[str],
-                   feature_sets: list[str] | None = None) -> dict:
-    """{(feature_set, view) -> [N, D]} — every design matrix a candidate can use."""
+                   feature_sets: list[str] | None = None,
+                   exclude_blocks: list[str] | None = None) -> dict:
+    """{(feature_set, view) -> [N, D]} — every design matrix a candidate can use.
+
+    `exclude_blocks` drops named blocks from every feature set while leaving the
+    set names, count and structure untouched. That is what lets an ablation arm
+    run under byte-identical settings to its comparison arm: the alternative --
+    editing FEATURE_SETS between runs -- also changes the candidate count, and
+    changing two things at once is how this campaign already produced one
+    wrong-signed conclusion.
+    """
+    exclude = set(exclude_blocks or [])
     viewed = {}
     for v in views:
         fn = SF.VIEWS[v]
@@ -154,8 +164,10 @@ def build_matrices(feats: dict, man: pd.DataFrame, views: list[str],
     out = {}
     for fs in wanted:
         for v in views:
-            out[(fs, v)] = np.concatenate([viewed[v][b] for b in FEATURE_SETS[fs]],
-                                          axis=1)
+            blocks = [b for b in FEATURE_SETS[fs] if b not in exclude]
+            if not blocks:                      # set was entirely excluded
+                continue
+            out[(fs, v)] = np.concatenate([viewed[v][b] for b in blocks], axis=1)
     return out
 
 
@@ -470,11 +482,12 @@ def run(cfg: Config, run_name: str, views: list[str], repeats: int, seed: int,
         models: list[str] | None = None, n_par: int = 4,
         windows: list[str] | None = None,
         torch_archs: list[str] | None = None,
-        inner_folds: int = 4, cum_keep: float = 1.0) -> dict:
+        inner_folds: int = 4, cum_keep: float = 1.0,
+        exclude_blocks: list[str] | None = None) -> dict:
     t0 = time.time()
     man = pd.read_csv(cfg.manifest_path)
     feats = SF.build(cfg, man)
-    mats = build_matrices(feats, man, views, feature_sets)
+    mats = build_matrices(feats, man, views, feature_sets, exclude_blocks)
     zoo = model_zoo(fast, max(1, JOBS // max(1, n_par)))
     windows = windows or []
     torch_archs = torch_archs or []
@@ -530,6 +543,7 @@ def run(cfg: Config, run_name: str, views: list[str], repeats: int, seed: int,
               "scopes": scopes, "fast": fast, "n_par": n_par, "jobs": JOBS,
               "window_views": windows, "torch_archs": torch_archs,
               "inner_folds": inner_folds, "ensemble_cum_keep": cum_keep,
+              "exclude_blocks": exclude_blocks or [],
               "selection": "bagged greedy w/ replacement on inner OOF; "
                            "threshold tuned on inner OOF"}
     sota_report.write(run_name, headline, config, notes, tables,
@@ -557,6 +571,8 @@ def main() -> None:
     ap.add_argument("--feature-sets", default="", help="comma list; default all")
     ap.add_argument("--models", default="", help="comma list; default all")
     ap.add_argument("--inner-folds", type=int, default=4)
+    ap.add_argument("--exclude-blocks", default="",
+                    help="drop these blocks from every feature set (ablation arm)")
     ap.add_argument("--cum-keep", type=float, default=1.0,
                     help="prune ensemble to members covering this cumulative weight "
                          "(1.0 = no pruning; the unpruned blend is scored either way)")
@@ -574,7 +590,8 @@ def main() -> None:
             [s for s in a.models.split(",") if s], a.n_par,
             [s for s in a.windows.split(",") if s],
             [s for s in a.torch_archs.split(",") if s], a.inner_folds,
-            a.cum_keep)
+            a.cum_keep,
+            [s for s in a.exclude_blocks.split(",") if s])
     for k, v in h.items():
         print(f"  {k:<32} {v}")
 
