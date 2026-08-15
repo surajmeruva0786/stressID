@@ -10,7 +10,9 @@ These numbers are **not** comparable to `reports/RUNS.md` (subject-held-out).
 | s4_windows | 0.7572 | 0.7580 | 0.7586 | nan | NEW BEST | 2026-08-15 05:27:44 |
 | s9_physglobal | 0.7542 | 0.7553 | 0.7571 | nan | no improvement | 2026-08-15 18:42:22 |
 | s2_views_relz | 0.7517 | 0.7525 | 0.7529 | nan | NEW BEST | 2026-08-15 02:48:38 |
+| s9b_physglobal_r3 | 0.7507 | 0.7517 | 0.7529 | nan | no improvement | 2026-08-15 23:34:57 |
 | s3_prune | 0.7505 | 0.7512 | 0.7514 | nan | no improvement | 2026-08-15 03:58:09 |
+| s9c_ablate_physglobal | 0.7484 | 0.7494 | 0.7505 | nan | no improvement | 2026-08-16 00:03:21 |
 | s8a_final_r3 | 0.7484 | 0.7494 | 0.7505 | nan | no improvement | 2026-08-15 13:55:19 |
 | s6_confirm_seed101 | 0.7467 | 0.7479 | 0.7500 | 0.6721 | no improvement | 2026-08-15 10:18:45 |
 | s1_baseline_raw | 0.7419 | 0.7426 | 0.7429 | 0.6518 | FIRST RUN | 2026-08-15 01:09:00 |

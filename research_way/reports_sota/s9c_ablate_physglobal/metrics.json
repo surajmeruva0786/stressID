@@ -1,0 +1,23 @@
+{
+  "run_name": "s9c_ablate_physglobal",
+  "timestamp": "2026-08-16 00:03:21",
+  "verdict": "no improvement",
+  "delta_vs_best": -0.011970159089595311,
+  "duration_s": 9903.15683054924,
+  "all700_macro_f1": 0.7484311713711597,
+  "all700_macro_f1_std": 0.03307557065734292,
+  "all700_weighted_f1": 0.749378804774049,
+  "all700_weighted_f1_std": 0.03244893079254337,
+  "all700_balanced_acc": 0.7489584573514241,
+  "all700_balanced_acc_std": 0.03314541802484443,
+  "all700_accuracy": 0.7504761904761905,
+  "all700_accuracy_std": 0.0313061934029653,
+  "all700_roc_auc": 0.8194001077153809,
+  "all700_roc_auc_std": 0.03771013631739062,
+  "all700_single_macro_f1": 0.7401390166079269,
+  "all700_unpruned_macro_f1": 0.7439594736208536,
+  "all700_mean_members": 54.733333333333334,
+  "all700_mean_members_unpruned": 84.06666666666666,
+  "all700_n_eval_folds": 15,
+  "all700_n_recordings": 700
+}
