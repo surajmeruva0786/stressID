@@ -522,6 +522,84 @@ references and paired tests on identical folds fixed all three, and
 
 ---
 
+## 2c. StressID has a *second* protocol confound: recording duration
+
+Found while adding whole-recording physiology, and caught before it reached any
+reported number. It is worth as much attention as the score.
+
+### The finding
+
+StressID task durations are near-deterministic per task:
+
+| Task | Duration | Stress rate |
+|---|---|---|
+| Breathing | 177 s | 0.17 |
+| Video1 | 171 s | 0.29 |
+| Relax | 148 s | 0.13 |
+| Video2 | 117 s | 0.40 |
+| Counting 1–3, Math, Reading, Speaking, Stroop | **all 59 s** | 0.55–0.77 |
+
+Low-stress tasks are long; every high-stress task is 59 seconds. So **recording
+length is the task label**, and the task label is very nearly the stress label.
+
+> **A random forest given duration alone — one scalar, no physiology of any
+> kind — scores 0.5923 ± 0.018 macro F1**, against a 0.344 majority baseline and
+> this campaign's full multimodal 0.7484. Duration by itself reaches **79%** of
+> the complete pipeline's score.
+
+### How it was caught
+
+The first version of `physio_global.py` produced 33 features. Its single
+strongest stress discriminator, by a wide margin, was `g_n_beats` — Cohen's
+*d* 0.74, *p* = 4×10⁻²³, ahead of every genuine physiological marker. It
+correlates **0.937 with recording duration**. A beat count is heart rate
+multiplied by elapsed time, so it was measuring the clock wearing a stethoscope.
+
+### The fix
+
+Every feature in the block is now a rate, a mean, or a per-second slope, and
+never a count:
+
+| Removed / changed | Why |
+|---|---|
+| `g_n_beats`, `g_n_breaths`, `g_scr_count` | pure duration × rate |
+| `g_scr_rate_min` | kept — count *per minute* is duration-free |
+| `g_phasic_auc` → `g_phasic_mean_abs` | running sum → per-sample mean |
+| all slopes | per-sample → **per second** (the same total drift over 59 s and 177 s would otherwise differ threefold) |
+
+After the fix the largest feature-duration correlation falls from **0.937 to
+0.317**, and the top discriminators become textbook stress physiology:
+
+| Feature | Cohen's *d* | Expected direction |
+|---|---|---|
+| `g_phasic_mean_abs` (EDA phasic activity) | +0.41 | ↑ sympathetic arousal ✓ |
+| `g_phasic_std` | +0.37 | ✓ |
+| `g_hr_mean` | +0.36 | ↑ heart rate ✓ |
+| `g_scl_mean` | +0.35 | ↑ skin conductance ✓ |
+| `g_lf` | −0.26 | ✓ |
+
+The residual ~0.3 correlations are not leakage: heart rate genuinely differs
+between a long relaxation task and a short stressful one, and that is the
+signal, not the shortcut.
+
+### Why this matters beyond our pipeline
+
+This is the **second** protocol artefact this repository has measured on
+StressID, and the two are the same species of problem — a property of the
+*experimental protocol* masquerading as a property of the *participant*:
+
+| Confound | Control that isolates it | Macro F1 from the confound alone |
+|---|---|---|
+| Modality availability | `availability_only` (3 bits) | ~0.697 |
+| **Recording duration** | **duration-only (1 scalar)** | **0.592** |
+| Subject identity | subject-ID probe | 41.5× chance from physiology |
+
+Any StressID result that does not report controls of this kind is difficult to
+interpret, because a model with access to the raw recording has access to all
+three for free. Ours reports them.
+
+---
+
 ## 3. Reference points
 
 | Source | Protocol | Weighted F1 | Macro F1 |
