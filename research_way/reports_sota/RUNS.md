@@ -6,6 +6,7 @@ These numbers are **not** comparable to `reports/RUNS.md` (subject-held-out).
 
 | run_name | all700_macro_f1 | all700_weighted_f1 | all700_accuracy | c364_macro_f1 | verdict | timestamp |
 |---|---|---|---|---|---|---|
+| s5_final | 0.7604 | 0.7612 | 0.7614 | 0.6435 | NEW BEST | 2026-08-15 08:38:10 |
 | s4_windows | 0.7572 | 0.7580 | 0.7586 | nan | NEW BEST | 2026-08-15 05:27:44 |
 | s2_views_relz | 0.7517 | 0.7525 | 0.7529 | nan | NEW BEST | 2026-08-15 02:48:38 |
 | s3_prune | 0.7505 | 0.7512 | 0.7514 | nan | no improvement | 2026-08-15 03:58:09 |

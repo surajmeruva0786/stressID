@@ -329,18 +329,78 @@ The fix immediately justified itself. In the smoke configuration,
 still took **59% of the ensemble weight** on one fold. A candidate's individual
 inner score and its ensemble contribution are close to unrelated quantities.
 
-### R5 — final configuration  *(running)*
+### R5 — final configuration → **0.7604** (best)
 
-Everything the campaign established, combined:
+Everything the campaign established, combined: views `raw` + `rel` + `z`
+(restored), window-level tree candidates on `raw`/`rel`, GPU sequence candidates
+(`gru`, `attn`), ensemble pruned to 90% cumulative weight, both scopes.
+Runtime 3.1 h.
 
-* views `raw` + `rel` + **`z` restored** — R3 measured its removal at −0.0053 as
-  ensemble diversity, and the final run is where that budget is worth spending
-* window-level tree candidates on `raw` and `rel`
-* GPU sequence candidates (`gru`, `attn`)
-* ensemble pruned to 90% cumulative weight
-* both scopes, `all700` and `c364`
+| Metric | `all700` R1 | `all700` **R5** | Δ vs R1 |
+|---|---|---|---|
+| **Macro F1** | 0.7419 ± 0.034 | **0.7604 ± 0.037** | **+0.0185** |
+| Weighted F1 | 0.7426 | 0.7612 | +0.0186 |
+| Balanced acc | 0.7420 | 0.7602 | +0.0182 |
+| Accuracy | 0.7429 | 0.7614 | +0.0185 |
+| ROC AUC | 0.8091 | 0.8226 | +0.0135 |
 
-_Result: pending._
+Per-fold: 0.7064 / 0.7642 / 0.8118 / 0.7637 / 0.7559. Fold variance came back
+down (0.046 → 0.037) while the mean rose, which is the shape a genuine
+improvement should have.
+
+#### The GPU sequence models do not earn their place
+
+With the selection table fixed, the question R4 could not answer is now settled.
+Mean share of ensemble weight across the five `all700` folds:
+
+| Candidate family | Weight share | Folds present |
+|---|---|---|
+| Recording-level | **88.4%** | 5 / 5 |
+| Window-level | **10.8%** | 5 / 5 (up to 19.3%) |
+| **GPU sequence (`gru`/`attn`)** | **0.7%** | **2 / 5** |
+
+Window-level candidates are real contributors — present in every fold, and the
+largest single member in fold 3 (`win-raw｜mean｜extratrees`, 9% alone). The
+GPU sequence models are not: 0.7% mean weight, and **zero weight in three of
+five folds**. They were given a fair test — two architectures, two views, the
+same inner folds as everyone else — and the ensemble declined them.
+
+This is consistent with what this repo already found on the other track, and it
+is the same lesson twice: on 700 recordings, learned sequence encoders lose to
+tree learners on aggregated descriptors. The right conclusion is not "tune the
+network harder", it is that this dataset is too small for representation
+learning to pay, and the window-level trick captures most of what temporal
+structure was there anyway.
+
+#### The `c364` scope got *worse* over the campaign
+
+| Scope | R1 | R5 | Δ |
+|---|---|---|---|
+| `all700` | 0.7419 | **0.7604** | **+0.0185** |
+| `c364` | **0.6518** | 0.6435 | **−0.0083** |
+
+Everything tuned across five rounds was selected while watching `all700`, and
+`c364` — 364 recordings, class-imbalanced, no availability shortcut — drifted
+down. Two readings, and honesty requires holding both:
+
+1. The `c364` change (−0.008) is small against its own fold spread (±0.056), so
+   this may be noise.
+2. But the *direction* is systematic across rounds, and that is what a
+   configuration tuned on one scope and applied to another looks like. The
+   headline gain is partly a gain at fitting `all700` specifically.
+
+`all700` remains the protocol-matched number, since the origin paper also
+evaluates over all recordings. But `c364` is the scope where the
+modality-availability shortcut is constant, so it is the more conservative
+measure of whether the model learned anything about *stress*.
+
+### Known limitation of the headline number
+
+All five rounds selected against the same five outer folds (seed 42). The
+campaign maximum over a fixed partition is therefore optimistically biased —
+the same effect this repo documented for the GroupKFold track. The number that
+belongs in a paper is a confirmation on partitions the search never touched,
+which is R6.
 
 ---
 
