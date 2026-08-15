@@ -672,6 +672,59 @@ only 0.7484 will draw the wrong conclusion, and so would we have.
 
 ---
 
+## 2d. Two expert-feature blocks, two nulls
+
+After the campaign plateaued, the obvious move was to add the domain features
+the literature is built on. Both were built, both were tested as matched 15-fold
+ablations with identical thread budgets, and both came back null.
+
+| Block | What it adds | Δ macro F1 | *p* | Folds |
+|---|---|---|---|---|
+| `physglobal` | frequency-domain HRV (LF, HF, LF/HF), whole-recording time-domain HRV, EDA tonic/phasic, respiration | **+0.0023** | 0.47 | 7 W / 5 L / 3 T |
+| `audioglobal` | F0 track, period & amplitude perturbation, HNR, alpha ratio, Hammarberg index, spectral shape | **+0.0025** | 0.72 | 7 W / 6 L / 2 T |
+
+Neither was a strawman. LF/HF is the most cited autonomic stress marker in the
+literature; the voice block is eGeMAPS-style. Both discriminated stress
+individually — EDA phasic activity *d* = 0.41, heart rate *d* = 0.36, HNR
+variability *d* = 0.42 — and both were worth about two thousandths of macro F1
+once the existing representation was already present.
+
+**The consistent reading:** the log-mel and window-aggregate features already
+encode what these descriptors encode. LF/HF summarises RR-interval structure
+that window-level HRV statistics already carry; F0 and spectral tilt are
+recoverable from mel bands. Attaching an expert name to a quantity does not add
+information the model did not already have.
+
+This is worth reporting. The reflex when a multimodal pipeline plateaus is to
+add more expert features. On StressID at this scale that reflex does not pay —
+twice, measured properly.
+
+### A methodological trap found on the way
+
+R9's first read was **+0.0075 at *p* = 0.051** and looked like a near-miss worth
+chasing. It was wrong twice over:
+
+1. **Thread count changes results.** The two arms had run at 10 and 4 threads.
+   `n_jobs` changes floating-point summation order in XGBoost and LightGBM,
+   which changes tree splits, which changes predictions. Proof: re-running one
+   arm at 2 threads scored 0.8067 on a fold where 4 threads scored 0.7996, with
+   everything else identical.
+2. **Five folds were the favourable five.** At fifteen the effect straddled zero
+   from both directions.
+
+Every paired comparison in this campaign is therefore only valid if both arms
+ran with the same thread budget. R8a vs R8b (both at 10) and R6 vs R7 (both at
+6) satisfy that; R9 vs R8a did not, which is why `--exclude-blocks` now exists —
+it runs an ablation arm under byte-identical settings instead of editing the
+feature-set table between runs.
+
+Reassurance: the ablated arm returned 0.7484, exactly matching R8a's independent
+0.7484 at a different thread budget. Thread differences perturb individual folds
+but wash out over fifteen, so the campaign's aggregate numbers are sound even
+though its five-fold comparisons were fragile.
+
+---
+
 ## 3. Reference points
 
 | Source | Protocol | Weighted F1 | Macro F1 |
