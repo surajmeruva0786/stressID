@@ -1,0 +1,23 @@
+{
+  "run_name": "s10b_voice_ablate",
+  "timestamp": "2026-08-16 02:50:01",
+  "verdict": "no improvement",
+  "delta_vs_best": NaN,
+  "duration_s": 4506.525489330292,
+  "c364_macro_f1": 0.6724535903311473,
+  "c364_macro_f1_std": 0.061031091111861384,
+  "c364_weighted_f1": 0.741974620583192,
+  "c364_weighted_f1_std": 0.045677007233148284,
+  "c364_balanced_acc": 0.6681365908724399,
+  "c364_balanced_acc_std": 0.0561777583303988,
+  "c364_accuracy": 0.7527016742770167,
+  "c364_accuracy_std": 0.04576448756903589,
+  "c364_roc_auc": 0.724949892874421,
+  "c364_roc_auc_std": 0.06874467022944328,
+  "c364_single_macro_f1": 0.663932918469979,
+  "c364_unpruned_macro_f1": 0.6735842494118106,
+  "c364_mean_members": 45.13333333333333,
+  "c364_mean_members_unpruned": 74.4,
+  "c364_n_eval_folds": 15,
+  "c364_n_recordings": 364
+}

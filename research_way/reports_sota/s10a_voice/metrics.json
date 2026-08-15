@@ -1,0 +1,23 @@
+{
+  "run_name": "s10a_voice",
+  "timestamp": "2026-08-16 01:34:47",
+  "verdict": "no improvement",
+  "delta_vs_best": NaN,
+  "duration_s": 4542.024643659592,
+  "c364_macro_f1": 0.6749049905684049,
+  "c364_macro_f1_std": 0.055998597852951935,
+  "c364_weighted_f1": 0.7458684195879102,
+  "c364_weighted_f1_std": 0.0433262824003453,
+  "c364_balanced_acc": 0.666365563158016,
+  "c364_balanced_acc_std": 0.05106412406279208,
+  "c364_accuracy": 0.7582699137493657,
+  "c364_accuracy_std": 0.043739292781207785,
+  "c364_roc_auc": 0.7278212039532795,
+  "c364_roc_auc_std": 0.06478584546735228,
+  "c364_single_macro_f1": 0.6668089991219694,
+  "c364_unpruned_macro_f1": 0.6749249266562346,
+  "c364_mean_members": 43.6,
+  "c364_mean_members_unpruned": 72.46666666666667,
+  "c364_n_eval_folds": 15,
+  "c364_n_recordings": 364
+}
