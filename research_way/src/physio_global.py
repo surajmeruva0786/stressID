@@ -49,14 +49,30 @@ except Exception:                                    # pragma: no cover
 
 GLOBAL_VERSION = 1
 
+# DURATION MUST NOT LEAK IN. StressID task durations are near-deterministic per
+# task -- every high-stress task runs 59 s while Relax/Breathing/Video run
+# 118-177 s -- so recording length is a task label in disguise. Measured: a
+# random forest on duration ALONE, with no physiology whatsoever, scores 0.5923
+# macro F1 against a 0.344 majority baseline. Any count that scales with
+# duration is therefore banned from this block, however physiological it looks:
+#
+#   g_n_beats   correlated 0.937 with duration, Cohen's d 0.74 -- the single
+#               strongest "physiological" discriminator, and it was measuring
+#               the clock
+#   g_n_breaths same
+#   g_scr_count same; kept only as g_scr_rate_min (count per minute)
+#   g_phasic_auc  was a running sum; now a per-second mean
+#
+# Slopes are expressed per second rather than per sample for the same reason: a
+# per-sample slope shrinks with recording length for an identical total change.
 ECG_G = ["g_hr_mean", "g_hr_std", "g_hr_slope", "g_sdnn", "g_rmssd", "g_pnn50",
-         "g_cvnn", "g_rr_range", "g_n_beats",
+         "g_cvnn", "g_rr_range",
          "g_lf", "g_hf", "g_lf_hf", "g_total_power", "g_lf_nu", "g_hf_nu"]
 EDA_G = ["g_scl_mean", "g_scl_std", "g_scl_slope", "g_scl_range",
-         "g_scr_count", "g_scr_rate_min", "g_scr_amp_mean", "g_scr_amp_max",
-         "g_phasic_auc", "g_phasic_std"]
+         "g_scr_rate_min", "g_scr_amp_mean", "g_scr_amp_max",
+         "g_phasic_mean_abs", "g_phasic_std"]
 RSP_G = ["g_rsp_rate", "g_rsp_rate_std", "g_rsp_rate_slope", "g_rrv_rmssd",
-         "g_rsp_amp_mean", "g_rsp_amp_std", "g_rsp_duty", "g_n_breaths"]
+         "g_rsp_amp_mean", "g_rsp_amp_std", "g_rsp_duty"]
 FEATURE_NAMES = ECG_G + EDA_G + RSP_G
 N_FEATURES = len(FEATURE_NAMES)
 
