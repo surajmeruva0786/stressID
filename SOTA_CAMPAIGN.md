@@ -613,21 +613,62 @@ The residual ~0.3 correlations are not leakage: heart rate genuinely differs
 between a long relaxation task and a short stressful one, and that is the
 signal, not the shortcut.
 
-### Why this matters beyond our pipeline
+### Correction to the figure first reported
 
-This is the **second** protocol artefact this repository has measured on
-StressID, and the two are the same species of problem — a property of the
-*experimental protocol* masquerading as a property of the *participant*:
+The duration confound was initially recorded here as **0.5923**, measured from a
+duration estimate derived from beat counts and heart rate. That estimate was
+noisy. Measured properly from the cache window count, duration alone scores
+**0.6996**. The confound was *understated*, and the corrected figure is used
+below.
 
-| Confound | Control that isolates it | Macro F1 from the confound alone |
-|---|---|---|
-| Modality availability | `availability_only` (3 bits) | ~0.697 |
-| **Recording duration** | **duration-only (1 scalar)** | **0.592** |
-| Subject identity | subject-ID probe | 41.5× chance from physiology |
+### The three confounds are one confound
 
-Any StressID result that does not report controls of this kind is difficult to
-interpret, because a model with access to the raw recording has access to all
-three for free. Ours reports them.
+They are not three independent problems. Every recording that carries audio is
+**exactly 59 s** — 11 windows, zero variance — because audio exists only for the
+seven speech tasks. The four non-speech tasks run 117–177 s. So:
+
+> `has_audio` ⟺ short recording ⟺ speech task
+
+Modality availability, recording duration and task identity are the same
+variable wearing three hats. Measured on `all700` under the paper protocol
+(subject-shared, 5 folds × 3 repeats):
+
+| Predictor | Macro F1 |
+|---|---|
+| Majority class | 0.3440 |
+| Task identity (one-hot, 11 tasks) | 0.6897 |
+| Modality availability (3 bits) | 0.6952 |
+| Recording duration (**1 scalar**) | **0.6996** |
+| **Availability + duration** | **0.7085** |
+| **Full multimodal pipeline** | **0.7484** |
+
+**The entire multimodal pipeline — physiology, voice, video, window-level
+models, ensembling — beats pure protocol metadata by +0.040.** Everything else
+that looks like performance on `all700` is recoverable from how long the
+recording was and which sensors were switched on.
+
+### Which is why `c364` is the number that means something
+
+The 364 all-modality recordings have **constant duration (all 11 windows) and
+constant availability**. Both confounds carry exactly zero information there,
+and it shows: within `c364`, a task-identity classifier scores 0.4176, which is
+*precisely* the majority-class baseline.
+
+| Scope | Confound ceiling | Final configuration | Real margin |
+|---|---|---|---|
+| `all700` | 0.7085 (availability + duration) | 0.7484 | **+0.040** |
+| `c364` | 0.4176 (= majority; task ID adds nothing) | 0.6721 | **+0.254** |
+
+So the two scopes tell opposite stories, and the *lower* number is the better
+result. `all700`'s 0.7484 is the protocol-comparable figure and is mostly
+protocol. `c364`'s 0.6721 is smaller but is **+0.254 over the confound ceiling**,
+and that margin is genuine multimodal signal — physiology, voice and face,
+measured where the shortcuts are constant.
+
+**Recommendation for the paper.** Report `all700` for comparability with
+published numbers, immediately alongside the metadata baseline that shows what
+it is worth. Report `c364` as the primary scientific result. A reader who sees
+only 0.7484 will draw the wrong conclusion, and so would we have.
 
 ---
 
