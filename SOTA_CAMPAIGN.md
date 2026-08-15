@@ -286,6 +286,62 @@ for the final run, where the budget is worth spending.
 visible. Had R3 been compared against R2 across runs, "pruning helps by
 −0.0012" would have been recorded, which is both wrong and the wrong sign.
 
+### R4 — window-level and GPU sequence candidates → **0.7572** (+0.0066)
+
+Adds two candidate families to the existing recording-level pool, which is left
+untouched so the newcomers must earn selection against it. R4 differs from R3 in
+exactly this one respect — same views, pruning, seed and folds — so the
+cross-run delta is clean. Runtime 84 min.
+
+| Metric (`all700`) | R3 | **R4** | Δ |
+|---|---|---|---|
+| Macro F1 | 0.7505 ± 0.035 | **0.7572 ± 0.046** | **+0.0066** |
+| Unpruned blend | 0.7464 | 0.7540 | +0.0077 |
+| Weighted F1 | 0.7512 | 0.7580 | +0.0068 |
+| Accuracy | 0.7514 | 0.7586 | +0.0071 |
+| ROC AUC | 0.8154 | 0.8228 | +0.0074 |
+
+Per-fold: 0.6994 / 0.7571 / **0.8268** / 0.7494 / 0.7531. Fold 2 is the highest
+single fold of the campaign. Fold variance also rose (std 0.035 → 0.046).
+
+The unpruned blend moved as well, so the gain is not an artefact of pruning
+interacting with a larger pool.
+
+**Window candidates earn their place on individual merit.**
+`win-raw｜mean｜extratrees` and `win-raw｜trimmed｜extratrees` rank 6th and 8th
+of ~148 candidates — above every recording-level model except the five best.
+Training on ~9 000 window rows instead of 560 recording rows relieves exactly
+the constraint identified at the start: 700 recordings against ~1 500 columns.
+
+**Whether the GPU sequence models contributed is, as of R4, unknown.** They took
+no top-25 slot — but R3 established that this does not answer the question, and
+the report was silently dropping the field that does. Which is a defect worth
+recording:
+
+> Per-fold metrics and per-fold *selections* were being concatenated into one
+> table, so the report writer took its columns from the first row and dropped
+> `top_members` entirely — the only record of which candidates the ensemble
+> actually chose. Fixed, with a new breakdown of ensemble weight by candidate
+> family.
+
+The fix immediately justified itself. In the smoke configuration,
+`seq-rel｜gru｜torch` ranked **last** individually (0.5594 against 0.6002) and
+still took **59% of the ensemble weight** on one fold. A candidate's individual
+inner score and its ensemble contribution are close to unrelated quantities.
+
+### R5 — final configuration  *(running)*
+
+Everything the campaign established, combined:
+
+* views `raw` + `rel` + **`z` restored** — R3 measured its removal at −0.0053 as
+  ensemble diversity, and the final run is where that budget is worth spending
+* window-level tree candidates on `raw` and `rel`
+* GPU sequence candidates (`gru`, `attn`)
+* ensemble pruned to 90% cumulative weight
+* both scopes, `all700` and `c364`
+
+_Result: pending._
+
 ---
 
 ## 3. Reference points
