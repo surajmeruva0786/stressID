@@ -1,0 +1,18 @@
+{
+  "run_name": "t1_affect3",
+  "timestamp": "2026-08-15 18:51:15",
+  "verdict": "no improvement",
+  "delta_vs_best": NaN,
+  "duration_s": 12360.709937810898,
+  "affect3_macro_f1": 0.621429582742486,
+  "affect3_macro_f1_std": 0.014189694509860672,
+  "affect3_weighted_f1": 0.6333586114371229,
+  "affect3_weighted_f1_std": 0.014065889597540421,
+  "affect3_balanced_acc": 0.6290198485898424,
+  "affect3_balanced_acc_std": 0.015350504113662717,
+  "affect3_accuracy": 0.6471428571428571,
+  "affect3_accuracy_std": 0.017928429140015897,
+  "affect3_single_macro_f1": 0.614061363687708,
+  "affect3_n_folds": 5,
+  "affect3_n_recordings": 700
+}

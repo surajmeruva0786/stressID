@@ -1,0 +1,23 @@
+{
+  "run_name": "s9_physglobal",
+  "timestamp": "2026-08-15 18:42:22",
+  "verdict": "no improvement",
+  "delta_vs_best": -0.0061589078464950875,
+  "duration_s": 10084.68983244896,
+  "all700_macro_f1": 0.7542424226142599,
+  "all700_macro_f1_std": 0.04337393444448666,
+  "all700_weighted_f1": 0.7553319417758121,
+  "all700_weighted_f1_std": 0.042358915448870396,
+  "all700_balanced_acc": 0.7551510312193199,
+  "all700_balanced_acc_std": 0.042987072280919233,
+  "all700_accuracy": 0.7571428571428571,
+  "all700_accuracy_std": 0.04008918628686368,
+  "all700_roc_auc": 0.8154975517886986,
+  "all700_roc_auc_std": 0.04516414165472806,
+  "all700_single_macro_f1": 0.7244897828638731,
+  "all700_unpruned_macro_f1": 0.7471524885203659,
+  "all700_mean_members": 56.4,
+  "all700_mean_members_unpruned": 85.0,
+  "all700_n_eval_folds": 5,
+  "all700_n_recordings": 700
+}
