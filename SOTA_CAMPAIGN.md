@@ -394,13 +394,59 @@ evaluates over all recordings. But `c364` is the scope where the
 modality-availability shortcut is constant, so it is the more conservative
 measure of whether the model learned anything about *stress*.
 
-### Known limitation of the headline number
+### R6/R7 — measuring the selection bias, and the honest delta
 
-All five rounds selected against the same five outer folds (seed 42). The
-campaign maximum over a fixed partition is therefore optimistically biased —
-the same effect this repo documented for the GroupKFold track. The number that
-belongs in a paper is a confirmation on partitions the search never touched,
-which is R6.
+All five rounds selected against the same five outer folds (seed 42), so the
+campaign maximum over that partition is optimistically biased. R6 re-runs the
+frozen R5 configuration on unseen seed-101 partitions; R7 runs the R1 *baseline*
+on those same partitions, supplying the term R6 alone was missing — comparing
+0.7467 (seed 101) against 0.7419 (seed 42) would compare two different
+partitions, not two configurations.
+
+| Configuration | Partition | `all700` macro F1 |
+|---|---|---|
+| Final (R5) | seed 42 — **searched** | 0.7604 |
+| Final (R6) | seed 101 — **unseen** | 0.7467 |
+
+**Measured campaign selection bias: +0.0137 macro F1.** Five rounds of choosing
+against one partition bought that much apparent score that does not transfer.
+
+**This also corrects the concern raised in R5.** R5's write-up claimed `c364`
+had declined systematically and that part of the gain was specific to fitting
+`all700`. On the unseen partition `c364` comes out *higher* (0.6721 vs 0.6435),
+its fold spread halves (±0.056 → ±0.036), and the final configuration beats the
+baseline on `c364` too (+0.0117). The seed-42 `c364` folds were simply hard.
+The accurate statement is that `c364` is highly partition-sensitive — what 364
+class-imbalanced recordings split five ways should look like — not that the
+campaign overfitted one scope.
+
+### R8 — the powered comparison → **significant**
+
+R6/R7 gave +0.0195 at paired *p* = 0.22 on five folds: consistent in sign across
+every metric and both scopes, but underpowered, with the mean pulled by a single
++0.064 fold. R8 re-runs both configurations at 3 repeats (**15 outer folds**) on
+unseen seed-101 partitions.
+
+| | 15 unseen folds |
+|---|---|
+| Final configuration | **0.7484 ± 0.0331** |
+| Baseline configuration | 0.7322 ± 0.0301 |
+| **Mean paired difference** | **+0.0162** |
+| 95% CI | **[+0.0013, +0.0311]** |
+| Paired *t* | **p = 0.035** |
+| Wilcoxon signed-rank | **p = 0.031** |
+| Folds improved | 10 / 15 |
+| Cohen's *dz* | 0.60 (medium) |
+
+Tripling the fold count *shrank* the point estimate (+0.0195 → +0.0162) while
+making it significant. That is the signature of a real effect that was
+underpowered, rather than a fluke regressing to the mean — a fluke would have
+shrunk toward zero, not tightened around a positive value.
+
+**How to state this.** The lower CI bound is +0.0013, so the effect is
+significant but its *magnitude* is not tightly pinned. The defensible claim is
+"a small but statistically significant improvement over a strong baseline
+(+0.016 macro F1, paired *p* = 0.035, n = 15 folds)" — not "a substantial gain".
 
 ---
 

@@ -1,0 +1,23 @@
+{
+  "run_name": "s8b_base_r3",
+  "timestamp": "2026-08-15 14:52:04",
+  "verdict": "no improvement",
+  "delta_vs_best": -0.0281771682758295,
+  "duration_s": 3397.9778118133545,
+  "all700_macro_f1": 0.7322241621849255,
+  "all700_macro_f1_std": 0.03006407699990333,
+  "all700_weighted_f1": 0.7331868111397574,
+  "all700_weighted_f1_std": 0.029540688064569155,
+  "all700_balanced_acc": 0.7328202396184404,
+  "all700_balanced_acc_std": 0.030164964767374444,
+  "all700_accuracy": 0.7342857142857144,
+  "all700_accuracy_std": 0.02872408199224783,
+  "all700_roc_auc": 0.8034646865969706,
+  "all700_roc_auc_std": 0.03327257148788766,
+  "all700_single_macro_f1": 0.7226368254044161,
+  "all700_unpruned_macro_f1": 0.7322241621849255,
+  "all700_mean_members": 45.666666666666664,
+  "all700_mean_members_unpruned": 45.666666666666664,
+  "all700_n_eval_folds": 15,
+  "all700_n_recordings": 700
+}

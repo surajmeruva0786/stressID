@@ -27,6 +27,7 @@ optimistically biased. Section 3 quantifies by how much.
 
 | Comparison | Scope | Folds | A | B | Δ | 95% CI | Wins | t p | Wilcoxon p |
 |---|---|---|---|---|---|---|---|---|---|
+| `s8a_final_r3` vs `s8b_base_r3` | all700 | 15 | 0.7484 | 0.7322 | **+0.0162** | [+0.0013, +0.0311] | 10/15 | 0.0349 | 0.0308 |
 | `s6_confirm_seed101` vs `s7_baseline_seed101` | all700 | 5 | 0.7467 | 0.7272 | **+0.0195** | [-0.0178, +0.0569] | 3/5 | 0.2204 | 0.3125 |
 | `s6_confirm_seed101` vs `s7_baseline_seed101` | c364 | 5 | 0.6721 | 0.6605 | **+0.0117** | [-0.0314, +0.0547] | 3/5 | 0.4937 | 0.4375 |
 
