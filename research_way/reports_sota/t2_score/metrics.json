@@ -1,0 +1,20 @@
+{
+  "run_name": "t2_score",
+  "timestamp": "2026-08-15 20:24:51",
+  "verdict": "no improvement",
+  "delta_vs_best": NaN,
+  "duration_s": 5608.554139614105,
+  "regression_rmse": 1.857036323541503,
+  "regression_rmse_std": 0.10651360088656503,
+  "regression_mae": 1.5026551490448328,
+  "regression_mae_std": 0.1064086131265411,
+  "regression_pearson_r": 0.6731749516236516,
+  "regression_pearson_r_std": 0.029845539767964883,
+  "regression_spearman_r": 0.6597593815014073,
+  "regression_spearman_r_std": 0.030908071303304405,
+  "regression_r2": 0.43947911052588695,
+  "regression_r2_std": 0.03951299033573373,
+  "regression_single_rmse": 1.8947793453747657,
+  "regression_n_folds": 5,
+  "regression_n_recordings": 700
+}

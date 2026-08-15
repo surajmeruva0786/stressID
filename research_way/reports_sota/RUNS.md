@@ -19,3 +19,4 @@ These numbers are **not** comparable to `reports/RUNS.md` (subject-held-out).
 | s0_smoke | nan | nan | nan | 0.6723 | FIRST RUN | 2026-08-14 23:43:24 |
 | s0_win_smoke | nan | nan | nan | 0.6356 | no improvement | 2026-08-15 05:30:36 |
 | t1_affect3 | nan | nan | nan | nan | no improvement | 2026-08-15 18:51:15 |
+| t2_score | nan | nan | nan | nan | no improvement | 2026-08-15 20:24:51 |
