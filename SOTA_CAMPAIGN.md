@@ -450,6 +450,78 @@ significant but its *magnitude* is not tightly pinned. The defensible claim is
 
 ---
 
+## 2b. Binary campaign — conclusion
+
+Eight rounds, ~14 h of compute. The campaign is **closed for the binary task**;
+what follows is the state to cite.
+
+### The number
+
+| | Value |
+|---|---|
+| **Headline** (`all700`, unseen folds, n = 15) | **macro F1 0.7484 ± 0.033** |
+| Improvement over baseline | **+0.0162**, 95% CI [+0.0013, +0.0311] |
+| Significance | paired *t* p = 0.035, Wilcoxon p = 0.031, 10/15 folds |
+| On the searched partition (do **not** cite) | 0.7604 |
+| Origin paper | 0.72 weighted F1 |
+| Majority class | 0.344 |
+
+### What worked, in order of contribution
+
+1. **Subject-relative baseline correction (`rel`)** — express each recording as
+   a deviation from that participant's own resting state. 19 of the top 25
+   candidates use it. Physiologically motivated: stress is a *deviation*, and
+   absolute levels differ enormously between people.
+2. **Window-level training** — fit trees on ~9 000 window rows rather than 560
+   recording rows, then average probabilities back to a recording. 10.8% of
+   ensemble weight, present in every fold. Directly relieves the
+   700-recordings-by-1500-columns ratio that binds this dataset.
+3. **Bagged greedy ensembling with inner-OOF threshold tuning**, pruned to 90%
+   cumulative weight (+0.0041, measured in-run).
+
+### What did not work — the negative results
+
+* **GPU sequence models (`gru`, `attn`) were declined by the ensemble**: 0.7%
+  mean weight, zero weight in three of five folds, after a fair test against
+  identical inner folds. On 700 recordings, learned sequence encoders lose to
+  tree learners over aggregated descriptors. This repo now has that result
+  twice, on two different protocols.
+* **Subject-z (`z`) as a standalone representation** — never ranked. It did
+  contribute as ensemble diversity, which is a different thing, and confusing
+  the two was one of this campaign's errors.
+* **CatBoost** — 143 s per GPU fit for a lower score than XGBoost's 6 s.
+
+### Errors made and corrected
+
+Recorded because the corrections are more informative than the claims were:
+
+| Claim | Correction | How it surfaced |
+|---|---|---|
+| "`z` contributed nothing" (R2) | It contributed −0.0053 worth of ensemble diversity | R3's in-run unpruned reference |
+| "`c364` is degrading systematically" (R5) | One hard partition; `c364` is *higher* on unseen folds | R6 on a fresh seed |
+| "pruning helps by −0.0012" (implied by cross-run comparison) | Pruning helps by **+0.0041** | Scoring both blends inside one run |
+
+The common thread: **every one of these was a cross-run comparison done by eye.**
+Two runs differing in more than one respect cannot attribute a delta. In-run
+references and paired tests on identical folds fixed all three, and
+`src/sota_summary.py` now generates them so it is not done by hand again.
+
+### Limitations to state in the paper
+
+1. **Subject leakage inflates every number here**, by a margin measured
+   separately in `LEAKY_PROTOCOL.md` (+0.098 macro F1 on physiology, ≈0 on a
+   subject-identity-free control). The deployment-realistic estimate remains
+   ≈0.52 on the GroupKFold track.
+2. **Campaign selection bias is +0.0137**, measured. Cite 0.748, not 0.760.
+3. **The protocol is comparable to the origin paper's, not identical** — theirs
+   is random 80/20 with SMOTE, ours subject-shared 5-fold without. Describe as
+   "competitive under a comparable protocol", not a like-for-like win.
+4. **`rel` and `z` are transductive.** No labels are read, but test rows
+   contribute to their own participant's statistics. Admissible only on this
+   track.
+
+---
+
 ## 3. Reference points
 
 | Source | Protocol | Weighted F1 | Macro F1 |
