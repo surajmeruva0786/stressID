@@ -235,6 +235,15 @@ def build(cfg: Config, man: pd.DataFrame, verbose: bool = True) -> dict[str, np.
     feats = {k: _winsorize(np.nan_to_num(np.stack(v).astype(np.float64)))
              for k, v in acc.items()}
     feats["avail"] = man[["has_physio", "has_audio", "has_video"]].values.astype(np.float64)
+
+    # Whole-recording physiology. Kept as its own block rather than folded into
+    # `physfeat` because it answers a question the window features structurally
+    # cannot: frequency-domain HRV needs >=60 s, and the window grid is 10 s.
+    try:
+        from . import physio_global as PG
+        feats["physglobal"] = _winsorize(PG.build(cfg, man, verbose=verbose))
+    except Exception as e:                              # pragma: no cover
+        print(f"[sotafeat] physglobal unavailable ({e}); continuing without it")
     return feats
 
 
