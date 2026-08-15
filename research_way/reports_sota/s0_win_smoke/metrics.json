@@ -1,9 +1,9 @@
 {
   "run_name": "s0_win_smoke",
-  "timestamp": "2026-08-15 04:02:47",
+  "timestamp": "2026-08-15 05:30:36",
   "verdict": "no improvement",
   "delta_vs_best": NaN,
-  "duration_s": 161.2609679698944,
+  "duration_s": 97.87059688568115,
   "c364_macro_f1": 0.6356221564614476,
   "c364_macro_f1_std": 0.06653275456406862,
   "c364_weighted_f1": 0.7030738733483007,

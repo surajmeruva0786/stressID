@@ -1,0 +1,23 @@
+{
+  "run_name": "s4_windows",
+  "timestamp": "2026-08-15 05:27:44",
+  "verdict": "NEW BEST",
+  "delta_vs_best": 0.005415567601265492,
+  "duration_s": 5061.905678987503,
+  "all700_macro_f1": 0.7571630622829568,
+  "all700_macro_f1_std": 0.045451610615637184,
+  "all700_weighted_f1": 0.7580071747890204,
+  "all700_weighted_f1_std": 0.04558796035273986,
+  "all700_balanced_acc": 0.7569532516475882,
+  "all700_balanced_acc_std": 0.0449722381871261,
+  "all700_accuracy": 0.7585714285714286,
+  "all700_accuracy_std": 0.04584801867394636,
+  "all700_roc_auc": 0.8228119189987927,
+  "all700_roc_auc_std": 0.049023333836411796,
+  "all700_single_macro_f1": 0.7336596780902254,
+  "all700_unpruned_macro_f1": 0.7540456769104222,
+  "all700_mean_members": 49.2,
+  "all700_mean_members_unpruned": 75.4,
+  "all700_n_eval_folds": 5,
+  "all700_n_recordings": 700
+}

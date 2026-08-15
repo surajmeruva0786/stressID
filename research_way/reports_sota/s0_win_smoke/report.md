@@ -1,9 +1,9 @@
 # SOTA run — `s0_win_smoke`
 
-**Generated:** 2026-08-15 04:02:47  
+**Generated:** 2026-08-15 05:30:36  
 **Primary (all700_macro_f1):** **nan**  
-**Best previous:** `s2_views_relz` at 0.7517 → **no improvement** (+nan)  
-**Duration:** 161 s (2.7 min)  
+**Best previous:** `s4_windows` at 0.7572 → **no improvement** (+nan)  
+**Duration:** 98 s (1.6 min)  
 
 > **Protocol.** Subject-shared repeated stratified CV — the split rule
 > the StressID origin paper uses (random 80/20 + SMOTE). Subjects appear
@@ -13,7 +13,7 @@
 
 ## What changed
 
-smoke: window + GPU sequence candidates
+smoke: verify selected-member table
 
 ## Headline metrics
 
@@ -45,11 +45,16 @@ smoke: window + GPU sequence candidates
 | 2 | 73 | 0.5200 | 3 | 3 | 0.7338 | 0.7988 | 0.7047 | 0.8219 | 0.7518 | 0.7338 | 0.7988 | 0.7047 | 0.8219 | 0.7518 | 0.6398 | 0.7257 | 0.6282 | 0.7534 | 0.7454 |
 | 3 | 73 | 0.7900 | 2 | 2 | 0.5764 | 0.6405 | 0.5842 | 0.6301 | 0.6630 | 0.5764 | 0.6405 | 0.5842 | 0.6301 | 0.6630 | 0.6166 | 0.7036 | 0.6090 | 0.7260 | 0.6841 |
 | 4 | 72 | 0.5300 | 4 | 4 | 0.6632 | 0.7505 | 0.6462 | 0.7778 | 0.7019 | 0.6632 | 0.7505 | 0.6462 | 0.7778 | 0.7019 | 0.6762 | 0.7621 | 0.6558 | 0.7917 | 0.6625 |
-| 0 |  | 0.6600 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
-| 1 |  | 0.7200 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
-| 2 |  | 0.5200 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
-| 3 |  | 0.7900 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
-| 4 |  | 0.5300 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
+
+## Selected ensemble members — c364
+
+| fold | thr | inner_blend_f1 | top_members | weight_recording | weight_window | weight_sequence |
+|---|---|---|---|---|---|---|
+| 0 | 0.6600 | 0.6648 | seq-rel|gru|torch:0.59 | phys|rel|lgbm:0.35 | win-rel|mean|lgbm:0.06 | 0.3530 | 0.0590 | 0.5880 |
+| 1 | 0.7200 | 0.6601 | win-rel|mean|lgbm:0.33 | phys|rel|lgbm:0.28 | seq-rel|gru|torch:0.22 | win-rel|trimmed|lgbm:0.17 | 0.2780 | 0.5000 | 0.2220 |
+| 2 | 0.5200 | 0.6101 | win-rel|trimmed|lgbm:0.33 | phys|rel|lgbm:0.33 | seq-rel|gru|torch:0.33 | 0.3330 | 0.3330 | 0.3330 |
+| 3 | 0.7900 | 0.6322 | win-rel|trimmed|lgbm:0.67 | win-rel|mean|lgbm:0.33 | 0 | 1.0000 | 0 |
+| 4 | 0.5300 | 0.6224 | win-rel|trimmed|lgbm:0.44 | win-rel|mean|lgbm:0.22 | phys|rel|lgbm:0.22 | seq-rel|gru|torch:0.11 | 0.2220 | 0.6670 | 0.1110 |
 
 ## Inner-CV candidate ranking — c364
 

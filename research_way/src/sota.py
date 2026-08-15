@@ -374,7 +374,17 @@ def run_scope(cands: list, yy: np.ndarray, n_folds: int, repeats: int, seed: int
             "inner_blend_f1": round(f1_score(ytr, (blend_oof >= thr).astype(int),
                                              average="macro", zero_division=0), 4),
             "top_members": " | ".join(f"{k}:{w:.2f}"
-                                      for k, w in list(weights.items())[:5]),
+                                      for k, w in list(weights.items())[:6]),
+            # Share of ensemble weight by candidate family, so a family that is
+            # individually mid-ranked but pulls real weight is visible. R3
+            # showed individual inner rank is the wrong instrument for this.
+            "weight_recording": round(sum(
+                w for k, w in weights.items()
+                if not k.startswith(("win-", "seq-"))), 3),
+            "weight_window": round(sum(
+                w for k, w in weights.items() if k.startswith("win-")), 3),
+            "weight_sequence": round(sum(
+                w for k, w in weights.items() if k.startswith("seq-")), 3),
         })
         if verbose:
             print(f"  fold {fi}: macro_f1={fold_rows[-1]['macro_f1']:.4f} "
@@ -397,7 +407,12 @@ def run_scope(cands: list, yy: np.ndarray, n_folds: int, repeats: int, seed: int
     rank = sorted(((k, float(np.mean(v))) for k, v in inner_acc.items()),
                   key=lambda kv: -kv[1])[:25]
     inner_rank = [{"candidate": k, "inner_macro_f1": v} for k, v in rank]
-    return headline, fold_rows + choice_rows, inner_rank
+    # Returned separately, NOT concatenated. Merging them into one table meant
+    # the report writer took its columns from the first row and silently
+    # dropped `top_members` -- which is the only record of WHICH candidates the
+    # ensemble actually selected, and therefore the only way to tell a
+    # contributing candidate type from a decorative one.
+    return headline, fold_rows, choice_rows, inner_rank
 
 
 _WIN_CACHE: dict = {}
@@ -492,12 +507,13 @@ def run(cfg: Config, run_name: str, views: list[str], repeats: int, seed: int,
                  for mname, mk in zoo.items()]
         cands += _window_candidates(cfg, man, rows, scope, views, windows,
                                     torch_archs, zoo)
-        h, folds, rank = run_scope(cands, y[rows], cfg.n_folds, repeats,
-                                   seed, max_size, n_bags, n_par,
-                                   inner_folds=inner_folds,
-                                   cum_keep=cum_keep)
+        h, folds, choices, rank = run_scope(cands, y[rows], cfg.n_folds, repeats,
+                                            seed, max_size, n_bags, n_par,
+                                            inner_folds=inner_folds,
+                                            cum_keep=cum_keep)
         headline.update({f"{scope}_{k}": v for k, v in h.items()})
         tables[f"Per-fold — {scope}"] = folds
+        tables[f"Selected ensemble members — {scope}"] = choices
         tables[f"Inner-CV candidate ranking — {scope}"] = rank
 
     config = {"protocol": "subject-shared RepeatedStratifiedKFold (paper-style)",
