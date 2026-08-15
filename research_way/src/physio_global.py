@@ -17,10 +17,24 @@ give:
   ECG   frequency-domain HRV (LF, HF, LF/HF, total power, normalised units),
         plus time-domain HRV computed over the full RR series rather than over
         ~12 beats, plus the HR trend across the task
-  EDA   tonic/phasic decomposition over the whole task: SCR count and rate,
-        amplitude statistics, phasic area, tonic level and slope
+  EDA   tonic/phasic decomposition over the whole task: SCR *rate*,
+        amplitude statistics, mean phasic activity, tonic level and slope
   RSP   breathing rate and its variability over the task, amplitude statistics,
         and the inhale/exhale duty cycle
+
+The duration trap
+-----------------
+Everything here is expressed as a rate, a mean or a per-second slope, and never
+as a count. That is not stylistic. StressID task durations are near-deterministic
+per task — every high-stress task runs 59 s while Relax, Breathing and Video run
+118–177 s — so recording length *is* the task label, and any count that grows
+with length smuggles it in. Version 1 of this module did exactly that: its
+strongest feature by far was `g_n_beats` (Cohen's d 0.74, correlation 0.937 with
+duration), which is the clock wearing a stethoscope.
+
+Measured, so the size of the trap is on record: a random forest given **duration
+alone** — one scalar, no physiology — scores **0.5923 macro F1**, against a
+0.344 majority baseline and the full multimodal pipeline's 0.7484.
 
 Cached to `data/physglobal_<tag>/<key>.npz`. Roughly 1–2 s per recording.
 
@@ -47,7 +61,7 @@ try:
 except Exception:                                    # pragma: no cover
     HAVE_NK = False
 
-GLOBAL_VERSION = 1
+GLOBAL_VERSION = 2   # v1 leaked recording duration; see the note on ECG_G
 
 # DURATION MUST NOT LEAK IN. StressID task durations are near-deterministic per
 # task -- every high-stress task runs 59 s while Relax/Breathing/Video run
@@ -77,10 +91,16 @@ FEATURE_NAMES = ECG_G + EDA_G + RSP_G
 N_FEATURES = len(FEATURE_NAMES)
 
 
-def _slope(x: np.ndarray) -> float:
+def _slope(x: np.ndarray, fs: float = 1.0) -> float:
+    """Least-squares slope in units per SECOND.
+
+    Per-sample slope would be duration-dependent: the same total drift across a
+    59 s task and a 177 s task yields a threefold different per-sample slope,
+    which reintroduces the duration shortcut this module is careful to exclude.
+    """
     if len(x) < 3:
         return 0.0
-    t = np.arange(len(x), dtype=np.float64)
+    t = np.arange(len(x), dtype=np.float64) / fs
     tc = t - t.mean()
     d = (tc ** 2).sum()
     return float((tc * (x - x.mean())).sum() / d) if d > 0 else 0.0
@@ -133,11 +153,14 @@ def _ecg_block(ecg: np.ndarray, fs: int) -> np.ndarray:
             return np.zeros(len(ECG_G))
         hr = 60000.0 / rr
         d = np.diff(rr)
-        time_dom = [hr.mean(), hr.std(), _slope(hr), rr.std(),
+        # hr is indexed per beat; convert to per second using the mean RR so
+        # the trend is comparable across recordings of different lengths
+        hr_fs = 1000.0 / rr.mean() if rr.mean() > 0 else 1.0
+        time_dom = [hr.mean(), hr.std(), _slope(hr, hr_fs), rr.std(),
                     float(np.sqrt((d ** 2).mean())),
                     float((np.abs(d) > 50).mean() * 100.0),
                     float(rr.std() / rr.mean()) if rr.mean() > 0 else 0.0,
-                    float(rr.max() - rr.min()), float(len(rr) + 1)]
+                    float(rr.max() - rr.min())]
         return np.array(time_dom + _hrv_frequency(rr))
     except Exception:
         return np.zeros(len(ECG_G))
@@ -153,12 +176,12 @@ def _eda_block(eda: np.ndarray, fs: int) -> np.ndarray:
         dur_min = len(eda) / fs / 60.0
         n_scr = float(len(amps))
         return np.array([
-            tonic.mean(), tonic.std(), _slope(tonic),
+            tonic.mean(), tonic.std(), _slope(tonic, fs),
             float(tonic.max() - tonic.min()),
-            n_scr, n_scr / dur_min if dur_min > 0 else 0.0,
+            n_scr / dur_min if dur_min > 0 else 0.0,
             float(amps.mean()) if len(amps) else 0.0,
             float(amps.max()) if len(amps) else 0.0,
-            float(np.abs(phasic).sum() / fs), float(phasic.std()),
+            float(np.abs(phasic).mean()), float(phasic.std()),
         ])
     except Exception:
         return np.zeros(len(EDA_G))
@@ -186,10 +209,9 @@ def _rsp_block(rsp: np.ndarray, fs: int) -> np.ndarray:
                 cyc = np.abs(np.diff(peaks)[:n])
                 ok = cyc > 0
                 duty = float((inh[ok] / cyc[ok]).mean()) if ok.any() else 0.0
-        return np.array([rate.mean(), rate.std(), _slope(rate), rrv,
+        return np.array([rate.mean(), rate.std(), _slope(rate, fs), rrv,
                          amp.mean() if len(amp) else 0.0,
-                         amp.std() if len(amp) else 0.0,
-                         duty, float(len(peaks))])
+                         amp.std() if len(amp) else 0.0, duty])
     except Exception:
         return np.zeros(len(RSP_G))
 
