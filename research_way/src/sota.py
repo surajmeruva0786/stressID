@@ -122,15 +122,21 @@ def model_zoo(fast: bool = False, jobs: int | None = None) -> dict:
 
 # ------------------------------------------------------------ feature sets
 
+_PHYS = ["physfeat", "physraw", "physglobal"]
+
 FEATURE_SETS = {
-    "phys":        ["physfeat", "physraw"],
+    "phys":        _PHYS,
     "audio":       ["audio"],
     "video":       ["videostat", "videofeat"],
     "audio+video": ["audio", "videostat", "videofeat"],
-    "phys+video":  ["physfeat", "physraw", "videostat", "videofeat"],
-    "phys+audio":  ["physfeat", "physraw", "audio"],
-    "all":         ["physfeat", "physraw", "audio", "videostat", "videofeat"],
-    "all+avail":   ["physfeat", "physraw", "audio", "videostat", "videofeat", "avail"],
+    "phys+video":  _PHYS + ["videostat", "videofeat"],
+    "phys+audio":  _PHYS + ["audio"],
+    "all":         _PHYS + ["audio", "videostat", "videofeat"],
+    "all+avail":   _PHYS + ["audio", "videostat", "videofeat", "avail"],
+    # Isolated so the contribution of whole-recording physiology (frequency
+    # -domain HRV in particular) can be read directly rather than inferred.
+    "physglobal":  ["physglobal"],
+    "phys_window_only": ["physfeat", "physraw"],
 }
 
 
