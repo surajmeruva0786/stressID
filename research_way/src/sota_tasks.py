@@ -157,8 +157,7 @@ class RegTabular(SM.TabularCandidate):
         X = self.X
         c = self.factory()
         c.fit(np.ascontiguousarray(X[tr]), y[tr])
-        return np.asarray(c.predict(np.ascontiguousarray(X[te), ])) \
-            if False else np.asarray(c.predict(np.ascontiguousarray(X[te])))
+        return np.asarray(c.predict(np.ascontiguousarray(X[te])))
 
 
 class MultiWindow(SM.WindowCandidate):
