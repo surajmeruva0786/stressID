@@ -184,7 +184,13 @@ def main() -> None:
     md = build()
     out = REPORTS / "SUMMARY.md"
     out.write_text(md, encoding="utf-8")
-    print(md)
+    # The file is UTF-8; the Windows console is cp1252 and dies on the delta
+    # and em-dash characters in the tables. Print a console-safe transliteration
+    # rather than degrade the document that actually gets read.
+    try:
+        print(md)
+    except UnicodeEncodeError:
+        print(md.encode("ascii", "replace").decode("ascii"))
     print(f"\n[summary] -> {out}")
 
 
