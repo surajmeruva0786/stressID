@@ -244,6 +244,15 @@ def build(cfg: Config, man: pd.DataFrame, verbose: bool = True) -> dict[str, np.
         feats["physglobal"] = _winsorize(PG.build(cfg, man, verbose=verbose))
     except Exception as e:                              # pragma: no cover
         print(f"[sotafeat] physglobal unavailable ({e}); continuing without it")
+
+    # Voice quality from the raw waveform. Same argument as physglobal: the
+    # log-mel block describes what the spectrum looks like, not how the voice is
+    # being produced, and the stress literature is built on the latter.
+    try:
+        from . import audio_global as AG
+        feats["audioglobal"] = _winsorize(AG.build(cfg, man, verbose=verbose))
+    except Exception as e:                              # pragma: no cover
+        print(f"[sotafeat] audioglobal unavailable ({e}); continuing without it")
     return feats
 
 
