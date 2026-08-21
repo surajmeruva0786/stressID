@@ -212,6 +212,13 @@
       within a few points of a baseline that reads no signal at all. That, rather
       than the leaderboard position, is the finding worth reporting.
     </p>
+    <p>
+      What our pipeline <em>does</em> demonstrably earn is measured against a matched
+      baseline rather than a published one: run a plain random forest through the same
+      folds and it scores 0.723, so the full model is worth
+      <strong>+0.026, p&nbsp;=&nbsp;0.002</strong>. Real, significant, and smaller than
+      the confound it sits on top of.
+    </p>
   </div>
 
   <div class="tiles">
@@ -314,8 +321,12 @@
           <td>Ours</td><td class="num">0.749</td><td class="num">0.748</td>
         </tr>
         <tr>
-          <td><span class="dot" style="background:var(--s2)"></span>Feature fusion + RF<span class="note">simple baseline, no tuning</span></td>
+          <td><span class="dot" style="background:var(--s2)"></span>Feature fusion + RF<span class="note">simple baseline &mdash; random 80/20 &times; 10, not directly comparable</span></td>
           <td>Ours</td><td class="num">0.740</td><td class="num">0.737</td>
+        </tr>
+        <tr>
+          <td><span class="dot" style="background:var(--s2)"></span>Plain random forest<span class="note">same folds as our final model &mdash; the matched baseline</span></td>
+          <td>Ours</td><td class="num">0.723</td><td class="num">0.723</td>
         </tr>
         <tr>
           <td><span class="dot" style="background:var(--s1)"></span>Physiological HC + RF</td>
@@ -373,14 +384,18 @@
     </table>
   </div>
 
-  <div class="callout">
-    <span class="tag">The uncomfortable row</span>
+  <div class="callout good">
+    <span class="tag">Does the pipeline earn its keep?</span>
     <p>
-      Our elaborate pipeline &mdash; eleven rounds of feature engineering, window-level
-      models, ensembling and threshold tuning &mdash; scores <strong>0.749</strong>.
-      A plain random forest on concatenated features, which took one line to write,
-      scores <strong>0.740</strong>. Most of what separates the top of this table
-      from the middle is not modelling sophistication.
+      Rows in the table above come from two different split rules, so they cannot be
+      subtracted from one another. The honest test is a plain random forest run through
+      the <em>identical</em> folds, seed and scoring as our final model:
+    </p>
+    <p>
+      <strong>Full pipeline 0.748 vs plain random forest 0.723 &mdash; a gain of
+      +0.026, paired p = 0.002, winning 12 of 15 folds.</strong> On the confound-free
+      subset the gap widens to +0.037 (p = 0.013). The engineering is doing real work;
+      it is simply doing it on top of a base that protocol metadata already supplies.
     </p>
   </div>
 </section>
@@ -512,7 +527,8 @@
         <tr><th>Component</th><th class="num">&Delta; Macro F1</th><th class="num">p</th><th>Verdict</th></tr>
       </thead>
       <tbody>
-        <tr class="ours"><td>Full pipeline vs simple baseline</td><td class="num">+0.016</td><td class="num">0.035</td><td>Significant</td></tr>
+        <tr class="ours"><td>Full pipeline vs plain random forest</td><td class="num">+0.026</td><td class="num">0.002</td><td>Significant</td></tr>
+        <tr class="ours"><td>Final config vs first-round config</td><td class="num">+0.016</td><td class="num">0.035</td><td>Significant</td></tr>
         <tr><td>Window-level training</td><td class="num">+0.007</td><td class="num muted">&mdash;</td><td>Kept</td></tr>
         <tr><td>Ensemble pruning to 90% weight</td><td class="num">+0.004</td><td class="num muted">&mdash;</td><td>Kept</td></tr>
         <tr><td>Frequency-domain HRV (LF/HF)</td><td class="num">+0.002</td><td class="num">0.47</td><td class="muted">No effect</td></tr>
@@ -644,9 +660,9 @@
       width:760, padL:238, max:0.8, ref:0.709, refLabel:'metadata only',
       data:[
         {l:'Nested ensemble (ours)',        v:0.749, c:'s2', em:true},
-        {l:'Feature fusion + RF (ours)',    v:0.740, c:'s2'},
         {l:'Physiological HC + RF',         v:0.730, c:'s1'},
         {l:'Decision fusion + RF (ours)',   v:0.726, c:'s2'},
+        {l:'Plain random forest (ours)',    v:0.723, c:'s2'},
         {l:'SVM + average-rule fusion',     v:0.720, c:'s1'},
         {l:'SVM + sum-rule fusion',         v:0.720, c:'s1'},
         {l:'wav2vec 2.0 classifier',        v:0.700, c:'s1'},
