@@ -92,6 +92,10 @@ def styles():
     s["note"] = ParagraphStyle(
         "note", fontName="Helvetica-Oblique", fontSize=7.2, leading=9,
         textColor=INK3)
+    # Tiles stack a 7pt label over a 16pt number in one paragraph; without
+    # generous leading the digits' ascenders clip the label above them.
+    s["tile"] = ParagraphStyle(
+        "tile", fontName="Helvetica", fontSize=8.2, leading=15, textColor=INK)
     s["callout"] = ParagraphStyle(
         "callout", fontName="Helvetica", fontSize=9.2, leading=13.2,
         textColor=INK, spaceAfter=5)
@@ -193,7 +197,7 @@ def barfig(name, labels, values, colours, ref=None, ref_label="", xlim=0.82,
 def grouped_fig(name, groups, series, xlim=0.85, width=6.9):
     """series = [(label, colour, [v per group]), ...] horizontal grouped bars."""
     n = len(series)
-    h = max(1.9, len(groups) * n * 0.19 + 1.0)
+    h = max(2.1, len(groups) * n * 0.19 + 1.3)
     fig, ax = plt.subplots(figsize=(width, h), dpi=200)
     idx = range(len(groups))
     bh = 0.78 / n
@@ -208,8 +212,8 @@ def grouped_fig(name, groups, series, xlim=0.85, width=6.9):
     ax.invert_yaxis()
     ax.set_xlim(0, xlim)
     style_axes(ax)
-    ax.legend(fontsize=7.4, frameon=False, loc="lower right", ncol=n,
-              labelcolor="#46525A")
+    ax.legend(fontsize=7.4, frameon=False, ncol=n, labelcolor="#46525A",
+              loc="lower center", bbox_to_anchor=(0.5, 1.005))
     fig.tight_layout(pad=0.4)
     p = FIGDIR / f"{name}.png"
     fig.savefig(p, bbox_inches="tight", facecolor="white")
@@ -310,16 +314,16 @@ def build():
     tiles = [[
         Paragraph("<font size=7 color='#6B7880'>OURS &middot; MATCHED SCOPE</font><br/>"
                   f"<font size=16><b>{c364['wf1']:.3f}</b></font><br/>"
-                  "<font size=7 color='#6B7880'>weighted F1, 364 rec.</font>", S["cell"]),
+                  "<font size=7 color='#6B7880'>weighted F1, 364 rec.</font>", S["tile"]),
         Paragraph("<font size=7 color='#6B7880'>BEST PUBLISHED</font><br/>"
                   "<font size=16><b>0.72</b></font><br/>"
-                  "<font size=7 color='#6B7880'>SVM + average fusion</font>", S["cell"]),
+                  "<font size=7 color='#6B7880'>SVM + average fusion</font>", S["tile"]),
         Paragraph("<font size=7 color='#6B7880'>OURS &middot; BAL. ACCURACY</font><br/>"
                   f"<font size=16><b>{c364['bacc']:.3f}</b></font><br/>"
-                  "<font size=7 color='#6B7880'>vs 0.65 published</font>", S["cell"]),
+                  "<font size=7 color='#6B7880'>vs 0.65 published</font>", S["tile"]),
         Paragraph("<font size=7 color='#6B7880'>METADATA ONLY</font><br/>"
                   "<font size=16><b>0.709</b></font><br/>"
-                  "<font size=7 color='#6B7880'>duration + availability</font>", S["cell"]),
+                  "<font size=7 color='#6B7880'>duration + availability</font>", S["tile"]),
     ]]
     tt = Table(tiles, colWidths=[41.25 * mm] * 4)
     tt.setStyle(TableStyle([

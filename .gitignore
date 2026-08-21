@@ -19,3 +19,4 @@ research_way/data/sotamat_*/
 research_way/data/sotawin_*/
 research_way/*.log
 research_way/*.err
+docs/_figs/
