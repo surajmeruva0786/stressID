@@ -267,10 +267,19 @@ def _inner_oof(cand, tr_i, y, splits, task: str):
 
 def run(cfg: Config, task: str, run_name: str, views: list[str], repeats: int,
         seed: int, max_size: int, n_bags: int, cum_keep: float,
-        windows: list[str], inner_folds: int, notes: str, n_folds: int = 5) -> dict:
+        windows: list[str], inner_folds: int, notes: str, n_folds: int = 5,
+        scope: str = "all700") -> dict:
     t0 = time.time()
-    man = pd.read_csv(cfg.manifest_path)
-    feats = SF.build(cfg, man)
+    man_full = pd.read_csv(cfg.manifest_path)
+    # The origin paper's multimodal table is measured on its 370 all-modality
+    # tasks, so a like-for-like comparison for affect3 has to run on c364 --
+    # our equivalent subset -- not on the full corpus.
+    keep = (((man_full.has_physio == 1) & (man_full.has_audio == 1) &
+             (man_full.has_video == 1)).values if scope == "c364"
+            else np.ones(len(man_full), bool))
+    man = man_full[keep].reset_index(drop=True)
+    feats_full = SF.build(cfg, man_full)
+    feats = {k: v[keep] for k, v in feats_full.items()}
     mats = build_matrices(feats, man, views)
     jobs = JOBS
     zoo = zoo_multiclass(jobs) if task == "affect3" else zoo_regression(jobs)
@@ -289,7 +298,8 @@ def run(cfg: Config, task: str, run_name: str, views: list[str], repeats: int,
 
     if windows:
         from . import sota_windows as SW
-        W, V, _ = SW.build_windows(cfg, man)
+        W, V, _ = SW.build_windows(cfg, man_full)
+        W, V = W[keep], V[keep]
         WinCls = MultiWindow if task == "affect3" else RegWindow
         for view in windows:
             Wv = W if view == "raw" else SW.subject_center(W, V, man, mode=view)
@@ -360,6 +370,7 @@ def run(cfg: Config, task: str, run_name: str, views: list[str], repeats: int,
     headline[f"{task}_single_{metrics[0]}"] = float(df[f"single_{metrics[0]}"].mean())
     headline[f"{task}_n_folds"] = int(len(df))
     headline[f"{task}_n_recordings"] = int(len(y))
+    headline[f"{task}_scope"] = scope
 
     rank = sorted(((k, float(np.mean(v))) for k, v in inner_acc.items()),
                   key=lambda kv: -kv[1])[:20]
@@ -367,6 +378,7 @@ def run(cfg: Config, task: str, run_name: str, views: list[str], repeats: int,
         run_name, headline,
         {"task": task, "protocol": "subject-shared repeated K-fold (paper-style)",
          "n_folds": n_folds, "repeats": repeats, "seed": seed, "views": views,
+         "scope": scope,
          "window_views": windows, "models": list(zoo), "cum_keep": cum_keep,
          "inner_folds": inner_folds, "feature_version": SF.FEATURE_VERSION,
          "selection": "bagged greedy w/ replacement on inner OOF"},
@@ -394,11 +406,13 @@ def main() -> None:
     ap.add_argument("--bags", type=int, default=12)
     ap.add_argument("--cum-keep", type=float, default=0.90)
     ap.add_argument("--inner-folds", type=int, default=3)
+    ap.add_argument("--scope", choices=["all700", "c364"], default="all700")
     ap.add_argument("--notes", default="")
     a = ap.parse_args()
     h = run(full_config(), a.task, a.run_name, a.views.split(","), a.repeats,
             a.seed, a.max_size, a.bags, a.cum_keep,
-            [s for s in a.windows.split(",") if s], a.inner_folds, a.notes)
+            [s for s in a.windows.split(",") if s], a.inner_folds, a.notes,
+            scope=a.scope)
     for k, v in h.items():
         print(f"  {k:<34} {v}")
 
