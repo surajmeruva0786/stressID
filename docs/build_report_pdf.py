@@ -401,7 +401,13 @@ def build():
     story.append(data_table(
         ["METHOD", "WEIGHTED F1", "BAL. ACCURACY", "SOURCE"],
         rows3, [72 * mm, 30 * mm, 33 * mm, 20 * mm], highlight=[0]))
-    story.append(P("Paper values are the 3-class columns of Table 3.", "cap"))
+    story.append(P(
+        "Paper values are the 3-class columns of Table 3. <b>Read this margin "
+        "cautiously:</b> we lead on both metrics, but by 0.02 against published "
+        "standard deviations of 0.05–0.07, so the intervals overlap heavily. Our "
+        "3-class run also used 5 folds against the binary task's 15, so its own "
+        "uncertainty (±0.05 weighted F1) is correspondingly wider. The defensible "
+        "statement is parity-to-slightly-ahead, not a clear win.", "cap"))
 
     # ---------------- 4. confounds
     story.append(P("4 &nbsp; What the numbers are actually measuring", "h2"))

@@ -26,3 +26,4 @@ These numbers are **not** comparable to `reports/RUNS.md` (subject-held-out).
 | t2_score | nan | nan | nan | nan | no improvement | 2026-08-15 20:24:51 |
 | s10a_voice | nan | nan | nan | 0.6749 | no improvement | 2026-08-16 01:34:47 |
 | s10b_voice_ablate | nan | nan | nan | 0.6725 | no improvement | 2026-08-16 02:50:01 |
+| t3_affect3_c364 | nan | nan | nan | nan | no improvement | 2026-08-21 12:17:02 |

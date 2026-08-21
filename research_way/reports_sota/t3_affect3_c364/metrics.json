@@ -1,0 +1,19 @@
+{
+  "run_name": "t3_affect3_c364",
+  "timestamp": "2026-08-21 12:17:02",
+  "verdict": "no improvement",
+  "delta_vs_best": NaN,
+  "duration_s": 3423.347695827484,
+  "affect3_macro_f1": 0.6195488822574882,
+  "affect3_macro_f1_std": 0.06734205343745057,
+  "affect3_weighted_f1": 0.6533200807288322,
+  "affect3_weighted_f1_std": 0.052599492095649625,
+  "affect3_balanced_acc": 0.5964054355358704,
+  "affect3_balanced_acc_std": 0.059861972157631345,
+  "affect3_accuracy": 0.6732115677321157,
+  "affect3_accuracy_std": 0.04581911108177678,
+  "affect3_single_macro_f1": 0.5927684122269556,
+  "affect3_n_folds": 5,
+  "affect3_n_recordings": 364,
+  "affect3_scope": "c364"
+}
