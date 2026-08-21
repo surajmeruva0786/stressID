@@ -194,8 +194,11 @@ def greedy_ensemble(oof: dict, y: np.ndarray, max_size: int = 25,
     rng = np.random.default_rng(seed)
     counts: dict = {}
     for b in range(n_bags):
-        pool = list(rng.choice(len(keys), size=max(2, int(len(keys) * bag_frac)),
-                               replace=False))
+        # Clamp to the population. With a single candidate -- a deliberate
+        # simple-baseline run -- max(2, ...) asked for 2 draws from a pool of 1
+        # and numpy raised. A one-candidate "ensemble" is just that candidate.
+        n_pool = min(len(keys), max(2, int(len(keys) * bag_frac)))
+        pool = list(rng.choice(len(keys), size=n_pool, replace=False))
         pool = [keys[i] for i in pool]
         cur = np.zeros(len(y))
         n = 0

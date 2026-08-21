@@ -18,6 +18,8 @@ These numbers are **not** comparable to `reports/RUNS.md` (subject-held-out).
 | s1_baseline_raw | 0.7419 | 0.7426 | 0.7429 | 0.6518 | FIRST RUN | 2026-08-15 01:09:00 |
 | s8b_base_r3 | 0.7322 | 0.7332 | 0.7343 | nan | no improvement | 2026-08-15 14:52:04 |
 | s7_baseline_seed101 | 0.7272 | 0.7283 | 0.7300 | 0.6605 | no improvement | 2026-08-15 10:49:23 |
+| s11a_simple_rf | 0.7225 | 0.7230 | 0.7238 | 0.6375 | no improvement | 2026-08-21 11:07:49 |
+| s11b_simple_logreg | 0.6492 | 0.6501 | 0.6519 | 0.6329 | no improvement | 2026-08-21 11:08:29 |
 | s0_smoke | nan | nan | nan | 0.6723 | FIRST RUN | 2026-08-14 23:43:24 |
 | s0_win_smoke | nan | nan | nan | 0.6356 | no improvement | 2026-08-15 05:30:36 |
 | t1_affect3 | nan | nan | nan | nan | no improvement | 2026-08-15 18:51:15 |
