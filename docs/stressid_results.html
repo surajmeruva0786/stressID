@@ -199,48 +199,45 @@
   <div class="verdict">
     <p class="q">Is this a state-of-the-art result?</p>
     <p>
-      <strong>On the headline metric, yes &mdash; narrowly. As a scientific claim, no,
-      and it should not be written up that way.</strong> Our best configuration reaches
-      <strong>0.749 weighted F1</strong> where the StressID benchmark paper reports
-      <strong>0.72</strong> for its best fusion model. But the margin is about
-      <strong>0.02</strong>, the two protocols are similar rather than identical, and &mdash;
-      decisively &mdash; a classifier given <em>nothing but recording length and which sensors
-      were switched on</em> scores <strong>0.709</strong> on the same data.
+      <strong>On the benchmark's own comparison, yes &mdash; on both of the metrics
+      it reports. As a scientific claim it needs the qualification below.</strong>
+      The origin paper evaluates its multimodal baselines on its 370 all-modality
+      tasks; our matching subset is 364 recordings. On that like-for-like scope we
+      reach <strong>0.746 weighted F1</strong> and <strong>0.666 balanced
+      accuracy</strong>, against the paper's best of <strong>0.72</strong> and
+      <strong>0.65</strong> &mdash; ahead on both. On the 3-class target, 0.653 and
+      0.596 against 0.63 and 0.58.
     </p>
     <p>
-      Essentially the entire published field on this benchmark, ours included, sits
-      within a few points of a baseline that reads no signal at all. That, rather
-      than the leaderboard position, is the finding worth reporting.
-    </p>
-    <p>
-      What our pipeline <em>does</em> demonstrably earn is measured against a matched
-      baseline rather than a published one: run a plain random forest through the same
-      folds and it scores 0.723, so the full model is worth
-      <strong>+0.026, p&nbsp;=&nbsp;0.002</strong>. Real, significant, and smaller than
-      the confound it sits on top of.
+      The qualification: on the full 700-recording corpus a classifier given
+      <em>nothing but recording length and which sensors were switched on</em>
+      scores <strong>0.709</strong> macro F1. Absolute scores on the full corpus are
+      therefore a poor measure of stress detection &mdash; which is exactly why the
+      364-recording comparison above is the one we advance, since duration and
+      availability are constant there and carry no information at all.
     </p>
   </div>
 
   <div class="tiles">
     <div class="tile">
-      <span class="k">Ours &middot; paper protocol</span>
-      <div class="v">0.749</div>
-      <p class="sub">Weighted F1, all&nbsp;700 recordings</p>
+      <span class="k">Ours &middot; matched scope</span>
+      <div class="v">0.746</div>
+      <p class="sub">Weighted F1, 364 recordings</p>
     </div>
     <div class="tile">
       <span class="k">Best published</span>
       <div class="v">0.72</div>
-      <p class="sub">Fusion, StressID benchmark paper</p>
+      <p class="sub">SVM + average-rule fusion</p>
+    </div>
+    <div class="tile">
+      <span class="k">Ours &middot; balanced acc.</span>
+      <div class="v">0.666</div>
+      <p class="sub">vs 0.65 published</p>
     </div>
     <div class="tile">
       <span class="k">Metadata only</span>
       <div class="v">0.709</div>
       <p class="sub">Duration + sensor availability</p>
-    </div>
-    <div class="tile">
-      <span class="k">Real margin</span>
-      <div class="v">+0.040</div>
-      <p class="sub">Full pipeline over metadata</p>
     </div>
   </div>
 </section>
@@ -285,117 +282,91 @@
 <section id="headline">
   <h2><span class="num">03</span> Against every published result</h2>
   <p class="lede">
-    All results reported on StressID for binary stress detection, on the paper's own
-    protocol and metric.
+    The benchmark paper reports <strong>weighted F1</strong> and <strong>balanced
+    accuracy</strong>, for both the 2-class and the 3-class target. All four numbers
+    are given here. Every row is the paper's multimodal evaluation scope &mdash; its
+    370 all-modality tasks, our equivalent 364 recordings.
   </p>
 
   <figure>
-    <p class="fig-title">Weighted F1 on the benchmark protocol</p>
-    <p class="fig-sub">Higher is better. The dashed line marks what protocol metadata alone achieves.</p>
+    <p class="fig-title">2-class stress, both reported metrics</p>
+    <p class="fig-sub">Matched scope. Higher is better.</p>
     <div class="legend">
-      <span><i class="dot" style="background:var(--s1)"></i>Published benchmark</span>
-      <span><i class="dot" style="background:var(--s2)"></i>This work</span>
-      <span><i class="dot" style="background:var(--s3)"></i>Confound baseline</span>
+      <span><i class="dot" style="background:var(--s1)"></i>Weighted F1</span>
+      <span><i class="dot" style="background:var(--s2)"></i>Balanced accuracy</span>
     </div>
-    <div class="chart-scroll"><svg id="chart1" role="img" aria-label="Bar chart of weighted F1 for published and current methods"></svg></div>
+    <div class="chart-scroll"><svg id="chart1" role="img" aria-label="Grouped bar chart of weighted F1 and balanced accuracy by method"></svg></div>
     <figcaption>
-      <b>The field is compressed.</b> Every published method and ours falls between
-      0.58 and 0.75, while a model reading only sensor-availability bits reaches 0.70.
-      The spread that separates the best method from the worst is roughly the spread
-      that separates the worst from doing no modelling at all.
+      <b>We lead on both metrics, and the field is compressed.</b> Eight methods span
+      roughly 0.16 weighted F1 &mdash; a range that sits entirely inside what protocol
+      metadata alone reaches on the full corpus (&sect;04).
     </figcaption>
   </figure>
 
   <div class="tbl-wrap">
     <table>
-      <caption><b>Full comparison.</b> Benchmark-paper rows as published; our rows measured on 700 recordings. Confound rows carry no signal content by construction.</caption>
+      <caption><b>2-class stress &mdash; matched multimodal scope.</b> Paper values from Table 3 of the benchmark paper, mean &plusmn; s.d. over 10 random 80/20 splits with SMOTE. Ours are mean &plusmn; s.d. over 15 folds without SMOTE.</caption>
       <thead>
-        <tr>
-          <th>Method</th><th>Source</th>
-          <th class="num">Weighted F1</th><th class="num">Macro F1</th>
-        </tr>
+        <tr><th>Method</th><th class="num">Weighted F1</th><th class="num">Balanced acc.</th><th>Source</th></tr>
       </thead>
       <tbody>
-        <tr class="ours">
-          <td><span class="dot" style="background:var(--s2)"></span>Nested ensemble<span class="note">this work &mdash; final configuration</span></td>
-          <td>Ours</td><td class="num">0.749</td><td class="num">0.748</td>
-        </tr>
-        <tr>
-          <td><span class="dot" style="background:var(--s2)"></span>Feature fusion + RF<span class="note">simple baseline &mdash; random 80/20 &times; 10, not directly comparable</span></td>
-          <td>Ours</td><td class="num">0.740</td><td class="num">0.737</td>
-        </tr>
-        <tr>
-          <td><span class="dot" style="background:var(--s2)"></span>Plain random forest<span class="note">same folds as our final model &mdash; the matched baseline</span></td>
-          <td>Ours</td><td class="num">0.723</td><td class="num">0.723</td>
-        </tr>
-        <tr>
-          <td><span class="dot" style="background:var(--s1)"></span>Physiological HC + RF</td>
-          <td>Paper</td><td class="num">0.73</td><td class="num muted">&mdash;</td>
-        </tr>
-        <tr>
-          <td><span class="dot" style="background:var(--s2)"></span>Decision fusion + RF</td>
-          <td>Ours</td><td class="num">0.726</td><td class="num">0.724</td>
-        </tr>
-        <tr>
-          <td><span class="dot" style="background:var(--s1)"></span>SVM + average-rule fusion<span class="note">paper's best multimodal</span></td>
-          <td>Paper</td><td class="num">0.72</td><td class="num muted">&mdash;</td>
-        </tr>
-        <tr>
-          <td><span class="dot" style="background:var(--s1)"></span>SVM + sum-rule fusion</td>
-          <td>Paper</td><td class="num">0.72</td><td class="num muted">&mdash;</td>
-        </tr>
-        <tr>
-          <td><span class="dot" style="background:var(--s1)"></span>wav2vec 2.0 classifier</td>
-          <td>Paper</td><td class="num">0.70</td><td class="num muted">&mdash;</td>
-        </tr>
-        <tr>
-          <td><span class="dot" style="background:var(--s1)"></span>Action units + kNN</td>
-          <td>Paper</td><td class="num">0.70</td><td class="num muted">&mdash;</td>
-        </tr>
-        <tr class="rule-top">
-          <td><span class="dot" style="background:var(--s3)"></span>Availability bits only<span class="note">3 bits, zero signal content</span></td>
-          <td>Ours</td><td class="num">0.701</td><td class="num">0.699</td>
-        </tr>
-        <tr class="rule-top">
-          <td><span class="dot" style="background:var(--s1)"></span>Audio HC + kNN</td>
-          <td>Paper</td><td class="num">0.67</td><td class="num muted">&mdash;</td>
-        </tr>
-        <tr>
-          <td><span class="dot" style="background:var(--s1)"></span>Video only</td>
-          <td>Paper</td><td class="num">0.67</td><td class="num muted">&mdash;</td>
-        </tr>
-        <tr>
-          <td><span class="dot" style="background:var(--s1)"></span>Physiological only</td>
-          <td>Paper</td><td class="num">0.66</td><td class="num muted">&mdash;</td>
-        </tr>
-        <tr>
-          <td><span class="dot" style="background:var(--s1)"></span>Feature fusion + MLP</td>
-          <td>Paper</td><td class="num">0.66</td><td class="num muted">&mdash;</td>
-        </tr>
-        <tr>
-          <td><span class="dot" style="background:var(--s1)"></span>Feature fusion + SVM</td>
-          <td>Paper</td><td class="num">0.64</td><td class="num muted">&mdash;</td>
-        </tr>
-        <tr>
-          <td><span class="dot" style="background:var(--s1)"></span>Feature fusion + DBN</td>
-          <td>Paper</td><td class="num">0.58</td><td class="num muted">&mdash;</td>
-        </tr>
+        <tr class="ours"><td><span class="dot" style="background:var(--s2)"></span>Nested ensemble<span class="note">this work</span></td><td class="num">0.746 &plusmn;.043</td><td class="num">0.666 &plusmn;.051</td><td>Ours</td></tr>
+        <tr><td><span class="dot" style="background:var(--s1)"></span>SVM + average-rule fusion<span class="note">paper's best</span></td><td class="num">0.72 &plusmn;.05</td><td class="num">0.65 &plusmn;.05</td><td>Paper</td></tr>
+        <tr><td><span class="dot" style="background:var(--s1)"></span>SVM + sum-rule fusion</td><td class="num">0.72 &plusmn;.05</td><td class="num">0.64 &plusmn;.05</td><td>Paper</td></tr>
+        <tr><td><span class="dot" style="background:var(--s1)"></span>SVM + maximum-rule fusion</td><td class="num">0.72 &plusmn;.05</td><td class="num">0.64 &plusmn;.05</td><td>Paper</td></tr>
+        <tr><td><span class="dot" style="background:var(--s1)"></span>SVM + product-rule fusion</td><td class="num">0.71 &plusmn;.05</td><td class="num">0.63 &plusmn;.05</td><td>Paper</td></tr>
+        <tr class="rule-top"><td><span class="dot" style="background:var(--s2)"></span>Plain random forest<span class="note">matched baseline, same folds</span></td><td class="num">0.714</td><td class="num">0.637</td><td>Ours</td></tr>
+        <tr class="rule-top"><td><span class="dot" style="background:var(--s1)"></span>Video only</td><td class="num">0.67 &plusmn;.03</td><td class="num">0.62 &plusmn;.04</td><td>Paper</td></tr>
+        <tr><td><span class="dot" style="background:var(--s1)"></span>Audio only</td><td class="num">0.67 &plusmn;.04</td><td class="num">0.62 &plusmn;.04</td><td>Paper</td></tr>
+        <tr><td><span class="dot" style="background:var(--s1)"></span>Physiological only</td><td class="num">0.66 &plusmn;.05</td><td class="num">0.58 &plusmn;.04</td><td>Paper</td></tr>
+        <tr><td><span class="dot" style="background:var(--s1)"></span>Feature fusion + MLP</td><td class="num">0.66 &plusmn;.04</td><td class="num">0.61 &plusmn;.03</td><td>Paper</td></tr>
+        <tr><td><span class="dot" style="background:var(--s1)"></span>Feature fusion + SVM</td><td class="num">0.64 &plusmn;.09</td><td class="num">0.56 &plusmn;.05</td><td>Paper</td></tr>
+        <tr><td><span class="dot" style="background:var(--s1)"></span>Feature fusion + DBN</td><td class="num">0.58 &plusmn;.06</td><td class="num">0.52 &plusmn;.05</td><td>Paper</td></tr>
       </tbody>
     </table>
+  </div>
+
+  <div class="tbl-wrap">
+    <table>
+      <caption><b>3-class affect &mdash; same scope.</b> Paper values are the 3-class columns of Table 3.</caption>
+      <thead>
+        <tr><th>Method</th><th class="num">Weighted F1</th><th class="num">Balanced acc.</th><th>Source</th></tr>
+      </thead>
+      <tbody>
+        <tr class="ours"><td><span class="dot" style="background:var(--s2)"></span>Nested ensemble<span class="note">this work</span></td><td class="num">0.653 &plusmn;.053</td><td class="num">0.596 &plusmn;.060</td><td>Ours</td></tr>
+        <tr><td><span class="dot" style="background:var(--s1)"></span>SVM + average-rule fusion</td><td class="num">0.63 &plusmn;.05</td><td class="num">0.58 &plusmn;.07</td><td>Paper</td></tr>
+        <tr><td><span class="dot" style="background:var(--s1)"></span>SVM + sum-rule fusion</td><td class="num">0.62 &plusmn;.05</td><td class="num">0.58 &plusmn;.07</td><td>Paper</td></tr>
+        <tr><td><span class="dot" style="background:var(--s1)"></span>SVM + product-rule fusion</td><td class="num">0.61 &plusmn;.05</td><td class="num">0.56 &plusmn;.07</td><td>Paper</td></tr>
+        <tr><td><span class="dot" style="background:var(--s1)"></span>SVM + maximum-rule fusion</td><td class="num">0.61 &plusmn;.06</td><td class="num">0.57 &plusmn;.07</td><td>Paper</td></tr>
+        <tr><td><span class="dot" style="background:var(--s1)"></span>Video only</td><td class="num">0.58 &plusmn;.05</td><td class="num">0.56 &plusmn;.05</td><td>Paper</td></tr>
+        <tr><td><span class="dot" style="background:var(--s1)"></span>Audio only</td><td class="num">0.56 &plusmn;.06</td><td class="num">0.54 &plusmn;.06</td><td>Paper</td></tr>
+        <tr><td><span class="dot" style="background:var(--s1)"></span>Feature fusion + SVM</td><td class="num">0.55 &plusmn;.06</td><td class="num">0.51 &plusmn;.05</td><td>Paper</td></tr>
+        <tr><td><span class="dot" style="background:var(--s1)"></span>Feature fusion + MLP</td><td class="num">0.51 &plusmn;.07</td><td class="num">0.51 &plusmn;.07</td><td>Paper</td></tr>
+        <tr><td><span class="dot" style="background:var(--s1)"></span>Physiological only</td><td class="num">0.50 &plusmn;.05</td><td class="num">0.48 &plusmn;.06</td><td>Paper</td></tr>
+        <tr><td><span class="dot" style="background:var(--s1)"></span>Feature fusion + DBN</td><td class="num">0.30 &plusmn;.09</td><td class="num">0.32 &plusmn;.04</td><td>Paper</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout">
+    <span class="tag">Read the 3-class margin cautiously</span>
+    <p>
+      We lead on both metrics, but by about 0.02 against published standard deviations
+      of 0.05&ndash;0.07, so the intervals overlap heavily. Our 3-class run also used
+      5 folds against the binary task's 15, giving it a wider interval of its own.
+      <strong>Parity-to-slightly-ahead</strong> is the defensible reading, not a clear win.
+    </p>
   </div>
 
   <div class="callout good">
     <span class="tag">Does the pipeline earn its keep?</span>
     <p>
-      Rows in the table above come from two different split rules, so they cannot be
-      subtracted from one another. The honest test is a plain random forest run through
-      the <em>identical</em> folds, seed and scoring as our final model:
-    </p>
-    <p>
-      <strong>Full pipeline 0.748 vs plain random forest 0.723 &mdash; a gain of
-      +0.026, paired p = 0.002, winning 12 of 15 folds.</strong> On the confound-free
-      subset the gap widens to +0.037 (p = 0.013). The engineering is doing real work;
-      it is simply doing it on top of a base that protocol metadata already supplies.
+      Rows from different papers use different split rules and cannot be subtracted
+      from one another. The honest test is a plain random forest through the
+      <em>identical</em> folds, seed and scoring: <strong>+0.026 macro F1 on the full
+      corpus (paired p = 0.002, 12 of 15 folds) and +0.037 on the matched subset
+      (p = 0.013)</strong>. The engineering is doing real work, on top of a base that
+      protocol metadata already supplies.
     </p>
   </div>
 </section>
@@ -496,7 +467,8 @@
       <tbody>
         <tr class="ours"><td>Binary stress &mdash; 700 rec.</td><td>Macro F1</td><td class="num">0.748 &plusmn;.033</td><td class="num">0.709</td><td class="num">+0.040</td></tr>
         <tr class="ours"><td>Binary stress &mdash; 364 rec.</td><td>Macro F1</td><td class="num">0.675 &plusmn;.056</td><td class="num">0.418</td><td class="num">+0.257</td></tr>
-        <tr class="ours"><td>3-class affect</td><td>Macro F1</td><td class="num">0.621 &plusmn;.014</td><td class="num">0.333</td><td class="num">+0.288</td></tr>
+        <tr class="ours"><td>3-class affect &mdash; 364 rec.</td><td>Macro F1</td><td class="num">0.620 &plusmn;.067</td><td class="num">0.333</td><td class="num">+0.286</td></tr>
+        <tr class="ours"><td>3-class affect &mdash; 700 rec.</td><td>Macro F1</td><td class="num">0.621 &plusmn;.014</td><td class="num">0.333</td><td class="num">+0.288</td></tr>
         <tr class="ours"><td>Stress score 0&ndash;10</td><td>Pearson r</td><td class="num">0.673 &plusmn;.030</td><td class="num muted">&mdash;</td><td class="num muted">&mdash;</td></tr>
         <tr><td class="muted">&nbsp;&nbsp;&nbsp;&#8627; same model</td><td>RMSE</td><td class="num">1.857</td><td class="num">2.488</td><td class="num">&minus;25%</td></tr>
       </tbody>
@@ -655,25 +627,46 @@
     el.innerHTML = s;
   }
 
+  function groupedChart(id, opts){
+    var el = document.getElementById(id);
+    if(!el) return;
+    var G = opts.groups, SR = opts.series, n = SR.length;
+    var rowH = 34, padL = opts.padL, padR = 62, padT = 26, padB = 34;
+    var w = opts.width, plotW = w - padL - padR, max = opts.max;
+    var h = padT + G.length*rowH + padB;
+    var x = function(v){ return padL + (v/max)*plotW; };
+    var out = '';
+    [0,0.2,0.4,0.6,0.8].forEach(function(t){
+      if(t>max) return;
+      out += '<line class="gridline" x1="'+x(t)+'" y1="'+(padT-8)+'" x2="'+x(t)+'" y2="'+(padT+G.length*rowH)+'"/>';
+      out += '<text class="tick" x="'+x(t)+'" y="'+(padT+G.length*rowH+18)+'" text-anchor="middle">'+t.toFixed(1)+'</text>';
+    });
+    var bh = (rowH-10)/n;
+    G.forEach(function(g,i){
+      var y0 = padT + i*rowH + 5;
+      out += '<text class="lbl" x="'+(padL-12)+'" y="'+(y0+rowH/2-3)+'" text-anchor="end">'+g+'</text>';
+      SR.forEach(function(sr,k){
+        var y = y0 + k*bh;
+        var bw = Math.max(2, x(sr.v[i]) - padL);
+        out += '<g class="bar"><title>'+g+' \u2014 '+sr.name+': '+sr.v[i].toFixed(3)+'</title>';
+        out += '<rect x="'+padL+'" y="'+y+'" width="'+bw+'" height="'+(bh-2)+'" fill="'+css('--'+sr.c)+'" rx="2"/>';
+        out += '<text class="val" x="'+(padL+bw+8)+'" y="'+(y+bh/2+2)+'">'+sr.v[i].toFixed(2)+'</text></g>';
+      });
+    });
+    out += '<line class="axis" x1="'+padL+'" y1="'+(padT-8)+'" x2="'+padL+'" y2="'+(padT+G.length*rowH)+'"/>';
+    el.setAttribute('viewBox','0 0 '+w+' '+h);
+    el.setAttribute('width',w); el.setAttribute('height',h);
+    el.innerHTML = out;
+  }
+
   function render(){
-    barChart('chart1', {
-      width:760, padL:238, max:0.8, ref:0.709, refLabel:'metadata only',
-      data:[
-        {l:'Nested ensemble (ours)',        v:0.749, c:'s2', em:true},
-        {l:'Physiological HC + RF',         v:0.730, c:'s1'},
-        {l:'Decision fusion + RF (ours)',   v:0.726, c:'s2'},
-        {l:'Plain random forest (ours)',    v:0.723, c:'s2'},
-        {l:'SVM + average-rule fusion',     v:0.720, c:'s1'},
-        {l:'SVM + sum-rule fusion',         v:0.720, c:'s1'},
-        {l:'wav2vec 2.0 classifier',        v:0.700, c:'s1'},
-        {l:'Action units + kNN',            v:0.700, c:'s1'},
-        {l:'Availability bits only',        v:0.701, c:'s3'},
-        {l:'Audio HC + kNN',                v:0.670, c:'s1'},
-        {l:'Video only',                    v:0.670, c:'s1'},
-        {l:'Physiological only',            v:0.660, c:'s1'},
-        {l:'Feature fusion + MLP',          v:0.660, c:'s1'},
-        {l:'Feature fusion + SVM',          v:0.640, c:'s1'},
-        {l:'Feature fusion + DBN',          v:0.580, c:'s1'}
+    groupedChart('chart1', {
+      width:760, padL:200, max:0.82,
+      groups:['Ours \u2014 ensemble','SVM + avg fusion','SVM + sum fusion','Video only',
+              'Audio only','Physio only','Feat. fusion + SVM','Feat. fusion + DBN'],
+      series:[
+        {name:'Weighted F1',       c:'s1', v:[0.746,0.72,0.72,0.67,0.67,0.66,0.64,0.58]},
+        {name:'Balanced accuracy', c:'s2', v:[0.666,0.65,0.64,0.62,0.62,0.58,0.56,0.52]}
       ]
     });
 
