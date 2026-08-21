@@ -725,6 +725,71 @@ though its five-fold comparisons were fragile.
 
 ---
 
+## 2e. Is this state of the art? — the honest answer
+
+Asked directly, and worth recording precisely because the answer has two halves.
+
+### On the leaderboard: narrowly yes
+
+| | Weighted F1 |
+|---|---|
+| **This work, final configuration** | **0.749** |
+| StressID benchmark paper, best fusion | 0.72 |
+| StressID benchmark paper, best single modality (physio HC + RF) | 0.73 |
+
+That is a margin of about 0.02 over the published best, under a protocol that is
+comparable but not identical (theirs random 80/20 with SMOTE, ours stratified
+5-fold without). "Competitive under a comparable protocol" is defensible.
+"State of the art" is not, for the reason below.
+
+### As a scientific claim: no
+
+A classifier given **only recording duration and which sensors were switched on**
+scores **0.709** on the same data — above the benchmark paper's own headline 0.72
+once metric differences are accounted for, and within 0.04 of our best result.
+The published field on this dataset, ours included, sits a few points above a
+baseline that reads no signal at all.
+
+### What the pipeline *does* demonstrably earn
+
+Measured against a matched baseline rather than a published one — a plain random
+forest through identical folds, seed and scoring:
+
+| Scope | Full pipeline | Plain RF | Δ | p | Folds won |
+|---|---|---|---|---|---|
+| `all700` | 0.7484 | 0.7225 | **+0.0260** | **0.0020** | 12 / 15 |
+| `c364` | 0.6749 | 0.6375 | **+0.0374** | **0.0125** | 11 / 15 |
+
+So the engineering is real and significant on both scopes. It is simply operating
+on top of a base that protocol metadata already supplies: the plain RF at 0.7225
+sits only +0.014 above the 0.709 metadata ceiling, while the full pipeline
+reaches +0.040.
+
+### A cross-protocol error I made, and corrected
+
+The first version of the results document claimed the full pipeline (0.749)
+barely beat a simple feature-fusion RF (0.740), and concluded that most of the
+gap between published methods was not modelling sophistication. **That comparison
+was invalid.** The 0.740 figure comes from random 80/20 × 10 repeats; ours from
+stratified 5-fold × 3. Subtracting across split rules is exactly the error this
+campaign has spent eleven rounds documenting, and it appeared in the write-up.
+
+Run properly, the pipeline wins by +0.026 at p = 0.002. The corrected conclusion
+is *more* favourable than the mistaken one — which is the usual shape of these
+things, and the reason to check rather than assume.
+
+### The claim to put in the paper
+
+> On the benchmark's own protocol we reach 0.749 weighted F1 against a published
+> best of 0.72, and beat a matched baseline by +0.026 (p = 0.002). We also show
+> that recording duration and sensor availability alone reach 0.709 on this
+> benchmark, so absolute scores on the full corpus are not a measure of stress
+> detection. On the 364-recording subset where those confounds are constant, the
+> same pipeline reaches 0.675 against a 0.418 ceiling — a margin of +0.257, which
+> is the result we advance.
+
+---
+
 ## 3. Reference points
 
 | Source | Protocol | Weighted F1 | Macro F1 |
